@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Estadísticas - QuizzMaster{% endblock %}
+
+{% block content %}
+<div class="container statistics-container">
+    <header class="statistics-header">
+        <h1>Estadísticas</h1>
+        <p>Resumen del rendimiento de tus quizzes y estudiantes.</p>
+    </header>
+
+    <section class="statistics-summary">
+        <article class="stat-card"><span>Quizzes</span><strong>{{ total_quizzes }}</strong><small>{{ active_quizzes }} activos</small></article>
+        <article class="stat-card"><span>Intentos</span><strong>{{ total_attempts }}</strong><small>realizados</small></article>
+        <article class="stat-card"><span>Alumnos</span><strong>{{ total_students }}</strong><small>participantes</small></article>
+        <article class="stat-card"><span>Promedio</span><strong>{{ average_score|floatformat:1 }}%</strong><small>de puntuación</small></article>
+        <article class="stat-card"><span>Tiempo medio</span><strong>{{ average_time|floatformat:0 }} s</strong><small>por intento</small></article>
+    </section>
+
+    <section class="statistics-section">
+        <h2>Rendimiento por categoría</h2>
+        {% if category_stats %}
+            <div class="statistics-table-wrap">
+                <table class="statistics-table">
+                    <thead><tr><th>Categoría</th><th>Quizzes</th><th>Intentos</th><th>Promedio</th></tr></thead>
+                    <tbody>
+                        {% for category in category_stats %}
+                            <tr>
+                                <td>{{ category.category }}</td>
+                                <td>{{ category.quizzes }}</td>
+                                <td>{{ category.attempts }}</td>
+                                <td>{{ category.average_score|default:0|floatformat:1 }}%</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="statistics-empty">Aún no has creado quizzes.</p>
+        {% endif %}
+    </section>
+
+    <a href="{% url 'quizz_app:teacher_dashboard' %}" class="statistics-back">Volver al panel</a>
+</div>
+
+<style>
+    .statistics-container { max-width: 1100px; margin: 40px auto; }
+    .statistics-header { margin-bottom: 28px; }
+    .statistics-header h1, .statistics-section h2 { color: #263238; }
+    .statistics-header h1 { font-size: 2rem; margin-bottom: 8px; }
+    .statistics-header p, .statistics-empty { color: #607d8b; }
+    .statistics-summary { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; margin-bottom: 36px; }
+    .stat-card { padding: 18px; background: white; border: 1px solid #dfe6e9; border-radius: 8px; }
+    .stat-card span, .stat-card small { display: block; color: #607d8b; }
+    .stat-card strong { display: block; margin: 8px 0; color: #263238; font-size: 1.7rem; }
+    .statistics-section { padding: 24px; background: white; border: 1px solid #dfe6e9; border-radius: 8px; }
+    .statistics-section h2 { font-size: 1.25rem; margin-bottom: 18px; }
+    .statistics-table-wrap { overflow-x: auto; }
+    .statistics-table { width: 100%; min-width: 520px; border-collapse: collapse; }
+    .statistics-table th, .statistics-table td { padding: 14px; text-align: left; border-bottom: 1px solid #edf1f2; }
+    .statistics-table th { color: #455a64; background: #f5f7fa; font-size: .85rem; }
+    .statistics-table tr:last-child td { border-bottom: 0; }
+    .statistics-back { display: inline-block; margin-top: 24px; color: #3949ab; font-weight: 700; text-decoration: none; }
+    @media (max-width: 900px) { .statistics-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 500px) { .statistics-summary { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}

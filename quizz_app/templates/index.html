@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block title %}Quizzes - QuizzMaster{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="header-section">
+        <h1 class="main-title">🎮 QuizzMaster</h1>
+        <p class="main-subtitle">¡Desafía tu conocimiento con nuestros quizzes increíbles!</p>
+    </div>
+
+    {% if quizzes %}
+        <div class="quizzes-grid">
+            {% for quiz in quizzes %}
+                <div class="quiz-card" data-difficulty="{{ quiz.difficulty }}">
+                    <div class="quiz-header">
+                        <span class="category-badge">{{ quiz.category }}</span>
+                        <span class="difficulty-badge difficulty-{{ quiz.difficulty }}">
+                            {% if quiz.difficulty == 'fácil' %}⭐
+                            {% elif quiz.difficulty == 'medio' %}⭐⭐
+                            {% else %}⭐⭐⭐
+                            {% endif %}
+                        </span>
+                    </div>
+                    <h2 class="quiz-title">{{ quiz.title }}</h2>
+                    <p class="quiz-description">{{ quiz.description }}</p>
+                    <div class="quiz-meta">
+                        <span class="question-count">
+                            📝 {{ quiz.questions_data|length }} preguntas
+                        </span>
+                    </div>
+                    <a href="{% url 'quizz_app:quiz_detail' quiz.id %}" class="btn btn-primary btn-large">
+                        🎯 Comenzar Quiz
+                        <span class="btn-icon">→</span>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">🎲</div>
+            <h2>No hay quizzes disponibles</h2>
+            <p>¡Vuelve pronto! Pronto habrá nuevos quizzes.</p>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .header-section {
+        text-align: center;
+        margin: 60px 0 80px;
+        animation: fadeInDown 0.6s ease-out;
+    }
+
+    .main-title {
+        font-size: 3.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 15px;
+        font-weight: 800;
+    }
+
+    .main-subtitle {
+        font-size: 1.3rem;
+        color: #666;
+        margin: 0;
+    }
+
+    .quizzes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 30px;
+        margin-top: 50px;
+    }
+
+    .quiz-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .quiz-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease;
+    }
+
+    .quiz-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+    }
+
+    .quiz-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .quiz-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .category-badge {
+        background: #f0f0f0;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #666;
+    }
+
+    .difficulty-badge {
+        font-size: 1rem;
+    }
+
+    .quiz-title {
+        font-size: 1.5rem;
+        margin: 15px 0;
+        color: #333;
+    }
+
+    .quiz-description {
+        color: #666;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin: 15px 0;
+    }
+
+    .quiz-meta {
+        margin: 20px 0;
+    }
+
+    .question-count {
+        color: #999;
+        font-size: 0.9rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+    }
+
+    .empty-state h2 {
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .empty-state p {
+        color: #999;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}

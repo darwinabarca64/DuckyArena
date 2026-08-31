@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz en Vivo - {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="container live-quiz-container">
+    <div class="live-quiz-header">
+        <div class="header-left">
+            <h1>{{ quiz.title }}</h1>
+            <p>{{ participant.student_name }}</p>
+        </div>
+        <div class="header-right">
+            <div class="session-code">
+                Código: <strong>{{ session.session_code }}</strong>
+            </div>
+            <div class="timer-display" id="timerDisplay">
+                ⏱️ <span id="timer">00:00</span>
+            </div>
+        </div>
+    </div>
+
+    <form id="liveQuizForm" method="post" class="live-quiz-form">
+        {% csrf_token %}
+        
+        <div class="questions-container">
+            {% for question in questions %}
+                <div class="question-card">
+                    <div class="question-header">
+                        <div class="question-number">Pregunta {{ forloop.counter }} de {{ questions|length }}</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {% widthratio forloop.counter questions|length 100 %}%"></div>
+                        </div>
+                    </div>
+
+                    <h3 class="question-text">{{ question.question }}</h3>
+
+                    <div class="options-grid">
+                        {% for option in question.options %}
+                            <label class="option-label">
+                                <input type="radio" name="question_{{ forloop.counter0 }}" value="{{ forloop.counter0 }}" class="option-input" required>
+                                <span class="option-box">
+                                    <span class="option-letter">{{ forloop.counter|lower|slice:"0:1" }}</span>
+                                    <span class="option-text">{{ option }}</span>
+                                </span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'quizz_app:join_live_session' %}" class="btn btn-secondary btn-large">← Salir</a>
+            <button type="submit" class="btn btn-success btn-large btn-pulse">✅ Enviar Respuestas 🚀</button>
+        </div>
+    </form>
+</div>
+
+<style>
+    .live-quiz-container {
+        max-width: 900px;
+        margin: 40px auto;
+    }
+
+    .live-quiz-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        animation: slideInDown 0.6s ease-out;
+    }
+
+    .header-left h1 {
+        font-size: 1.8rem;
+        margin: 0 0 5px 0;
+    }
+
+    .header-left p {
+        margin: 0;
+        opacity: 0.9;
+    }
+
+    .header-right {
+        text-align: right;
+    }
+
+    .session-code {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 8px 15px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        font-size: 0.9rem;
+    }
+
+    .timer-display {
+        font-size: 1.3rem;
+        font-weight: 700;
+    }
+
+    .live-quiz-form {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .questions-container {
+        margin-bottom: 30px;
+    }
+
+    .question-card {
+        background: #f8f9fa;
+        padding: 25px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        border-left: 5px solid #667eea;
+        animation: slideInUp 0.5s ease-out;
+    }
+
+    .question-header {
+        margin-bottom: 20px;
+    }
+
+    .question-number {
+        font-size: 0.9rem;
+        color: #667eea;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .progress-bar {
+        height: 6px;
+        background: #e0e0e0;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        transition: width 0.3s ease;
+    }
+
+    .question-text {
+        font-size: 1.1rem;
+        color: #333;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    .options-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .option-label {
+        cursor: pointer;
+    }
+
+    .option-input {
+        display: none;
+    }
+
+    .option-box {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        background: white;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .option-label:hover .option-box {
+        border-color: #667eea;
+        background: #f0f2ff;
+        transform: translateX(5px);
+    }
+
+    .option-input:checked + .option-box {
+        border-color: #667eea;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    }
+
+    .option-letter {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: #e0e0e0;
+        border-radius: 8px;
+        font-weight: 700;
+        color: #667eea;
+        flex-shrink: 0;
+    }
+
+    .option-input:checked + .option-box .option-letter {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .option-text {
+        flex: 1;
+        color: #333;
+        font-weight: 500;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        padding-top: 20px;
+        border-top: 2px solid #e0e0e0;
+    }
+
+    .form-actions .btn {
+        flex: 1;
+        max-width: 300px;
+    }
+
+    @media (max-width: 768px) {
+        .live-quiz-header {
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .header-right {
+            text-align: left;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .form-actions .btn {
+            max-width: none;
+        }
+    }
+</style>
+
+<script>
+    // Timer functionality
+    let totalSeconds = {{ quiz.time_limit|default:0 }};
+    
+    if (totalSeconds > 0) {
+        let secondsLeft = totalSeconds;
+        
+        function updateTimer() {
+            const minutes = Math.floor(secondsLeft / 60);
+            const seconds = secondsLeft % 60;
+            document.getElementById('timer').textContent = 
+                String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+            
+            if (secondsLeft <= 60) {
+                document.getElementById('timerDisplay').style.color = '#f44336';
+            }
+            
+            if (secondsLeft <= 0) {
+                document.getElementById('liveQuizForm').submit();
+            }
+            
+            secondsLeft--;
+        }
+        
+        // Update every second
+        setInterval(updateTimer, 1000);
+        updateTimer(); // Initial call
+    }
+</script>
+{% endblock %}

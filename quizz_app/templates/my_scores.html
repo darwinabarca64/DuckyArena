@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis puntuaciones - QuizzMaster{% endblock %}
+
+{% block content %}
+<div class="container scores-container">
+    <header class="scores-header">
+        <h1>Mis puntuaciones</h1>
+        <p>Resultados de los quizzes que has completado.</p>
+    </header>
+
+    {% if results %}
+        <div class="scores-table-wrap">
+            <table class="scores-table">
+                <thead>
+                    <tr>
+                        <th>Quiz</th>
+                        <th>Fecha y hora</th>
+                        <th>Resultado</th>
+                        <th>Porcentaje</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in results %}
+                        <tr>
+                            <td>{{ result.quiz_name|default:result.quiz.title }}</td>
+                            <td>{{ result.created_at|date:"d/m/Y H:i" }}</td>
+                            <td>{{ result.score }}/{{ result.total_questions }}</td>
+                            <td>{{ result.percentage|floatformat:1 }}%</td>
+                            <td><a href="{% url 'quizz_app:results' result.id %}" class="score-detail-link">Ver detalle</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="scores-empty">
+            <p>Aún no has completado ningún quiz.</p>
+            <a href="{% url 'quizz_app:index' %}" class="btn btn-primary">Ver quizzes</a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .scores-container { max-width: 960px; margin: 40px auto; }
+    .scores-header { margin-bottom: 28px; }
+    .scores-header h1 { color: #263238; font-size: 2rem; margin-bottom: 8px; }
+    .scores-header p { color: #607d8b; }
+    .scores-table-wrap { overflow-x: auto; background: white; border: 1px solid #dfe6e9; border-radius: 8px; }
+    .scores-table { width: 100%; border-collapse: collapse; min-width: 620px; }
+    .scores-table th, .scores-table td { padding: 16px; text-align: left; border-bottom: 1px solid #edf1f2; }
+    .scores-table th { background: #f5f7fa; color: #455a64; font-size: 0.85rem; }
+    .scores-table tr:last-child td { border-bottom: 0; }
+    .score-detail-link { color: #3949ab; font-weight: 700; text-decoration: none; }
+    .score-detail-link:hover { text-decoration: underline; }
+    .scores-empty { padding: 36px; background: white; border: 1px solid #dfe6e9; border-radius: 8px; text-align: center; }
+    .scores-empty p { margin-bottom: 20px; color: #607d8b; }
+</style>
+{% endblock %}

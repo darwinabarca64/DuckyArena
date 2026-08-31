@@ -1,0 +1,354 @@
+{% extends 'base.html' %}
+
+{% block title %}Resultados - {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="container live-results-container">
+    <div class="results-header">
+        <h1>¡Sesión Completada!</h1>
+        <div class="score-circle">
+            <div class="score-value">{{ score }}/{{ total }}</div>
+            <div class="score-percentage">{{ percentage|floatformat:1 }}%</div>
+        </div>
+    </div>
+
+    <div class="result-message">
+        {% if percentage >= 90 %}
+            <div class="message success">
+                <h2>🎉 ¡Excelente!</h2>
+                <p>¡Acabas de demostrar ser un verdadero experto! ¡Eres increíble!</p>
+            </div>
+        {% elif percentage >= 70 %}
+            <div class="message good">
+                <h2>😊 ¡Bien hecho!</h2>
+                <p>¡Lo hiciste muy bien! Sigue practicando para mejorar más.</p>
+            </div>
+        {% elif percentage >= 50 %}
+            <div class="message okay">
+                <h2>🤔 Necesitas practicar</h2>
+                <p>¡Vamos! Revisa tus errores y vuelve a intentarlo.</p>
+            </div>
+        {% else %}
+            <div class="message poor">
+                <h2>💪 ¡Sigue intentando!</h2>
+                <p>No te desanimes, cada intento te acerca a mejorar.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="detailed-results">
+        <h2>Análisis Detallado</h2>
+        {% for answer in detailed_results %}
+            <div class="answer-card {% if answer.is_correct %}correct{% else %}incorrect{% endif %}">
+                <div class="answer-header">
+                    <span class="question-badge">Pregunta {{ forloop.counter }}</span>
+                    <span class="answer-status">
+                        {% if answer.is_correct %}
+                            ✓ Correcto
+                        {% else %}
+                            ✗ Incorrecto
+                        {% endif %}
+                    </span>
+                </div>
+                
+                <h4 class="answer-question">{{ answer.question }}</h4>
+                
+                <div class="options-review">
+                    {% for option in answer.options %}
+                        {% with forloop.counter0 as idx %}
+                            <div class="option-review 
+                                {% if idx == answer.correct_answer %}correct-answer{% endif %}
+                                {% if idx == answer.user_answer and not answer.is_correct %}wrong-answer{% endif %}
+                                ">
+                                <span class="option-review-label">{{ forloop.counter|lower|slice:"0:1" }}</span>
+                                <span class="option-review-text">{{ option }}</span>
+                                {% if idx == answer.correct_answer %}
+                                    <span class="option-review-badge">✓ Correcta</span>
+                                {% endif %}
+                                {% if idx == answer.user_answer and not answer.is_correct %}
+                                    <span class="option-review-badge">✗ Tu respuesta</span>
+                                {% endif %}
+                                {% if idx == answer.user_answer and answer.is_correct %}
+                                    <span class="option-review-badge">✓ Tu respuesta</span>
+                                {% endif %}
+                            </div>
+                        {% endwith %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="results-actions">
+        <a href="{% url 'quizz_app:index' %}" class="btn btn-primary btn-large">🏠 Volver al inicio</a>
+        <a href="{% url 'quizz_app:join_live_session' %}" class="btn btn-secondary btn-large">📡 Unirse a otra sesión</a>
+    </div>
+</div>
+
+<style>
+    .live-results-container {
+        max-width: 900px;
+        margin: 40px auto;
+    }
+
+    .results-header {
+        text-align: center;
+        margin-bottom: 50px;
+        animation: slideInDown 0.6s ease-out;
+    }
+
+    .results-header h1 {
+        font-size: 2.5rem;
+        color: #333;
+        margin-bottom: 30px;
+    }
+
+    .score-circle {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        color: white;
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+        animation: scaleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .score-value {
+        font-size: 3rem;
+        font-weight: 800;
+    }
+
+    .score-percentage {
+        font-size: 1.5rem;
+        opacity: 0.9;
+    }
+
+    .result-message {
+        margin-bottom: 50px;
+        animation: slideInUp 0.6s ease-out 0.1s both;
+    }
+
+    .message {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+        border-top: 5px solid;
+    }
+
+    .message.success {
+        border-color: #4caf50;
+        background: #f1f8f4;
+    }
+
+    .message.good {
+        border-color: #2196f3;
+        background: #e3f2fd;
+    }
+
+    .message.okay {
+        border-color: #ff9800;
+        background: #fff3e0;
+    }
+
+    .message.poor {
+        border-color: #f44336;
+        background: #ffebee;
+    }
+
+    .message h2 {
+        margin-top: 0;
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+    }
+
+    .message p {
+        margin: 0;
+        font-size: 1rem;
+        color: #666;
+    }
+
+    .detailed-results {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        animation: slideInUp 0.6s ease-out 0.2s both;
+    }
+
+    .detailed-results h2 {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 25px;
+    }
+
+    .answer-card {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        border-left: 5px solid #e0e0e0;
+    }
+
+    .answer-card.correct {
+        border-left-color: #4caf50;
+        background: #f1f8f4;
+    }
+
+    .answer-card.incorrect {
+        border-left-color: #f44336;
+        background: #ffebee;
+    }
+
+    .answer-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .question-badge {
+        background: #667eea;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .answer-status {
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .answer-card.correct .answer-status {
+        color: #4caf50;
+    }
+
+    .answer-card.incorrect .answer-status {
+        color: #f44336;
+    }
+
+    .answer-question {
+        font-size: 1rem;
+        color: #333;
+        margin-bottom: 15px;
+        margin-top: 0;
+    }
+
+    .options-review {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .option-review {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        background: white;
+        border-radius: 8px;
+        border: 2px solid #e0e0e0;
+    }
+
+    .option-review.correct-answer {
+        border-color: #4caf50;
+        background: #f1f8f4;
+    }
+
+    .option-review.wrong-answer {
+        border-color: #f44336;
+        background: #ffebee;
+    }
+
+    .option-review-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        background: #e0e0e0;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    .option-review.correct-answer .option-review-label {
+        background: #4caf50;
+        color: white;
+    }
+
+    .option-review.wrong-answer .option-review-label {
+        background: #f44336;
+        color: white;
+    }
+
+    .option-review-text {
+        flex: 1;
+        color: #333;
+        font-weight: 500;
+    }
+
+    .option-review-badge {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .option-review.correct-answer .option-review-badge {
+        background: #c8e6c9;
+        color: #2e7d32;
+    }
+
+    .option-review.wrong-answer .option-review-badge {
+        background: #ffcdd2;
+        color: #c62828;
+    }
+
+    .results-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 40px;
+        animation: slideInUp 0.6s ease-out 0.3s both;
+    }
+
+    .results-actions .btn {
+        flex: 1;
+        max-width: 300px;
+    }
+
+    @media (max-width: 768px) {
+        .score-circle {
+            width: 150px;
+            height: 150px;
+        }
+
+        .score-value {
+            font-size: 2.2rem;
+        }
+
+        .score-percentage {
+            font-size: 1.1rem;
+        }
+
+        .results-actions {
+            flex-direction: column;
+        }
+
+        .results-actions .btn {
+            max-width: none;
+        }
+    }
+</style>
+{% endblock %}

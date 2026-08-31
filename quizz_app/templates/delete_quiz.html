@@ -1,0 +1,273 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Ejercicio - QuizzMaster{% endblock %}
+
+{% block content %}
+<div class="container delete-container">
+    <div class="delete-card">
+        <div class="delete-icon">🗑️</div>
+        <h1>Eliminar Ejercicio</h1>
+        
+        <div class="quiz-info">
+            <h2>{{ quiz.title }}</h2>
+            <p class="quiz-meta">
+                <span class="category">{{ quiz.category }}</span>
+                <span class="difficulty">
+                    {% if quiz.difficulty == 'fácil' %}⭐ Fácil
+                    {% elif quiz.difficulty == 'medio' %}⭐⭐ Medio
+                    {% else %}⭐⭐⭐ Difícil
+                    {% endif %}
+                </span>
+            </p>
+        </div>
+
+        <div class="warning-message">
+            <h3>⚠️ Acción Irreversible</h3>
+            <p>Si eliminas este ejercicio, se borrarán:</p>
+            <ul>
+                <li>Todas las respuestas de los estudiantes</li>
+                <li>Las estadísticas del quiz</li>
+                <li>Los resultados almacenados</li>
+            </ul>
+            <p class="emphasis">Esta acción no puede deshacerse.</p>
+        </div>
+
+        <form method="post" class="delete-form">
+            {% csrf_token %}
+            
+            <div class="confirmation-input">
+                <label for="confirm">
+                    Escribe el nombre del quiz para confirmar:
+                </label>
+                <input 
+                    type="text" 
+                    id="confirm" 
+                    placeholder="{{ quiz.title }}"
+                    class="form-control"
+                >
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'quizz_app:teacher_dashboard' %}" class="btn btn-secondary btn-lg">
+                    ❌ Cancelar
+                </a>
+                <button type="submit" class="btn btn-danger btn-lg" id="deleteBtn" disabled>
+                    🗑️ Eliminar Permanentemente
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .delete-container {
+        max-width: 600px;
+        margin: 60px auto;
+        padding: 20px;
+    }
+
+    .delete-card {
+        background: white;
+        border-radius: 15px;
+        padding: 40px 30px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        animation: scaleIn 0.5s ease-out;
+    }
+
+    .delete-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+    }
+
+    .delete-card h1 {
+        font-size: 2.5rem;
+        color: #d32f2f;
+        margin: 0 0 30px 0;
+    }
+
+    .quiz-info {
+        background: #f5f5f5;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+
+    .quiz-info h2 {
+        margin: 0 0 15px 0;
+        font-size: 1.5rem;
+        color: #333;
+    }
+
+    .quiz-meta {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin: 0;
+        flex-wrap: wrap;
+    }
+
+    .category, .difficulty {
+        background: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #666;
+    }
+
+    .warning-message {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        text-align: left;
+    }
+
+    .warning-message h3 {
+        margin-top: 0;
+        color: #856404;
+    }
+
+    .warning-message ul {
+        margin: 15px 0;
+        padding-left: 20px;
+    }
+
+    .warning-message li {
+        margin: 10px 0;
+        color: #856404;
+    }
+
+    .emphasis {
+        background: #ffebee;
+        color: #c62828;
+        padding: 12px;
+        border-radius: 5px;
+        font-weight: 600;
+        margin-bottom: 0;
+    }
+
+    .confirmation-input {
+        margin: 30px 0;
+        text-align: left;
+    }
+
+    .confirmation-input label {
+        display: block;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-family: inherit;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #d32f2f;
+        box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 2px solid #e0e0e0;
+    }
+
+    .btn-lg {
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        flex: 1;
+        text-align: center;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-secondary {
+        background: #e0e0e0;
+        color: #333;
+        border: none;
+    }
+
+    .btn-secondary:hover {
+        background: #d0d0d0;
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+        color: white;
+        border: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-danger:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(244, 67, 54, 0.3);
+    }
+
+    .btn-danger:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    @media (max-width: 768px) {
+        .delete-container {
+            margin: 40px auto;
+        }
+
+        .delete-card {
+            padding: 30px 20px;
+        }
+
+        .delete-card h1 {
+            font-size: 2rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+    }
+
+    @keyframes scaleIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+</style>
+
+<script>
+    const quizTitle = "{{ quiz.title }}";
+    const confirmInput = document.getElementById('confirm');
+    const deleteBtn = document.getElementById('deleteBtn');
+
+    confirmInput.addEventListener('input', function() {
+        deleteBtn.disabled = this.value !== quizTitle;
+    });
+
+    document.querySelector('.delete-form').addEventListener('submit', function(e) {
+        if (confirmInput.value !== quizTitle) {
+            e.preventDefault();
+            showNotification('El nombre del quiz no coincide. Por favor, intenta de nuevo.');
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,474 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestionar Sesión en Vivo - QuizzMaster{% endblock %}
+
+{% block content %}
+<div class="container live-session-container">
+    <div class="session-header">
+        <h1>📡 Sesión en Vivo - {{ quiz.title }}</h1>
+        <div class="session-info">
+            <div class="info-box">
+                <span class="info-label">Código:</span>
+                <span class="info-value code">{{ session.session_code }}</span>
+                <button onclick="copyCode('{{ session.session_code }}')" class="btn-small-copy">📋 Copiar</button>
+            </div>
+            <div class="info-box">
+                <span class="info-label">Estado:</span>
+                <span class="status-badge status-{{ session.status }}">
+                    {% if session.status == 'waiting' %}⏳ Esperando
+                    {% elif session.status == 'active' %}🟢 Activo
+                    {% elif session.status == 'paused' %}⏸️ Pausado
+                    {% else %}✅ Finalizado
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="session-content">
+        <div class="control-panel">
+            <h2>🎮 Controles</h2>
+            <form method="post" class="control-buttons">
+                {% csrf_token %}
+                {% if session.status == 'waiting' %}
+                    <button type="submit" name="action" value="start" class="btn btn-success btn-large btn-pulse">
+                        ▶️ Iniciar Sesión
+                    </button>
+                {% elif session.status == 'active' %}
+                    <button type="submit" name="action" value="pause" class="btn btn-warning btn-large">
+                        ⏸️ Pausar
+                    </button>
+                    <button type="submit" name="action" value="finish" class="btn btn-danger btn-large">
+                        ⏹️ Finalizar
+                    </button>
+                {% elif session.status == 'paused' %}
+                    <button type="submit" name="action" value="resume" class="btn btn-success btn-large btn-pulse">
+                        ▶️ Reanudar
+                    </button>
+                    <button type="submit" name="action" value="finish" class="btn btn-danger btn-large">
+                        ⏹️ Finalizar
+                    </button>
+                {% else %}
+                    <a href="{% url 'quizz_app:teacher_dashboard' %}" class="btn btn-secondary btn-large">
+                        🏠 Volver al Dashboard
+                    </a>
+                {% endif %}
+            </form>
+        </div>
+
+        <div class="stats-panel">
+            <h2>📊 Estadísticas</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Estudiantes conectados</div>
+                        <div class="stat-value">{{ total_participants }}</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Completados</div>
+                        <div class="stat-value">{{ completed_count }}</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📝</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Preguntas</div>
+                        <div class="stat-value">{{ quiz.questions_data|length }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="participants-panel">
+            <h2>👥 Participantes en Tiempo Real</h2>
+            {% if participants %}
+                <div class="participants-list">
+                    {% for participant in participants %}
+                        <div class="participant-card {% if participant.completed %}completed{% endif %}">
+                            <div class="participant-header">
+                                <span class="participant-name">{{ participant.student_name }}</span>
+                                {% if participant.completed %}
+                                    <span class="participant-status">✅ Completado</span>
+                                {% else %}
+                                    <span class="participant-status">⏳ En progreso...</span>
+                                {% endif %}
+                            </div>
+                            {% if participant.completed %}
+                                <div class="participant-score">
+                                    <span class="score-value">{{ participant.score }}/{{ quiz.questions_data|length }}</span>
+                                    <span class="score-percentage">{{ participant.score_percentage|floatformat:1 }}%</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">🚀</div>
+                    <p>Esperando que los estudiantes se unan...</p>
+                    <p class="small">Comparte el código: <strong>{{ session.session_code }}</strong></p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="student-join-section">
+            <h2>📱 Los estudiantes pueden unirse con:</h2>
+            <div class="join-instructions">
+                <p>1. Ir a: <a href="{% url 'quizz_app:join_live_session' %}">Unirse a Sesión en Vivo</a></p>
+                <p>2. Ingresar el código: <strong>{{ session.session_code }}</strong></p>
+                <p>3. Escribir su nombre</p>
+                <p>4. ¡Comenzar a responder!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .live-session-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    .session-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        animation: slideInDown 0.6s ease-out;
+    }
+
+    .session-header h1 {
+        font-size: 2.2rem;
+        margin-bottom: 20px;
+    }
+
+    .session-info {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .info-box {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 15px 20px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .info-label {
+        font-weight: 600;
+        opacity: 0.9;
+    }
+
+    .info-value {
+        font-weight: 800;
+        font-size: 1.1rem;
+    }
+
+    .info-value.code {
+        font-family: monospace;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+
+    .btn-small-copy {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-small-copy:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .status-badge {
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .status-waiting {
+        background: rgba(255, 193, 7, 0.3);
+    }
+
+    .status-active {
+        background: rgba(76, 175, 80, 0.3);
+        animation: pulse 2s infinite;
+    }
+
+    .status-paused {
+        background: rgba(255, 152, 0, 0.3);
+    }
+
+    .status-finished {
+        background: rgba(33, 150, 243, 0.3);
+    }
+
+    .session-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+
+    .control-panel,
+    .stats-panel {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        animation: slideInUp 0.6s ease-out;
+    }
+
+    .control-panel h2,
+    .stats-panel h2 {
+        margin-bottom: 20px;
+        color: #333;
+        font-size: 1.3rem;
+    }
+
+    .control-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 15px;
+    }
+
+    .stat-card {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 12px;
+        border-left: 4px solid #667eea;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+    }
+
+    .stat-content {
+        flex: 1;
+    }
+
+    .stat-label {
+        color: #666;
+        font-size: 0.85rem;
+        margin-bottom: 5px;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #667eea;
+    }
+
+    .participants-panel {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        grid-column: 1 / -1;
+        animation: slideInUp 0.6s ease-out 0.1s both;
+    }
+
+    .participants-panel h2 {
+        margin-bottom: 20px;
+        color: #333;
+        font-size: 1.3rem;
+    }
+
+    .participants-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+    }
+
+    .participant-card {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 10px;
+        border: 2px solid #e0e0e0;
+        transition: all 0.3s ease;
+    }
+
+    .participant-card.completed {
+        border-color: #4caf50;
+        background: #f1f8f4;
+    }
+
+    .participant-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .participant-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .participant-name {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .participant-status {
+        font-size: 0.85rem;
+        padding: 4px 8px;
+        border-radius: 12px;
+        background: rgba(102, 126, 234, 0.1);
+        color: #667eea;
+    }
+
+    .participant-card.completed .participant-status {
+        background: rgba(76, 175, 80, 0.1);
+        color: #4caf50;
+    }
+
+    .participant-score {
+        display: flex;
+        gap: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    .score-value {
+        font-weight: 700;
+        color: #667eea;
+        font-size: 1.1rem;
+    }
+
+    .score-percentage {
+        color: #999;
+        font-size: 0.9rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #999;
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+    }
+
+    .empty-state p {
+        margin: 5px 0;
+    }
+
+    .empty-state .small {
+        font-size: 0.9rem;
+        margin-top: 10px;
+    }
+
+    .student-join-section {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border-left: 5px solid #667eea;
+    }
+
+    .student-join-section h2 {
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .join-instructions {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    .join-instructions p {
+        margin: 10px 0;
+        color: #555;
+    }
+
+    .join-instructions a {
+        color: #667eea;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .join-instructions a:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 900px) {
+        .session-content {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .participants-list {
+            grid-template-columns: 1fr;
+        }
+
+        .control-buttons {
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+
+        .control-buttons button {
+            flex: 1;
+            min-width: 150px;
+        }
+    }
+</style>
+
+<script>
+    function copyCode(code) {
+        navigator.clipboard.writeText(code).then(() => {
+            showNotification('Código copiado: ' + code, 'success');
+        });
+    }
+
+    // Auto-refresh participants every 3 seconds
+    setInterval(() => {
+        fetch('{% url 'quizz_app:api_session_status' session.id %}')
+            .then(r => r.json())
+            .then(data => {
+                // Update UI with new data
+                document.querySelectorAll('.participant-card').forEach(el => {
+                    el.style.opacity = '0.8';
+                    setTimeout(() => el.style.opacity = '1', 500);
+                });
+            });
+    }, 3000);
+</script>
+{% endblock %}

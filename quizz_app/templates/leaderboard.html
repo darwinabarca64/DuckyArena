@@ -1,0 +1,273 @@
+{% extends 'base.html' %}
+
+{% block title %}Tabla de Puntuaciones - QuizzMaster{% endblock %}
+
+{% block content %}
+<div class="container leaderboard-container">
+    <div class="leaderboard-header">
+        <h1>🏆 Tabla de Puntuaciones</h1>
+        <p>{{ quiz.title }}</p>
+    </div>
+
+    {% if results %}
+        <div class="leaderboard-table-wrapper">
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th class="rank">Posición</th>
+                        <th class="name">Jugador</th>
+                        <th class="score">Puntuación</th>
+                        <th class="percentage">Porcentaje</th>
+                        <th class="date">Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in results %}
+                        <tr class="leaderboard-row" data-rank="{{ forloop.counter }}">
+                            <td class="rank">
+                                <span class="rank-badge rank-{{ forloop.counter }}">
+                                    {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% else %}#{{ forloop.counter }}{% endif %}
+                                </span>
+                            </td>
+                            <td class="name">{{ result.player_name }}</td>
+                            <td class="score">{{ result.score }}/{{ result.total_questions }}</td>
+                            <td class="percentage">
+                                <span class="percentage-badge" data-percentage="{{ result.percentage }}">
+                                    {{ result.percentage|floatformat:1 }}%
+                                </span>
+                            </td>
+                            <td class="date">{{ result.created_at|date:"d/m/Y H:i" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-leaderboard">
+            <div class="empty-icon">📊</div>
+            <h2>No hay puntuaciones aún</h2>
+            <p>¡Sé el primero en completar este quiz!</p>
+            <a href="{% url 'quizz_app:quiz_detail' quiz.id %}" class="btn btn-primary btn-large btn-pulse">🎯 Comenzar Quiz</a>
+        </div>
+    {% endif %}
+
+    <div class="leaderboard-actions">
+        <a href="{% url 'quizz_app:index' %}" class="btn btn-secondary btn-large">🏠 Volver al inicio</a>
+        <a href="{% url 'quizz_app:quiz_detail' quiz.id %}" class="btn btn-primary btn-large btn-pulse">🎯 Intentar Quiz</a>
+    </div>
+</div>
+
+<style>
+    .leaderboard-container {
+        max-width: 900px;
+        margin: 40px auto;
+    }
+
+    .leaderboard-header {
+        text-align: center;
+        margin-bottom: 50px;
+        animation: fadeInDown 0.6s ease-out;
+    }
+
+    .leaderboard-header h1 {
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+    }
+
+    .leaderboard-header p {
+        font-size: 1.2rem;
+        color: #666;
+    }
+
+    .leaderboard-table-wrapper {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        animation: slideInUp 0.6s ease-out;
+    }
+
+    .leaderboard-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .leaderboard-table thead {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .leaderboard-table th {
+        padding: 20px;
+        text-align: left;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+    }
+
+    .leaderboard-table th.rank {
+        text-align: center;
+        width: 100px;
+    }
+
+    .leaderboard-table th.percentage {
+        text-align: center;
+    }
+
+    .leaderboard-table th.date {
+        text-align: center;
+    }
+
+    .leaderboard-row {
+        border-bottom: 1px solid #eee;
+        transition: all 0.3s ease;
+    }
+
+    .leaderboard-row:hover {
+        background: #f9f9f9;
+        transform: scale(1.01);
+    }
+
+    .leaderboard-row td {
+        padding: 20px;
+        color: #333;
+    }
+
+    .rank-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+        border-radius: 50%;
+        font-weight: 800;
+    }
+
+    .rank-badge.rank-1 {
+        background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+        box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+    }
+
+    .rank-badge.rank-2 {
+        background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+        box-shadow: 0 5px 15px rgba(192, 192, 192, 0.3);
+    }
+
+    .rank-badge.rank-3 {
+        background: linear-gradient(135deg, #cd7f32 0%, #e8a968 100%);
+        box-shadow: 0 5px 15px rgba(205, 127, 50, 0.3);
+    }
+
+    .name {
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .score {
+        font-weight: 600;
+        color: #667eea;
+    }
+
+    .percentage {
+        text-align: center;
+    }
+
+    .percentage-badge {
+        display: inline-block;
+        padding: 8px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .percentage-badge[data-percentage="100"] {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .percentage-badge[data-percentage="90"] {
+        background: #c8e6c9;
+        color: #2e7d32;
+    }
+
+    .percentage-badge[data-percentage="70"] {
+        background: #ffe0b2;
+        color: #e65100;
+    }
+
+    .percentage-badge[data-percentage="50"] {
+        background: #ffccbc;
+        color: #bf360c;
+    }
+
+    .percentage-badge[data-percentage="0"] {
+        background: #ffcdd2;
+        color: #c62828;
+    }
+
+    .date {
+        text-align: center;
+        font-size: 0.9rem;
+        color: #999;
+    }
+
+    .empty-leaderboard {
+        text-align: center;
+        padding: 80px 20px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+    }
+
+    .empty-leaderboard h2 {
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .empty-leaderboard p {
+        color: #999;
+        margin-bottom: 30px;
+    }
+
+    .leaderboard-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin: 50px 0;
+        flex-wrap: wrap;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}

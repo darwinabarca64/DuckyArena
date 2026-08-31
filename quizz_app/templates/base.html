@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Quizz App{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .notification-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 1100;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: min(380px, calc(100vw - 40px));
+        }
+
+        .notification {
+            padding: 14px 18px;
+            border-radius: 8px;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+            color: white;
+            font-weight: 600;
+            animation: notification-in 0.3s ease-out;
+        }
+
+        .notification.error { background: #c62828; }
+        .notification.success { background: #2e7d32; }
+        .notification.info { background: #1565c0; }
+        .notification.is-leaving { animation: notification-out 0.3s ease-in forwards; }
+
+        @keyframes notification-in {
+            from { opacity: 0; transform: translateX(24px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes notification-out {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(24px); }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="{% url 'quizz_app:index' %}" class="logo">
+                <span class="logo-icon">🎯</span>
+                <span class="logo-text">QuizzMaster</span>
+            </a>
+            
+            <div class="nav-menu">
+                <a href="{% url 'quizz_app:index' %}" class="nav-item">
+                     Inicio
+                </a>
+                
+                {% if user.is_authenticated %}
+                    <div class="nav-item nav-user-info">
+                        👤 {{ user.username }}
+                    </div>
+                    
+                    {% if user.profile.role == 'profesor' %}
+                        <a href="{% url 'quizz_app:teacher_dashboard' %}" class="nav-item nav-btn">
+                            📊 Panel
+                        </a>
+                        <a href="{% url 'quizz_app:create_quiz' %}" class="nav-item nav-btn">
+                            ➕ Crear Quiz
+                        </a>
+                        <div class="nav-dropdown">
+                            <button class="nav-item nav-btn" onclick="toggleDropdown()">
+                                ⚙️ Más Opciones ▼
+                            </button>
+                            <div class="dropdown-menu">
+                                <a href="{% url 'quizz_app:teacher_dashboard' %}" class="dropdown-item">
+                                    📚 Mis Quizzes
+                                </a>
+                                <a href="{% url 'quizz_app:teacher_dashboard' %}" class="dropdown-item">
+                                    👥 Gestionar Estudiantes
+                                </a>
+                                <a href="{% url 'quizz_app:teacher_statistics' %}" class="dropdown-item">
+                                    📊 Ver Estadísticas
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'quizz_app:my_scores' %}" class="nav-item">
+                            📊 Mis Puntuaciones
+                        </a>
+                        <a href="{% url 'quizz_app:join_live_session' %}" class="nav-item nav-btn">
+                            📡 Sesión en Vivo
+                        </a>
+                    {% endif %}
+                    
+                    <div class="nav-separator"></div>
+                    
+                    <a href="{% url 'quizz_app:logout' %}" class="nav-item nav-logout">
+                        🚪 Salir
+                    </a>
+                {% else %}
+                    <a href="{% url 'quizz_app:login' %}" class="nav-item nav-btn">
+                        🔐 Entrar
+                    </a>
+                {% endif %}
+            </div>
+            
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+        </div>
+    </nav>
+
+    <div id="notificationContainer" class="notification-container" aria-live="polite" aria-atomic="true">
+        {% if error %}
+            <div class="notification error">{{ error }}</div>
+        {% endif %}
+        {% for message in messages %}
+            <div class="notification {{ message.tags|default:'info' }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>© 2024 QuizzMaster - ¡Aprende jugando! 🚀</p>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+<script>
+// Toggle mobile menu
+function toggleMenu() {
+    const navMenu = document.querySelector('.nav-menu');
+    navMenu.classList.toggle('active');
+}
+
+// Toggle dropdown menu
+function toggleDropdown() {
+    const dropdown = document.querySelector('.dropdown-menu');
+    if (dropdown) {
+        dropdown.classList.toggle('active');
+    }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const navDropdown = document.querySelector('.nav-dropdown');
+    const dropdown = document.querySelector('.dropdown-menu');
+    
+    if (navDropdown && !navDropdown.contains(event.target)) {
+        if (dropdown) dropdown.classList.remove('active');
+    }
+});
+
+// Close menu when clicking outside
+document.addEventListener('click', function(event) {
+    const navbar = document.querySelector('.navbar');
+    const toggle = document.querySelector('.menu-toggle');
+    const navMenu = document.querySelector('.nav-menu');
+    
+    if (!navbar.contains(event.target)) {
+        navMenu.classList.remove('active');
+    }
+});
+
+// Logout function
+function logout(e) {
+    e.preventDefault();
+    if (confirm('¿Estás seguro de que deseas salir?')) {
+        window.location.href = '{% url 'quizz_app:logout' %}';
+    }
+}
+
+// Login function
+function login(e) {
+    e.preventDefault();
+    window.location.href = '{% url 'quizz_app:login' %}';
+}
+
+function showNotification(message, type = 'error') {
+    const container = document.getElementById('notificationContainer');
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    container.appendChild(notification);
+    dismissNotification(notification);
+}
+
+function dismissNotification(notification) {
+    window.setTimeout(() => {
+        notification.classList.add('is-leaving');
+        window.setTimeout(() => notification.remove(), 300);
+    }, 5000);
+}
+
+document.querySelectorAll('.notification').forEach(dismissNotification);
+
+// Cerrar menú al hacer clic en un enlace
+document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', function() {
+        const navMenu = document.querySelector('.nav-menu');
+        navMenu.classList.remove('active');
+    });
+});
+</script>

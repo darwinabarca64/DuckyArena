@@ -1,0 +1,425 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel del Profesor - QuizzMaster{% endblock %}
+
+{% block content %}
+<div class="container teacher-dashboard">
+    <div class="dashboard-header">
+        <h1>📊 Panel del Profesor</h1>
+        <p>Gestiona tus quizzes y visualiza estadísticas</p>
+        <div class="header-buttons">
+            <a href="{% url 'quizz_app:create_quiz' %}" class="btn btn-success btn-large btn-pulse">
+                ➕ Crear Nuevo Ejercicio
+            </a>
+            <a href="{% url 'quizz_app:manage_categories' %}" class="btn btn-info btn-large">
+                Categorías
+            </a>
+            <a href="{% url 'quizz_app:index' %}" class="btn btn-secondary">← Volver al inicio</a>
+        </div>
+    </div>
+
+    {% if quiz_stats %}
+        <div class="quizzes-grid">
+            {% for stat in quiz_stats %}
+                <div class="quiz-card">
+                    <div class="quiz-card-header">
+                        <h2>{{ stat.quiz.title }}</h2>
+                        <div class="difficulty-badge difficulty-{{ stat.quiz.difficulty }}">
+                            {% if stat.quiz.difficulty == 'fácil' %}⭐ Fácil
+                            {% elif stat.quiz.difficulty == 'medio' %}⭐⭐ Medio
+                            {% else %}⭐⭐⭐ Difícil
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="quiz-card-body">
+                        <p class="quiz-description">{{ stat.quiz.description }}</p>
+
+                        <div class="access-code-section">
+                            <label>Código de acceso:</label>
+                            <div class="access-code-display">
+                                <code>{{ stat.quiz.access_code }}</code>
+                                <button class="btn-copy" onclick="copyToClipboard('{{ stat.quiz.access_code }}')">📋 Copiar</button>
+                            </div>
+                        </div>
+
+                        <div class="quiz-stats-grid">
+                            <div class="stat-box">
+                                <span class="stat-icon">👥</span>
+                                <div>
+                                    <div class="stat-label">Inscritos</div>
+                                    <div class="stat-value">{{ stat.enrollments }}</div>
+                                </div>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-icon">✅</span>
+                                <div>
+                                    <div class="stat-label">Intentos</div>
+                                    <div class="stat-value">{{ stat.attempts }}</div>
+                                </div>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-icon">📈</span>
+                                <div>
+                                    <div class="stat-label">Promedio</div>
+                                    <div class="stat-value">{{ stat.avg_score }}%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="quiz-actions">
+                            <a href="{% url 'quizz_app:start_live_session' stat.quiz.id %}" class="btn btn-danger btn-large btn-pulse">
+                                📡 Iniciar en Vivo
+                            </a>
+                            <a href="{% url 'quizz_app:generate_qr' stat.quiz.id %}" class="btn btn-primary" target="_blank">
+                                🎯 Ver QR
+                            </a>
+                            <a href="{% url 'quizz_app:quiz_students' stat.quiz.id %}" class="btn btn-info">
+                                👥 Ver Estudiantes
+                            </a>
+                            <a href="{% url 'quizz_app:leaderboard' stat.quiz.id %}" class="btn btn-info">
+                                🏆 Resultados
+                            </a>
+                            <button onclick="toggleActions(this)" class="btn btn-secondary">⚙️ Más</button>
+                            
+                            <div class="quiz-extra-actions hidden">
+                                <a href="{% url 'quizz_app:edit_quiz' stat.quiz.id %}" class="btn-action btn-edit">
+                                    ✏️ Editar
+                                </a>
+                                <a href="{% url 'quizz_app:delete_quiz' stat.quiz.id %}" class="btn-action btn-delete">
+                                    🗑️ Eliminar
+                                </a>
+                            </div>
+                        </div>
+
+                        {% if stat.quiz.time_limit > 0 %}
+                            <div class="time-info">
+                                ⏱️ Límite: {{ stat.quiz.time_limit }} segundos
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>No has creado ningún quiz aún.</p>
+            <a href="{% url 'quizz_app:create_quiz' %}" class="btn btn-primary">➕ Crear Nuevo Ejercicio</a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .teacher-dashboard {
+        max-width: 1200px;
+        margin: 40px auto;
+    }
+
+    .dashboard-header {
+        text-align: center;
+        margin-bottom: 50px;
+        animation: slideInDown 0.6s ease-out;
+    }
+
+    .dashboard-header h1 {
+        font-size: 2.5rem;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .dashboard-header p {
+        font-size: 1.1rem;
+        color: #666;
+        margin-bottom: 20px;
+    }
+
+    .header-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .quizzes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    .quiz-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: scaleIn 0.5s ease-out;
+    }
+
+    .quiz-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    }
+
+    .quiz-card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .quiz-card-header h2 {
+        font-size: 1.4rem;
+        margin: 0;
+        flex: 1;
+    }
+
+    .difficulty-badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.2);
+        white-space: nowrap;
+    }
+
+    .quiz-card-body {
+        padding: 25px;
+    }
+
+    .quiz-description {
+        color: #666;
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+
+    .access-code-section {
+        margin-bottom: 20px;
+    }
+
+    .access-code-section label {
+        display: block;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .access-code-display {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .access-code-display code {
+        background: #f5f5f5;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #667eea;
+        flex: 1;
+    }
+
+    .btn-copy {
+        padding: 8px 15px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background 0.3s ease;
+    }
+
+    .btn-copy:hover {
+        background: #764ba2;
+    }
+
+    .quiz-stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .stat-box {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 10px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .stat-icon {
+        font-size: 1.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        color: #999;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .quiz-actions {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+        position: relative;
+    }
+
+    .quiz-actions .btn {
+        flex: 1;
+        min-width: 100px;
+        text-align: center;
+        padding: 10px 15px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+    }
+
+    .time-info {
+        background: #fff3cd;
+        padding: 10px 15px;
+        border-radius: 8px;
+        color: #856404;
+        font-size: 0.9rem;
+        border-left: 4px solid #ffc107;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: #f9f9f9;
+        border-radius: 15px;
+    }
+
+    .empty-state p {
+        font-size: 1.2rem;
+        color: #666;
+        margin-bottom: 20px;
+    }
+
+    @keyframes scaleIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .quizzes-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .quiz-stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .quiz-actions {
+            flex-direction: column;
+        }
+    }
+
+    .quiz-extra-actions {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: white;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+        min-width: 150px;
+        margin-top: 5px;
+        padding: 8px 0;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    .quiz-extra-actions.hidden {
+        display: none;
+    }
+
+    .btn-action {
+        display: block;
+        padding: 12px 16px;
+        text-decoration: none;
+        color: white;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border-radius: 0;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-action:first-child {
+        border-radius: 5px 5px 0 0;
+    }
+
+    .btn-action:last-child {
+        border-radius: 0 0 5px 5px;
+    }
+
+    .btn-edit {
+        background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+    }
+
+    .btn-edit:hover {
+        background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+    }
+
+    .btn-delete {
+        background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+    }
+
+    .btn-delete:hover {
+        background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
+    }
+</style>
+
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        showNotification('Código copiado al portapapeles', 'success');
+    }).catch(() => {
+        showNotification('Error al copiar el código');
+    });
+}
+
+function toggleActions(button) {
+    const actionsContainer = button.parentElement;
+    const extraActions = actionsContainer.querySelector('.quiz-extra-actions');
+    
+    if (extraActions) {
+        extraActions.classList.toggle('hidden');
+        
+        // Close when clicking outside
+        if (!extraActions.classList.contains('hidden')) {
+            document.addEventListener('click', function closeActions(e) {
+                if (!actionsContainer.contains(e.target)) {
+                    extraActions.classList.add('hidden');
+                    document.removeEventListener('click', closeActions);
+                }
+            });
+        }
+    }
+}
+</script>
+{% endblock %}

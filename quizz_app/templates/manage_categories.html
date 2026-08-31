@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Categorías - QuizzMaster{% endblock %}
+
+{% block content %}
+<div class="container categories-container">
+    <header class="categories-header">
+        <h1>Categorías</h1>
+        <p>Organiza los quizzes que creas para tus estudiantes.</p>
+    </header>
+
+    <form method="post" class="category-create-form">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="create">
+        <input type="text" name="name" placeholder="Nueva categoría" maxlength="100" required>
+        <button type="submit" class="btn btn-primary">Crear categoría</button>
+    </form>
+
+    {% if categories %}
+        <div class="category-list">
+            {% for category in categories %}
+                <article class="category-row">
+                    <form method="post" class="category-rename-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="rename">
+                        <input type="hidden" name="category_id" value="{{ category.id }}">
+                        <input type="text" name="name" value="{{ category.name }}" maxlength="100" required>
+                        <button type="submit" class="btn btn-info">Guardar</button>
+                    </form>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="category_id" value="{{ category.id }}">
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </form>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="categories-empty">Aún no has creado categorías.</p>
+    {% endif %}
+
+    <a href="{% url 'quizz_app:teacher_dashboard' %}" class="back-link">Volver al panel</a>
+</div>
+
+<style>
+    .categories-container { max-width: 760px; margin: 40px auto; }
+    .categories-header { margin-bottom: 24px; }
+    .categories-header h1 { color: #263238; font-size: 2rem; margin-bottom: 8px; }
+    .categories-header p, .categories-empty { color: #607d8b; }
+    .category-create-form, .category-row { display: flex; gap: 12px; align-items: center; }
+    .category-create-form { margin-bottom: 24px; }
+    .category-create-form input, .category-rename-form input { flex: 1; min-width: 0; padding: 11px 12px; border: 1px solid #b0bec5; border-radius: 6px; font: inherit; }
+    .category-list { display: grid; gap: 10px; }
+    .category-row { justify-content: space-between; padding: 12px; background: white; border: 1px solid #dfe6e9; border-radius: 8px; }
+    .category-rename-form { display: flex; gap: 12px; flex: 1; }
+    .back-link { display: inline-block; margin-top: 24px; color: #3949ab; font-weight: 700; text-decoration: none; }
+    @media (max-width: 600px) { .category-create-form, .category-row, .category-rename-form { align-items: stretch; flex-direction: column; } }
+</style>
+{% endblock %}

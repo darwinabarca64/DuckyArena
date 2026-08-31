@@ -1,0 +1,826 @@
+[
+  {
+    "title": "Simulacro Certificación Inicial Python",
+    "description": "Evalúa tus conocimientos fundamentales de Python con preguntas originales de dificultad equivalente a una certificación inicial.",
+    "category": "Programación",
+    "difficulty": "medio",
+    "questions": [
+      {
+        "question": "¿Qué imprime el siguiente código?\n\nx = 8\ny = 3\nprint(x // y)",
+        "options": [
+          "2.6666667",
+          "2",
+          "3",
+          "1"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué operador devuelve el residuo de una división?",
+        "options": [
+          "/",
+          "//",
+          "%",
+          "**"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Cuál de las siguientes expresiones devuelve un valor de tipo float?",
+        "options": [
+          "8 // 2",
+          "8 / 2",
+          "8 % 2",
+          "8 ** 0"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Cuál es un identificador válido para una variable?",
+        "options": [
+          "2dato",
+          "dato-1",
+          "dato_1",
+          "class"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Qué imprime print(type(True))?",
+        "options": [
+          "<class 'bool'>",
+          "bool",
+          "<class 'logical'>",
+          "logical"
+        ],
+        "correct_answer": "0"
+      },
+      {
+        "question": "¿Qué imprime?\n\nprint(2 + 3 * 4)",
+        "options": [
+          "20",
+          "14",
+          "24",
+          "18"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué imprime?\n\nx = 5\nif x > 3:\n    print('A')\nelse:\n    print('B')",
+        "options": [
+          "A",
+          "B",
+          "Error",
+          "Nada"
+        ],
+        "correct_answer": "0"
+      },
+      {
+        "question": "¿Qué operador lógico representa 'y'?",
+        "options": [
+          "&&",
+          "&",
+          "and",
+          "AND"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Qué imprime?\n\nx = 0\nif x:\n    print('Sí')\nelse:\n    print('No')",
+        "options": [
+          "Sí",
+          "No",
+          "Error",
+          "Nada"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Cuál de estas expresiones es verdadera?",
+        "options": [
+          "7 < 5",
+          "4 != 4",
+          "6 >= 6",
+          "3 > 8"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Qué imprime?\n\nfor i in range(4):\n    print(i)",
+        "options": [
+          "1 2 3 4",
+          "0 1 2 3",
+          "0 1 2 3 4",
+          "Error"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Cuántas iteraciones realiza range(2,6)?",
+        "options": [
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué hace break dentro de un ciclo?",
+        "options": [
+          "Omite la iteración actual",
+          "Sale del ciclo",
+          "Reinicia el ciclo",
+          "Finaliza Python"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué hace continue?",
+        "options": [
+          "Sale del ciclo",
+          "Finaliza el programa",
+          "Omite la iteración actual",
+          "Reinicia el ciclo"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Cómo se define una función en Python?",
+        "options": [
+          "function suma():",
+          "func suma():",
+          "def suma():",
+          "create suma():"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Qué imprime?\n\ndef cuadrado(x):\n    return x*x\n\nprint(cuadrado(4))",
+        "options": [
+          "8",
+          "16",
+          "4",
+          "Error"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué devuelve una función sin return?",
+        "options": [
+          "0",
+          "False",
+          "None",
+          "Error"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Cuál es el índice del primer elemento de una lista?",
+        "options": [
+          "1",
+          "-1",
+          "0",
+          "Depende de la lista"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Qué imprime?\n\nnumeros = [3,6,9]\nprint(numeros[1])",
+        "options": [
+          "3",
+          "6",
+          "9",
+          "Error"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué método agrega un elemento al final de una lista?",
+        "options": [
+          "insert()",
+          "append()",
+          "push()",
+          "add()"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Cuál de los siguientes tipos es inmutable?",
+        "options": [
+          "list",
+          "dict",
+          "tuple",
+          "set"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Qué imprime?\n\nprint(len([1,2,3]))",
+        "options": [
+          "2",
+          "3",
+          "4",
+          "Error"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué estructura almacena pares clave-valor?",
+        "options": [
+          "list",
+          "tuple",
+          "dict",
+          "set"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Qué imprime?\n\npersona = {'nombre':'Ana'}\nprint(persona['nombre'])",
+        "options": [
+          "nombre",
+          "Ana",
+          "persona",
+          "Error"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué método convierte una cadena a mayúsculas?",
+        "options": [
+          "capitalize()",
+          "upper()",
+          "uppercase()",
+          "toUpper()"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué imprime?\n\nprint('Python'[2])",
+        "options": [
+          "P",
+          "y",
+          "t",
+          "h"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Qué operador verifica si un elemento pertenece a una colección?",
+        "options": [
+          "contains",
+          "has",
+          "in",
+          "is"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Qué imprime?\n\nprint(not False)",
+        "options": [
+          "False",
+          "True",
+          "None",
+          "Error"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué imprime?\n\nprint(max([2,9,1]))",
+        "options": [
+          "1",
+          "2",
+          "9",
+          "Error"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Qué imprime?\n\nprint('abc' * 2)",
+        "options": [
+          "abc2",
+          "abcabc",
+          "2abc",
+          "Error"
+        ],
+        "correct_answer": "1"
+      }
+    ]
+  },
+  {
+    "title": "Certificación Python PDEP",
+    "description": "Prepárate para la certificación Python Data Engineering Practitioner. Preguntas sobre manejo de datos, librerías y prácticas profesionales.",
+    "category": "Programación",
+    "difficulty": "difícil",
+    "questions": [
+      {
+        "question": "¿Cuál es la principal diferencia entre list y tuple en Python?",
+        "options": [
+          "Las listas son más rápidas que las tuplas",
+          "Las tuplas son inmutables, las listas son mutables",
+          "Las tuplas pueden contener más elementos",
+          "No hay diferencia, son lo mismo"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Cuál es el propósito principal de una lista por comprensión (list comprehension)?",
+        "options": [
+          "Crear listas de forma más legible y concisa",
+          "Aumentar la velocidad de Python",
+          "Reemplazar los bucles for",
+          "Comprimir datos en la memoria"
+        ],
+        "correct_answer": "0"
+      },
+      {
+        "question": "¿Qué imprime?\n\nx = [1, 2, 3]\ny = x\ny.append(4)\nprint(x)",
+        "options": [
+          "[1, 2, 3]",
+          "[1, 2, 3, 4]",
+          "Error",
+          "[4]"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Cuál es la forma correcta de hacer una copia profunda de una lista?",
+        "options": [
+          "x = y",
+          "x = y.copy()",
+          "x = list(y)",
+          "import copy; x = copy.deepcopy(y)"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué devuelve?\n\nresult = list(map(lambda x: x**2, [1,2,3]))\nprint(result)",
+        "options": [
+          "[1, 2, 3]",
+          "[1, 4, 9]",
+          "[2, 4, 6]",
+          "Error"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué es un diccionario en Python?",
+        "options": [
+          "Una colección ordenada de elementos",
+          "Una estructura que almacena pares clave-valor",
+          "Un conjunto de funciones",
+          "Un tipo de archivo"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué imprime?\n\nd = {'a': 1, 'b': 2}\nprint(d.get('c', 'no existe'))",
+        "options": [
+          "Error",
+          "None",
+          "no existe",
+          "c"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Cuál es la complejidad temporal de acceder a un elemento en un diccionario?",
+        "options": [
+          "O(n)",
+          "O(log n)",
+          "O(1)",
+          "O(n²)"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Qué método elimina un elemento de un diccionario?",
+        "options": [
+          "remove()",
+          "delete()",
+          "pop()",
+          "erase()"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Qué imprime?\n\nwith open('archivo.txt') as f:\n    contenido = f.read()",
+        "options": [
+          "Abre el archivo y mantiene el archivo abierto",
+          "Abre, lee y cierra automáticamente el archivo",
+          "Error, falta el modo 'r'",
+          "Lee solo la primera línea"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué módulo de Python es usado para serializar objetos?",
+        "options": [
+          "json",
+          "pickle",
+          "marshal",
+          "struct"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Cuál es la diferencia entre JSON y pickle?",
+        "options": [
+          "JSON es más rápido",
+          "JSON es texto plano, pickle es binario",
+          "Pickle solo funciona con Python",
+          "JSON puede serializar cualquier objeto Python"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Qué retorna?\n\nimport json\ndata = json.loads('{\"nombre\": \"Ana\"}')",
+        "options": [
+          "Un string",
+          "Un diccionario",
+          "Una lista",
+          "Error"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué es una excepción en Python?",
+        "options": [
+          "Un error que detiene el programa",
+          "Un evento anómalo durante la ejecución",
+          "Un tipo de variable",
+          "Una función especial"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Cuál es la estructura correcta de try-except?",
+        "options": [
+          "try: ... catch: ...",
+          "try: ... except: ...",
+          "catch: ... try: ...",
+          "attempt: ... error: ..."
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué imprime?\n\ntry:\n    x = 1/0\nexcept ZeroDivisionError:\n    print('Error')",
+        "options": [
+          "Nada, error fatal",
+          "Error",
+          "1/0",
+          "None"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Cuál es el propósito de finally en try-except?",
+        "options": [
+          "Ejecutar código solo si hay error",
+          "Ejecutar código independientemente del error",
+          "Finalizar el programa",
+          "Pasar al siguiente except"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué es una clase en Python?",
+        "options": [
+          "Una función especial",
+          "Un tipo de variable",
+          "Un molde para crear objetos",
+          "Un módulo"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Qué es __init__ en una clase?",
+        "options": [
+          "Una variable global",
+          "El método constructor",
+          "Un atributo privado",
+          "El método destructor"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué imprime?\n\nclass Persona:\n    def __init__(self, nombre):\n        self.nombre = nombre\n\np = Persona('Juan')\nprint(p.nombre)",
+        "options": [
+          "Persona",
+          "Juan",
+          "p",
+          "Error"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué es la herencia en POO?",
+        "options": [
+          "Copiar el código de otra clase",
+          "Una clase hereda atributos y métodos de otra",
+          "Compartir variables globales",
+          "Importar un módulo"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué es un generador en Python?",
+        "options": [
+          "Una función que retorna múltiples valores",
+          "Una función que usa yield",
+          "Una clase especial",
+          "Un tipo de bucle"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Cuál es la ventaja de usar generadores?",
+        "options": [
+          "Son más rápidos que listas",
+          "Usan menos memoria",
+          "Permiten iterar datos grandes sin cargarlos en memoria",
+          "Todas las anteriores"
+        ],
+        "correct_answer": "3"
+      },
+      {
+        "question": "¿Qué imprime?\n\ndef generador():\n    yield 1\n    yield 2\n    yield 3\n\ng = generador()\nprint(next(g))",
+        "options": [
+          "[1, 2, 3]",
+          "1",
+          "generador",
+          "Error"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué es un decorador en Python?",
+        "options": [
+          "Una variable especial",
+          "Una función que modifica otra función",
+          "Un tipo de clase",
+          "Un comentario especial"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Cuál es el módulo estándar de Python para trabajar con fechas?",
+        "options": [
+          "time",
+          "datetime",
+          "date",
+          "calendar"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Cómo se crea un conjunto (set) en Python?",
+        "options": [
+          "set = []",
+          "set = {}",
+          "set = {1, 2, 3}",
+          "set = (1, 2, 3)"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Cuál es una característica de los sets?",
+        "options": [
+          "Pueden contener duplicados",
+          "Son ordenados",
+          "No contienen elementos duplicados",
+          "Permiten indexación"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Qué imprime?\n\ns = {1, 2, 2, 3}\nprint(len(s))",
+        "options": [
+          "4",
+          "3",
+          "2",
+          "Error"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Cuál es la diferencia entre == e 'is' en Python?",
+        "options": [
+          "Son equivalentes",
+          "== compara valor, 'is' compara identidad",
+          "'is' compara valor, == compara identidad",
+          "No hay diferencia en Python 3"
+        ],
+        "correct_answer": "1"
+      }
+    ]
+  },
+  {
+    "title": "Funcionalidad Básica de Python",
+    "description": "Aprende los conceptos fundamentales de Python: variables, tipos de datos, operadores y sintaxis básica.",
+    "category": "Programación",
+    "difficulty": "fácil",
+    "questions": [
+      {
+        "question": "¿Cuál es la forma correcta de crear una variable en Python?",
+        "options": [
+          "variable: int = 5",
+          "int variable = 5",
+          "variable = 5",
+          "declare variable = 5"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Qué tipos de datos básicos tiene Python?",
+        "options": [
+          "int, float, string, boolean",
+          "integer, double, text, bool",
+          "int, double, str, bool",
+          "number, decimal, text, logical"
+        ],
+        "correct_answer": "0"
+      },
+      {
+        "question": "¿Qué imprime print(10 + 5)?",
+        "options": [
+          "10 + 5",
+          "15",
+          "105",
+          "Error"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué imprime print('Hola' + 'Mundo')?",
+        "options": [
+          "HolaMundo",
+          "Hola Mundo",
+          "HolaWorld",
+          "Error"
+        ],
+        "correct_answer": "0"
+      },
+      {
+        "question": "¿Qué hace la función type()?",
+        "options": [
+          "Convierte un valor a tipo específico",
+          "Retorna el tipo de dato de una variable",
+          "Define el tipo de una variable",
+          "Verifica si el tipo es correcto"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Cómo se comentan líneas en Python?",
+        "options": [
+          "// comentario",
+          "/* comentario */",
+          "# comentario",
+          "// comentario //"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Qué imprime print(True and False)?",
+        "options": [
+          "True",
+          "False",
+          "None",
+          "Error"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué imprime print(True or False)?",
+        "options": [
+          "True",
+          "False",
+          "None",
+          "Error"
+        ],
+        "correct_answer": "0"
+      },
+      {
+        "question": "¿Cuántos caracteres tiene 'Python'?",
+        "options": [
+          "5",
+          "6",
+          "7",
+          "Error"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué imprime print(5 == 5)?",
+        "options": [
+          "5",
+          "True",
+          "False",
+          "Error"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué imprime print(5 != 3)?",
+        "options": [
+          "True",
+          "False",
+          "5",
+          "Error"
+        ],
+        "correct_answer": "0"
+      },
+      {
+        "question": "¿Cuál es el resultado de 10 / 3?",
+        "options": [
+          "3",
+          "3.333...",
+          "3.33",
+          "Error"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Cuál es el resultado de 10 // 3?",
+        "options": [
+          "3",
+          "3.333...",
+          "3.33",
+          "4"
+        ],
+        "correct_answer": "0"
+      },
+      {
+        "question": "¿Cuál es el resultado de 10 % 3?",
+        "options": [
+          "3",
+          "1",
+          "0",
+          "Error"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Cuál es el resultado de 2 ** 3?",
+        "options": [
+          "6",
+          "8",
+          "5",
+          "23"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué imprime print(bool(0))?",
+        "options": [
+          "0",
+          "True",
+          "False",
+          "None"
+        ],
+        "correct_answer": "2"
+      },
+      {
+        "question": "¿Qué imprime print(bool(1))?",
+        "options": [
+          "1",
+          "True",
+          "False",
+          "None"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Cómo se convierte un string a entero?",
+        "options": [
+          "str(5)",
+          "int('5')",
+          "convert('5')",
+          "integer('5')"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Cómo se convierte un número a string?",
+        "options": [
+          "string(5)",
+          "str(5)",
+          "convert(5)",
+          "text(5)"
+        ],
+        "correct_answer": "1"
+      },
+      {
+        "question": "¿Qué imprime print(5 > 3 and 2 < 4)?",
+        "options": [
+          "True",
+          "False",
+          "Error",
+          "Nada"
+        ],
+        "correct_answer": "0"
+      }
+    ]
+  }
+]
