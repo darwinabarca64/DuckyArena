@@ -1,0 +1,497 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Ducky Quiz Arenas{% endblock %}</title>
+    
+    <!-- Favicon & Touch Icons -->
+    <link rel="icon" type="image/png" href="{% static 'assets/favicon.png' %}">
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+
+    <!-- Google Fonts: Montserrat & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Modern Light Color Palette */
+            --bg-body: #F4F6FB;
+            --bg-surface: #FFFFFF;
+            --bg-surface-secondary: #F8FAFC;
+            --bg-input: #FFFFFF;
+            
+            /* Borders & Shadows */
+            --border-subtle: #E2E8F0;
+            --border-medium: #CBD5E1;
+            --shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.05);
+            --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.08);
+            --shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12);
+            
+            /* Text Hierarchy */
+            --text-heading: #0F172A;
+            --text-body: #334155;
+            --text-muted: #64748B;
+            --text-light: #94A3B8;
+
+            /* Brand & Game Vibrant Palette */
+            --kahoot-purple: #46178F;
+            --kahoot-purple-shadow: #300C66;
+            --kahoot-red: #E21B3C;
+            --kahoot-red-shadow: #B2102A;
+            --kahoot-blue: #1368CE;
+            --kahoot-blue-shadow: #0C4C9B;
+            --kahoot-yellow: #FFA602;
+            --kahoot-yellow-shadow: #CC8200;
+            --kahoot-green: #26890C;
+            --kahoot-green-shadow: #1A6407;
+
+            /* Radii & Typography */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 18px;
+            --radius-full: 9999px;
+            --font-display: 'Montserrat', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-body);
+            color: var(--text-body);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        /* Top Accent Strip */
+        .brand-top-strip {
+            height: 4px;
+            width: 100%;
+            background: linear-gradient(90deg, 
+                var(--kahoot-red) 0%, var(--kahoot-red) 25%,
+                var(--kahoot-blue) 25%, var(--kahoot-blue) 50%,
+                var(--kahoot-yellow) 50%, var(--kahoot-yellow) 75%,
+                var(--kahoot-green) 75%, var(--kahoot-green) 100%
+            );
+            position: sticky;
+            top: 0;
+            z-index: 1001;
+        }
+
+        /* Navbar Header */
+        .ducky-navbar {
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border-subtle);
+            position: sticky;
+            top: 4px;
+            z-index: 1000;
+            padding: 0.85rem 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .navbar-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+        }
+
+        /* Logo Branding */
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            text-decoration: none;
+            color: var(--text-heading);
+            font-family: var(--font-display);
+            font-size: 1.45rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            flex-shrink: 0;
+        }
+
+        .mascot-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid var(--kahoot-yellow);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            object-fit: cover;
+            transition: transform 0.25s ease;
+        }
+
+        .brand-logo:hover .mascot-avatar {
+            transform: scale(1.08);
+        }
+
+        .brand-title-accent {
+            color: var(--kahoot-purple);
+        }
+
+        /* Navigation Links */
+        .nav-links-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            list-style: none;
+        }
+
+        .nav-link-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.55rem 1.15rem;
+            border-radius: var(--radius-md);
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--text-body);
+            background: transparent;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link-btn:hover {
+            background: var(--bg-surface-secondary);
+            color: var(--text-heading);
+            border-color: var(--border-subtle);
+        }
+
+        .nav-link-btn.active {
+            background: rgba(70, 23, 143, 0.08);
+            color: var(--kahoot-purple);
+            border-color: rgba(70, 23, 143, 0.2);
+        }
+
+        /* User Panel */
+        .user-panel-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .user-pill-card {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.4rem 0.9rem;
+            background: var(--bg-surface-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-full);
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-heading);
+        }
+
+        .user-role-badge {
+            background: rgba(70, 23, 143, 0.1);
+            color: var(--kahoot-purple);
+            font-family: var(--font-display);
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 0.2rem 0.6rem;
+            border-radius: var(--radius-full);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .user-coins-badge {
+            background: rgba(255, 166, 2, 0.15);
+            color: #B45309;
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 0.2rem 0.55rem;
+            border-radius: var(--radius-full);
+        }
+
+        .btn-logout {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.4rem 0.75rem;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+        }
+
+        .btn-logout:hover {
+            color: var(--kahoot-red);
+            background: rgba(226, 27, 60, 0.08);
+        }
+
+        /* Modern Tactile 3D Buttons */
+        .btn-3d {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.2s ease;
+            user-select: none;
+        }
+
+        .btn-3d:active {
+            transform: translateY(3px);
+        }
+
+        .btn-3d-green {
+            background-color: var(--kahoot-green);
+            box-shadow: 0 4px 0 var(--kahoot-green-shadow);
+            color: #FFFFFF;
+        }
+        .btn-3d-green:hover { background-color: #2CA30E; }
+        .btn-3d-green:active { box-shadow: 0 1px 0 var(--kahoot-green-shadow); }
+
+        .btn-3d-blue {
+            background-color: var(--kahoot-blue);
+            box-shadow: 0 4px 0 var(--kahoot-blue-shadow);
+            color: #FFFFFF;
+        }
+        .btn-3d-blue:hover { background-color: #1776EA; }
+        .btn-3d-blue:active { box-shadow: 0 1px 0 var(--kahoot-blue-shadow); }
+
+        .btn-3d-yellow {
+            background-color: var(--kahoot-yellow);
+            box-shadow: 0 4px 0 var(--kahoot-yellow-shadow);
+            color: #FFFFFF;
+        }
+        .btn-3d-yellow:hover { background-color: #FFB32E; }
+        .btn-3d-yellow:active { box-shadow: 0 1px 0 var(--kahoot-yellow-shadow); }
+
+        .btn-3d-red {
+            background-color: var(--kahoot-red);
+            box-shadow: 0 4px 0 var(--kahoot-red-shadow);
+            color: #FFFFFF;
+        }
+        .btn-3d-red:hover { background-color: #ED2849; }
+        .btn-3d-red:active { box-shadow: 0 1px 0 var(--kahoot-red-shadow); }
+
+        .btn-3d-purple {
+            background-color: var(--kahoot-purple);
+            box-shadow: 0 4px 0 var(--kahoot-purple-shadow);
+            color: #FFFFFF;
+        }
+        .btn-3d-purple:hover { background-color: #551CB0; }
+        .btn-3d-purple:active { box-shadow: 0 1px 0 var(--kahoot-purple-shadow); }
+
+        .btn-3d-neutral {
+            background-color: #E2E8F0;
+            box-shadow: 0 4px 0 #CBD5E1;
+            color: var(--text-heading);
+        }
+        .btn-3d-neutral:hover { background-color: #CBD5E1; }
+        .btn-3d-neutral:active { box-shadow: 0 1px 0 #94A3B8; }
+
+        /* Main Container */
+        .main-content {
+            flex: 1;
+            max-width: 1280px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2.25rem 1.5rem 4rem 1.5rem;
+        }
+
+        /* Alerts & Messages */
+        .messages-container {
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .ducky-alert {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: var(--shadow-sm);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .ducky-alert-success {
+            background: #ECFDF5;
+            border-left: 5px solid var(--kahoot-green);
+            color: #065F46;
+        }
+
+        .ducky-alert-error {
+            background: #FEF2F2;
+            border-left: 5px solid var(--kahoot-red);
+            color: #991B1B;
+        }
+
+        .ducky-alert-info {
+            background: #EFF6FF;
+            border-left: 5px solid var(--kahoot-blue);
+            color: #1E40AF;
+        }
+
+        .ducky-alert-warning {
+            background: #FFFBEB;
+            border-left: 5px solid var(--kahoot-yellow);
+            color: #92400E;
+        }
+
+        .alert-close-btn {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0 0.5rem;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .alert-close-btn:hover {
+            opacity: 1;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer */
+        .ducky-footer {
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border-subtle);
+            padding: 1.75rem 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: auto;
+        }
+
+        .footer-mascot-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            vertical-align: middle;
+            margin-right: 0.4rem;
+        }
+
+        .ducky-footer strong {
+            color: var(--text-heading);
+        }
+
+        @media (max-width: 868px) {
+            .navbar-container {
+                flex-direction: column;
+                gap: 0.85rem;
+            }
+            .nav-links-group {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="brand-top-strip"></div>
+    
+    <header class="ducky-navbar">
+        <div class="navbar-container">
+            <a href="{% url 'quizzes:quiz_list' %}" class="brand-logo">
+                <img src="{% static 'assets/ducky_mascot.jpg' %}" alt="Ducky Logo" class="mascot-avatar">
+                <span>Ducky<span class="brand-title-accent">Arena</span></span>
+            </a>
+
+            <nav>
+                <ul class="nav-links-group">
+                    <li>
+                        <a href="{% url 'quizzes:quiz_list' %}" class="nav-link-btn">
+                            Explorar Quizzes
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'quizzes:quiz_create' %}" class="btn-3d btn-3d-green" style="padding: 0.5rem 1.1rem; font-size: 0.88rem;">
+                            + Crear Quiz
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'admin:index' %}" class="nav-link-btn" target="_blank" title="Panel de Administración Django">
+                            Admin
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="user-panel-group">
+                {% if user.is_authenticated %}
+                    <div class="user-pill-card">
+                        <span>{{ user.username }}</span>
+                        {% if user.profile %}
+                            {% if user.profile.ducky_coins is not None %}
+                                <span class="user-coins-badge">{{ user.profile.ducky_coins }} DC</span>
+                            {% endif %}
+                            {% if user.profile.role %}
+                                <span class="user-role-badge">{{ user.profile.role }}</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="user-role-badge">DOCENTE</span>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'admin:logout' %}" class="btn-logout" title="Cerrar sesión">Salir</a>
+                {% else %}
+                    <a href="{% url 'admin:login' %}" class="btn-3d btn-3d-yellow" style="padding: 0.45rem 1rem; font-size: 0.85rem;">
+                        Iniciar Sesión
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                    <div class="ducky-alert ducky-alert-{{ message.tags|default:'info' }}">
+                        <span>{{ message }}</span>
+                        <button class="alert-close-btn" onclick="this.parentElement.remove()">&times;</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="ducky-footer">
+        <p>
+            <img src="{% static 'assets/ducky_mascot.jpg' %}" alt="Ducky Mascot" class="footer-mascot-img">
+            <strong>Ducky Quiz Arenas</strong> &copy; 2026 — Plataforma de Evaluación y Competencia en Vivo
+        </p>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,867 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if form.instance.pk %}Editar {{ form.instance.title }}{% else %}Crear Cuestionario{% endif %} — Ducky Quiz Arenas{% endblock %}
+
+{% block extra_css %}
+<style>
+    .editor-wrapper {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding-bottom: 7rem;
+    }
+
+    /* Top Bar */
+    .editor-nav-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .editor-title-group h1 {
+        font-family: var(--font-display);
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--text-heading);
+    }
+
+    .editor-title-group p {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        margin-top: 0.25rem;
+    }
+
+    /* Form Panels */
+    .modern-card-panel {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: 2.25rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .panel-heading {
+        font-family: var(--font-display);
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--text-heading);
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group-ducky {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label-ducky {
+        display: block;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: var(--text-heading);
+        margin-bottom: 0.4rem;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .input-ducky, .textarea-ducky {
+        width: 100%;
+        background: var(--bg-surface);
+        border: 1.5px solid var(--border-medium);
+        border-radius: var(--radius-md);
+        padding: 0.75rem 1.1rem;
+        color: var(--text-heading);
+        font-family: var(--font-body);
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.2s ease;
+    }
+
+    .input-ducky:focus, .textarea-ducky:focus {
+        border-color: var(--kahoot-purple);
+        box-shadow: 0 0 0 3px rgba(70, 23, 143, 0.15);
+    }
+
+    .textarea-ducky {
+        min-height: 85px;
+        resize: vertical;
+    }
+
+    .checkbox-publish-card {
+        background: var(--bg-surface-secondary);
+        border: 1.5px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 1.1rem 1.4rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        cursor: pointer;
+        transition: border-color 0.2s;
+    }
+
+    .checkbox-publish-card:hover {
+        border-color: var(--border-medium);
+    }
+
+    .checkbox-publish-input {
+        width: 22px;
+        height: 22px;
+        accent-color: var(--kahoot-green);
+        cursor: pointer;
+    }
+
+    /* Questions Dynamic Stack */
+    .questions-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 1.75rem;
+    }
+
+    .question-builder-card {
+        background: var(--bg-surface-secondary);
+        border: 1.5px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: 1.75rem;
+        position: relative;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .question-builder-card.has-error {
+        border-color: var(--kahoot-red) !important;
+        box-shadow: 0 0 0 3px rgba(226, 27, 60, 0.2) !important;
+    }
+
+    .q-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .q-number-pill {
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 0.92rem;
+        background: var(--bg-surface);
+        color: var(--kahoot-purple);
+        border: 1px solid var(--border-medium);
+        padding: 0.35rem 0.9rem;
+        border-radius: var(--radius-full);
+    }
+
+    .btn-delete-q {
+        background: #FEF2F2;
+        border: 1px solid #FCA5A5;
+        color: #B91C1C;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 0.82rem;
+        padding: 0.35rem 0.8rem;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-delete-q:hover {
+        background: var(--kahoot-red);
+        color: #FFFFFF;
+        border-color: var(--kahoot-red);
+    }
+
+    .q-params-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+        margin-top: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Answers Builder Box */
+    .answers-builder-box {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 1.25rem;
+    }
+
+    .answers-builder-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .answers-builder-title {
+        font-family: var(--font-display);
+        font-size: 0.88rem;
+        font-weight: 800;
+        color: var(--text-heading);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .answers-list-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .answer-row-tile {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: var(--bg-surface-secondary);
+        border: 1.5px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 0.65rem 0.85rem;
+        transition: all 0.2s ease;
+    }
+
+    .answer-row-tile:focus-within {
+        border-color: var(--border-medium);
+        background: var(--bg-surface);
+    }
+
+    .answer-row-tile.deleted {
+        display: none !important;
+    }
+
+    .ans-geo-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+        font-weight: 900;
+        color: #FFFFFF;
+        flex-shrink: 0;
+    }
+
+    .geo-red { background: var(--kahoot-red); }
+    .geo-blue { background: var(--kahoot-blue); }
+    .geo-yellow { background: var(--kahoot-yellow); }
+    .geo-green { background: var(--kahoot-green); }
+
+    .ans-input-wrapper {
+        flex: 1;
+    }
+
+    .correct-selector-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: #ECFDF5;
+        border: 1px solid #A7F3D0;
+        padding: 0.35rem 0.75rem;
+        border-radius: var(--radius-full);
+        cursor: pointer;
+        user-select: none;
+        white-space: nowrap;
+    }
+
+    .correct-selector-badge label {
+        font-family: var(--font-display);
+        font-size: 0.78rem;
+        font-weight: 800;
+        color: #065F46;
+        cursor: pointer;
+        margin: 0;
+    }
+
+    .correct-answer-radio {
+        accent-color: var(--kahoot-green);
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+
+    .btn-remove-answer {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        font-size: 1.25rem;
+        font-weight: 700;
+        cursor: pointer;
+        padding: 0.2rem 0.5rem;
+        border-radius: var(--radius-sm);
+        transition: color 0.2s;
+    }
+
+    .btn-remove-answer:hover {
+        color: var(--kahoot-red);
+    }
+
+    /* Sticky Bottom Actions */
+    .sticky-dock-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.96);
+        backdrop-filter: blur(12px);
+        border-top: 1px solid var(--border-subtle);
+        padding: 1rem 2rem;
+        z-index: 900;
+        box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+    }
+
+    .dock-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+    }
+
+    .js-validation-alert {
+        display: none;
+        background: #FEF2F2;
+        border-left: 5px solid var(--kahoot-red);
+        color: #991B1B;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 0.95rem;
+        padding: 1rem 1.25rem;
+        border-radius: var(--radius-md);
+        margin-bottom: 1.5rem;
+        box-shadow: var(--shadow-sm);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="editor-wrapper">
+    <!-- Top Navigation -->
+    <div class="editor-nav-bar">
+        <div class="editor-title-group">
+            <h1>
+                {% if form.instance.pk %}Editar Cuestionario{% else %}Crear Nuevo Cuestionario{% endif %}
+            </h1>
+            <p>Configura las preguntas, tiempo de respuesta y alternativas para la arena.</p>
+        </div>
+        <a href="{% url 'quizzes:quiz_list' %}" class="btn-3d btn-3d-neutral" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+            &larr; Volver a Galería
+        </a>
+    </div>
+
+    <!-- JS Validation Banner -->
+    <div id="jsValidationErrorBanner" class="js-validation-alert"></div>
+
+    <form method="POST" id="quizEditorForm" novalidate>
+        {% csrf_token %}
+
+        <!-- Panel 1: Datos Generales -->
+        <section class="modern-card-panel">
+            <h2 class="panel-heading">
+                1. Información General del Cuestionario
+            </h2>
+
+            <div class="form-group-ducky">
+                <label for="{{ form.title.id_for_label }}" class="form-label-ducky">Título del Quiz *</label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                    <div style="color: #DC2626; font-weight: 600; margin-top: 0.35rem;">
+                        {{ form.title.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group-ducky">
+                <label for="{{ form.description.id_for_label }}" class="form-label-ducky">Descripción</label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                    <div style="color: #DC2626; font-weight: 600; margin-top: 0.35rem;">
+                        {{ form.description.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group-ducky">
+                <label class="checkbox-publish-card">
+                    {{ form.is_published }}
+                    <div>
+                        <strong style="color: var(--text-heading); font-family: var(--font-display); font-size: 1rem;">Publicar cuestionario</strong>
+                        <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 0.15rem;">
+                            Estará disponible para que todos los participantes puedan acceder en partidas en vivo.
+                        </p>
+                    </div>
+                </label>
+                {% if form.is_published.errors %}
+                    <div style="color: #DC2626; font-weight: 600; margin-top: 0.35rem;">
+                        {{ form.is_published.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- Panel 2: Gestor Dinámico de Preguntas y Respuestas -->
+        <section class="modern-card-panel">
+            <h2 class="panel-heading">
+                2. Preguntas y Opciones de Respuesta
+            </h2>
+
+            {# Management Form del Formset de Preguntas #}
+            {{ question_formset.management_form }}
+
+            <div class="questions-stack" id="questionsContainer">
+                {% for q_form in question_formset %}
+                    <div class="question-builder-card" data-q-index="{{ forloop.counter0 }}">
+                        {# Hidden Fields de la Pregunta #}
+                        {% for hidden in q_form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
+
+                        <div class="q-card-top">
+                            <span class="q-number-pill">
+                                Pregunta #<span class="q-order-num">{{ forloop.counter }}</span>
+                            </span>
+                            <button type="button" class="btn-delete-q btn-delete-question" title="Eliminar pregunta">
+                                Eliminar Pregunta
+                            </button>
+                        </div>
+
+                        <div class="form-group-ducky">
+                            <label class="form-label-ducky">Enunciado de la Pregunta *</label>
+                            {{ q_form.text }}
+                            {% if q_form.text.errors %}
+                                <div style="color: #DC2626; font-weight: 600; margin-top: 0.35rem;">
+                                    {{ q_form.text.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="q-params-row">
+                            <div class="form-group-ducky" style="margin-bottom: 0;">
+                                <label class="form-label-ducky">Tiempo Límite (segundos)</label>
+                                {{ q_form.time_limit }}
+                            </div>
+                            <div class="form-group-ducky" style="margin-bottom: 0;">
+                                <label class="form-label-ducky">Puntuación Base</label>
+                                {{ q_form.points }}
+                            </div>
+                            <div style="display:none;">
+                                {{ q_form.order }}
+                            </div>
+                        </div>
+
+                        {# Formset de Respuestas de esta Pregunta #}
+                        <div class="answers-builder-box">
+                            <div class="answers-builder-header">
+                                <span class="answers-builder-title">Opciones de Respuesta (2 a 6)</span>
+                            </div>
+
+                            {% with ans_fs=q_form.answer_formset %}
+                                {{ ans_fs.management_form }}
+                                <div class="answers-list-stack" id="answersList-{{ forloop.counter0 }}">
+                                    {% for a_form in ans_fs %}
+                                        <div class="answer-row-tile">
+                                            {# Hidden fields de respuesta #}
+                                            {% for hidden in a_form.hidden_fields %}
+                                                {{ hidden }}
+                                            {% endfor %}
+
+                                            <span class="ans-geo-icon {% cycle 'geo-red' 'geo-blue' 'geo-yellow' 'geo-green' %}">
+                                                {% if forloop.counter0 == 0 %}▲
+                                                {% elif forloop.counter0 == 1 %}◆
+                                                {% elif forloop.counter0 == 2 %}●
+                                                {% else %}■
+                                                {% endif %}
+                                            </span>
+
+                                            <div class="ans-input-wrapper">
+                                                {{ a_form.text }}
+                                            </div>
+
+                                            <label class="correct-selector-badge" title="Marcar como respuesta correcta">
+                                                {{ a_form.is_correct }}
+                                                <span>Correcta</span>
+                                            </label>
+
+                                            <div style="display:none;">
+                                                {{ a_form.order }}
+                                            </div>
+
+                                            <button type="button" class="btn-remove-answer btn-delete-answer" title="Eliminar alternativa">&times;</button>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endwith %}
+
+                            <button type="button" class="btn-3d btn-3d-neutral btn-add-answer" data-q-index="{{ forloop.counter0 }}" style="padding: 0.45rem 1rem; font-size: 0.82rem;">
+                                + Añadir Alternativa
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div style="margin-top: 2rem; text-align: center;">
+                <button type="button" id="btnAddQuestion" class="btn-3d btn-3d-blue">
+                    + Añadir Otra Pregunta
+                </button>
+            </div>
+        </section>
+
+        <!-- Barra Fija Inferior -->
+        <div class="sticky-dock-bar">
+            <div class="dock-container">
+                <a href="{% url 'quizzes:quiz_list' %}" class="btn-3d btn-3d-neutral" style="padding: 0.75rem 1.4rem;">
+                    Cancelar
+                </a>
+                <button type="submit" class="btn-3d btn-3d-green" style="padding: 0.75rem 2rem; font-size: 1rem;">
+                    Guardar Cuestionario
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Template HTML para Inserción Dinámica de Alternativas -->
+<template id="answerTemplate">
+    <div class="answer-row-tile">
+        <input type="hidden" name="answers_questions-__q_prefix__-__a_prefix__-id" id="id_answers_questions-__q_prefix__-__a_prefix__-id">
+        <input type="checkbox" name="answers_questions-__q_prefix__-__a_prefix__-DELETE" id="id_answers_questions-__q_prefix__-__a_prefix__-DELETE" style="display:none;">
+        
+        <span class="ans-geo-icon geo-yellow">●</span>
+
+        <div class="ans-input-wrapper">
+            <input type="text" name="answers_questions-__q_prefix__-__a_prefix__-text" class="input-ducky answer-text-input" placeholder="Escribe el texto de la alternativa..." id="id_answers_questions-__q_prefix__-__a_prefix__-text">
+        </div>
+
+        <label class="correct-selector-badge">
+            <input type="checkbox" name="answers_questions-__q_prefix__-__a_prefix__-is_correct" class="correct-answer-radio correct-answer-check" id="id_answers_questions-__q_prefix__-__a_prefix__-is_correct">
+            <span>Correcta</span>
+        </label>
+
+        <div style="display:none;">
+            <input type="number" name="answers_questions-__q_prefix__-__a_prefix__-order" value="1" id="id_answers_questions-__q_prefix__-__a_prefix__-order">
+        </div>
+
+        <button type="button" class="btn-remove-answer btn-delete-answer" title="Eliminar alternativa">&times;</button>
+    </div>
+</template>
+
+<!-- Template HTML para Inserción Dinámica de Preguntas -->
+<template id="questionTemplate">
+    <div class="question-builder-card" data-q-index="__q_prefix__">
+        <input type="hidden" name="questions-__q_prefix__-id" id="id_questions-__q_prefix__-id">
+        <input type="checkbox" name="questions-__q_prefix__-DELETE" id="id_questions-__q_prefix__-DELETE" style="display:none;">
+        
+        <div class="q-card-top">
+            <span class="q-number-pill">
+                Pregunta #<span class="q-order-num">__q_num__</span>
+            </span>
+            <button type="button" class="btn-delete-q btn-delete-question" title="Eliminar pregunta">
+                Eliminar Pregunta
+            </button>
+        </div>
+
+        <div class="form-group-ducky">
+            <label class="form-label-ducky">Enunciado de la Pregunta *</label>
+            <textarea name="questions-__q_prefix__-text" rows="2" class="textarea-ducky" placeholder="¿Cuál es el enunciado de la pregunta?" id="id_questions-__q_prefix__-text"></textarea>
+        </div>
+
+        <div class="q-params-row">
+            <div class="form-group-ducky" style="margin-bottom: 0;">
+                <label class="form-label-ducky">Tiempo Límite (segundos)</label>
+                <input type="number" name="questions-__q_prefix__-time_limit" value="30" min="5" max="300" class="input-ducky" id="id_questions-__q_prefix__-time_limit">
+            </div>
+            <div class="form-group-ducky" style="margin-bottom: 0;">
+                <label class="form-label-ducky">Puntuación Base</label>
+                <input type="number" name="questions-__q_prefix__-points" value="1000" min="10" class="input-ducky" id="id_questions-__q_prefix__-points">
+            </div>
+            <div style="display:none;">
+                <input type="number" name="questions-__q_prefix__-order" value="__q_num__" id="id_questions-__q_prefix__-order">
+            </div>
+        </div>
+
+        <div class="answers-builder-box">
+            <div class="answers-builder-header">
+                <span class="answers-builder-title">Opciones de Respuesta (2 a 6)</span>
+            </div>
+
+            <input type="hidden" name="answers_questions-__q_prefix__-TOTAL_FORMS" value="2" id="id_answers_questions-__q_prefix__-TOTAL_FORMS">
+            <input type="hidden" name="answers_questions-__q_prefix__-INITIAL_FORMS" value="0" id="id_answers_questions-__q_prefix__-INITIAL_FORMS">
+            <input type="hidden" name="answers_questions-__q_prefix__-MIN_NUM_FORMS" value="2" id="id_answers_questions-__q_prefix__-MIN_NUM_FORMS">
+            <input type="hidden" name="answers_questions-__q_prefix__-MAX_NUM_FORMS" value="6" id="id_answers_questions-__q_prefix__-MAX_NUM_FORMS">
+
+            <div class="answers-list-stack" id="answersList-__q_prefix__">
+                {# Opción 1 inicial #}
+                <div class="answer-row-tile">
+                    <input type="hidden" name="answers_questions-__q_prefix__-0-id" id="id_answers_questions-__q_prefix__-0-id">
+                    <input type="checkbox" name="answers_questions-__q_prefix__-0-DELETE" id="id_answers_questions-__q_prefix__-0-DELETE" style="display:none;">
+                    <span class="ans-geo-icon geo-red">▲</span>
+                    <div class="ans-input-wrapper">
+                        <input type="text" name="answers_questions-__q_prefix__-0-text" class="input-ducky answer-text-input" placeholder="Alternativa 1..." id="id_answers_questions-__q_prefix__-0-text">
+                    </div>
+                    <label class="correct-selector-badge">
+                        <input type="checkbox" name="answers_questions-__q_prefix__-0-is_correct" class="correct-answer-radio correct-answer-check" id="id_answers_questions-__q_prefix__-0-is_correct">
+                        <span>Correcta</span>
+                    </label>
+                    <div style="display:none;">
+                        <input type="number" name="answers_questions-__q_prefix__-0-order" value="1" id="id_answers_questions-__q_prefix__-0-order">
+                    </div>
+                    <button type="button" class="btn-remove-answer btn-delete-answer" title="Eliminar alternativa">&times;</button>
+                </div>
+
+                {# Opción 2 inicial #}
+                <div class="answer-row-tile">
+                    <input type="hidden" name="answers_questions-__q_prefix__-1-id" id="id_answers_questions-__q_prefix__-1-id">
+                    <input type="checkbox" name="answers_questions-__q_prefix__-1-DELETE" id="id_answers_questions-__q_prefix__-1-DELETE" style="display:none;">
+                    <span class="ans-geo-icon geo-blue">◆</span>
+                    <div class="ans-input-wrapper">
+                        <input type="text" name="answers_questions-__q_prefix__-1-text" class="input-ducky answer-text-input" placeholder="Alternativa 2..." id="id_answers_questions-__q_prefix__-1-text">
+                    </div>
+                    <label class="correct-selector-badge">
+                        <input type="checkbox" name="answers_questions-__q_prefix__-1-is_correct" class="correct-answer-radio correct-answer-check" id="id_answers_questions-__q_prefix__-1-is_correct">
+                        <span>Correcta</span>
+                    </label>
+                    <div style="display:none;">
+                        <input type="number" name="answers_questions-__q_prefix__-1-order" value="2" id="id_answers_questions-__q_prefix__-1-order">
+                    </div>
+                    <button type="button" class="btn-remove-answer btn-delete-answer" title="Eliminar alternativa">&times;</button>
+                </div>
+            </div>
+
+            <button type="button" class="btn-3d btn-3d-neutral btn-add-answer" data-q-index="__q_prefix__" style="padding: 0.45rem 1rem; font-size: 0.82rem;">
+                + Añadir Alternativa
+            </button>
+        </div>
+    </div>
+</template>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const questionsContainer = document.getElementById('questionsContainer');
+    const btnAddQuestion = document.getElementById('btnAddQuestion');
+    const quizForm = document.getElementById('quizEditorForm');
+    const validationBanner = document.getElementById('jsValidationErrorBanner');
+
+    const totalQuestionsInput = document.getElementById('id_questions-TOTAL_FORMS');
+    const answerTemplate = document.getElementById('answerTemplate');
+    const questionTemplate = document.getElementById('questionTemplate');
+
+    // 1. Exclusión Mutua de Respuesta Correcta
+    document.addEventListener('change', function(e) {
+        if (e.target && e.target.classList.contains('correct-answer-check')) {
+            if (e.target.checked) {
+                const questionCard = e.target.closest('.question-builder-card');
+                if (questionCard) {
+                    const allCheckboxes = questionCard.querySelectorAll('.correct-answer-check');
+                    allCheckboxes.forEach(cb => {
+                        if (cb !== e.target) {
+                            cb.checked = false;
+                        }
+                    });
+                }
+            }
+        }
+    });
+
+    // 2. Añadir Nueva Alternativa de Respuesta
+    document.addEventListener('click', function(e) {
+        const btnAddAnswer = e.target.closest('.btn-add-answer');
+        if (btnAddAnswer) {
+            const qIndex = btnAddAnswer.getAttribute('data-q-index');
+            const answersList = document.getElementById(`answersList-${qIndex}`);
+            const totalFormsInput = document.getElementById(`id_answers_questions-${qIndex}-TOTAL_FORMS`);
+
+            if (answersList && totalFormsInput) {
+                const currentTotal = parseInt(totalFormsInput.value, 10) || 0;
+                const visibleAnswers = answersList.querySelectorAll('.answer-row-tile:not(.deleted)').length;
+
+                if (visibleAnswers >= 6) {
+                    showBanner(`Una pregunta puede tener como máximo 6 respuestas.`);
+                    return;
+                }
+
+                let html = answerTemplate.innerHTML;
+                html = html.replace(/__q_prefix__/g, qIndex);
+                html = html.replace(/__a_prefix__/g, currentTotal);
+
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html.trim();
+                const newAnswerRow = tempDiv.firstChild;
+
+                // Asignar icono y color según el orden
+                const iconSpan = newAnswerRow.querySelector('.ans-geo-icon');
+                if (iconSpan) {
+                    if (visibleAnswers === 2) { iconSpan.className = 'ans-geo-icon geo-yellow'; iconSpan.textContent = '●'; }
+                    else if (visibleAnswers === 3) { iconSpan.className = 'ans-geo-icon geo-green'; iconSpan.textContent = '■'; }
+                    else { iconSpan.className = 'ans-geo-icon geo-blue'; iconSpan.textContent = '★'; }
+                }
+
+                // Establecer número de orden
+                const orderInput = newAnswerRow.querySelector('input[type="number"]');
+                if (orderInput) {
+                    orderInput.value = visibleAnswers + 1;
+                }
+
+                answersList.appendChild(newAnswerRow);
+                totalFormsInput.value = currentTotal + 1;
+            }
+        }
+    });
+
+    // 3. Eliminar Alternativa de Respuesta
+    document.addEventListener('click', function(e) {
+        const btnDeleteAnswer = e.target.closest('.btn-delete-answer');
+        if (btnDeleteAnswer) {
+            const answerRow = btnDeleteAnswer.closest('.answer-row-tile');
+            if (answerRow) {
+                const idInput = answerRow.querySelector('input[name$="-id"]');
+                const deleteInput = answerRow.querySelector('input[name$="-DELETE"]');
+
+                if (idInput && idInput.value) {
+                    if (deleteInput) {
+                        deleteInput.checked = true;
+                    }
+                    answerRow.classList.add('deleted');
+                } else {
+                    answerRow.remove();
+                }
+            }
+        }
+    });
+
+    // 4. Añadir Nueva Pregunta Completa
+    if (btnAddQuestion && totalQuestionsInput) {
+        btnAddQuestion.addEventListener('click', function() {
+            const currentTotal = parseInt(totalQuestionsInput.value, 10) || 0;
+            const visibleQuestions = questionsContainer.querySelectorAll('.question-builder-card:not(.deleted)').length + 1;
+
+            let html = questionTemplate.innerHTML;
+            html = html.replace(/__q_prefix__/g, currentTotal);
+            html = html.replace(/__q_num__/g, visibleQuestions);
+
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html.trim();
+            const newQuestionCard = tempDiv.firstChild;
+
+            questionsContainer.appendChild(newQuestionCard);
+            totalQuestionsInput.value = currentTotal + 1;
+            updateQuestionNumbers();
+        });
+    }
+
+    // 5. Eliminar Pregunta Completa
+    document.addEventListener('click', function(e) {
+        const btnDeleteQuestion = e.target.closest('.btn-delete-question');
+        if (btnDeleteQuestion) {
+            const questionCard = btnDeleteQuestion.closest('.question-builder-card');
+            if (questionCard) {
+                const idInput = questionCard.querySelector('input[name^="questions-"][name$="-id"]');
+                const deleteInput = questionCard.querySelector('input[name^="questions-"][name$="-DELETE"]');
+
+                if (idInput && idInput.value) {
+                    if (deleteInput) {
+                        deleteInput.checked = true;
+                    }
+                    questionCard.classList.add('deleted');
+                    questionCard.style.display = 'none';
+                } else {
+                    questionCard.remove();
+                }
+                updateQuestionNumbers();
+            }
+        }
+    });
+
+    function updateQuestionNumbers() {
+        const cards = questionsContainer.querySelectorAll('.question-builder-card:not(.deleted)');
+        cards.forEach((card, idx) => {
+            const numSpan = card.querySelector('.q-order-num');
+            if (numSpan) {
+                numSpan.textContent = idx + 1;
+            }
+            const orderInput = card.querySelector('input[name$="-order"]');
+            if (orderInput && !orderInput.name.includes('answers_')) {
+                orderInput.value = idx + 1;
+            }
+        });
+    }
+
+    function showBanner(message) {
+        if (validationBanner) {
+            validationBanner.textContent = message;
+            validationBanner.style.display = 'block';
+            window.scrollTo({ top: validationBanner.offsetTop - 120, behavior: 'smooth' });
+        }
+    }
+
+    function hideBanner() {
+        if (validationBanner) {
+            validationBanner.style.display = 'none';
+            validationBanner.textContent = '';
+        }
+    }
+
+    // 6. Validación Pre-Flight en Cliente antes del Submit
+    if (quizForm) {
+        quizForm.addEventListener('submit', function(e) {
+            hideBanner();
+            const questionCards = questionsContainer.querySelectorAll('.question-builder-card:not(.deleted)');
+
+            // Resetear bordes de error
+            questionCards.forEach(c => c.classList.remove('has-error'));
+
+            for (let i = 0; i < questionCards.length; i++) {
+                const card = questionCards[i];
+                const textInput = card.querySelector('textarea[name$="-text"]');
+                const qText = textInput ? textInput.value.trim() : '';
+
+                if (!qText) {
+                    e.preventDefault();
+                    card.classList.add('has-error');
+                    showBanner(`La Pregunta #${i + 1} no tiene enunciado. Completa el texto antes de guardar.`);
+                    return;
+                }
+
+                const answerRows = card.querySelectorAll('.answer-row-tile:not(.deleted)');
+                let validAnswerCount = 0;
+                let correctCount = 0;
+
+                answerRows.forEach(row => {
+                    const ansInput = row.querySelector('input.answer-text-input');
+                    const ansCorrectCb = row.querySelector('input.correct-answer-check');
+
+                    if (ansInput && ansInput.value.trim() !== '') {
+                        validAnswerCount++;
+                        if (ansCorrectCb && ansCorrectCb.checked) {
+                            correctCount++;
+                        }
+                    }
+                });
+
+                if (validAnswerCount < 2 || validAnswerCount > 6) {
+                    e.preventDefault();
+                    card.classList.add('has-error');
+                    showBanner(`La Pregunta #${i + 1} debe contener entre 2 y 6 respuestas con texto. Actualmente tiene ${validAnswerCount}.`);
+                    return;
+                }
+
+                if (correctCount !== 1) {
+                    e.preventDefault();
+                    card.classList.add('has-error');
+                    showBanner(`La Pregunta #${i + 1} debe tener exactamente una respuesta marcada como correcta. Tiene ${correctCount}.`);
+                    return;
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

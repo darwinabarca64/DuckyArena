@@ -1,0 +1,457 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ quiz.title }} — Ducky Quiz Arenas{% endblock %}
+
+{% block extra_css %}
+<style>
+    .detail-layout-container {
+        max-width: 1040px;
+        margin: 0 auto;
+    }
+
+    /* Top Navigation Bar */
+    .detail-nav-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.75rem;
+    }
+
+    .btn-return {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-medium);
+        color: var(--text-heading);
+        text-decoration: none;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 0.88rem;
+        padding: 0.55rem 1.15rem;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        transition: all 0.2s ease;
+    }
+
+    .btn-return:hover {
+        background: var(--bg-surface-secondary);
+        border-color: var(--border-subtle);
+    }
+
+    /* Hero Card */
+    .quiz-hero-banner {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-sm);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .quiz-hero-banner::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, var(--kahoot-red), var(--kahoot-blue), var(--kahoot-yellow), var(--kahoot-green));
+    }
+
+    .hero-top-row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1.25rem;
+        margin-bottom: 1rem;
+    }
+
+    .quiz-hero-title {
+        font-family: var(--font-display);
+        font-size: 2.2rem;
+        font-weight: 900;
+        color: var(--text-heading);
+        line-height: 1.2;
+    }
+
+    .quiz-hero-desc {
+        color: var(--text-body);
+        font-size: 1.05rem;
+        line-height: 1.6;
+        margin-bottom: 1.75rem;
+        max-width: 820px;
+    }
+
+    .quiz-hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--border-subtle);
+    }
+
+    .hero-meta-item strong {
+        color: var(--text-heading);
+    }
+
+    /* Metric Cards */
+    .metrics-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .stat-card-modern {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .stat-card-modern:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .stat-blue-edge { border-left: 5px solid var(--kahoot-blue); }
+    .stat-yellow-edge { border-left: 5px solid var(--kahoot-yellow); }
+    .stat-green-edge { border-left: 5px solid var(--kahoot-green); }
+
+    .stat-label {
+        font-family: var(--font-display);
+        font-size: 0.8rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--text-muted);
+        margin-bottom: 0.35rem;
+    }
+
+    .stat-number {
+        font-family: var(--font-display);
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: var(--text-heading);
+        line-height: 1;
+    }
+
+    /* Teacher Control Bar */
+    .teacher-control-bar {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        margin-bottom: 2.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.25rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .control-bar-title {
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 1.1rem;
+        color: var(--kahoot-purple);
+    }
+
+    .control-buttons-group {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    /* Questions Structure Section */
+    .questions-overview-section {
+        margin-top: 2rem;
+    }
+
+    .section-headline {
+        font-family: var(--font-display);
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: var(--text-heading);
+        margin-bottom: 1.5rem;
+    }
+
+    .question-items-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .question-card-preview {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: 1.75rem;
+        box-shadow: var(--shadow-sm);
+        transition: border-color 0.2s ease;
+    }
+
+    .question-card-preview:hover {
+        border-color: var(--border-medium);
+    }
+
+    .q-preview-header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.85rem;
+        margin-bottom: 1rem;
+    }
+
+    .q-index-pill {
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 0.88rem;
+        background: var(--bg-surface-secondary);
+        color: var(--kahoot-purple);
+        border: 1px solid var(--border-medium);
+        padding: 0.35rem 0.9rem;
+        border-radius: var(--radius-full);
+    }
+
+    .q-badge-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+    .q-badge {
+        font-family: var(--font-display);
+        font-size: 0.78rem;
+        font-weight: 700;
+        padding: 0.3rem 0.75rem;
+        border-radius: var(--radius-full);
+        background: var(--bg-surface-secondary);
+        border: 1px solid var(--border-subtle);
+        color: var(--text-muted);
+    }
+
+    .q-badge-points {
+        background: #FFFBEB;
+        color: #B45309;
+        border-color: #FDE68A;
+    }
+
+    .q-text-body {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--text-heading);
+        line-height: 1.45;
+        margin-bottom: 1.25rem;
+    }
+
+    /* Answers Preview Tiles */
+    .kahoot-answers-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .kahoot-ans-tile {
+        padding: 0.85rem 1.1rem;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: #FFFFFF;
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 0.92rem;
+    }
+
+    .ans-red { background: var(--kahoot-red); }
+    .ans-blue { background: var(--kahoot-blue); }
+    .ans-yellow { background: var(--kahoot-yellow); color: #FFFFFF; }
+    .ans-green { background: var(--kahoot-green); }
+
+    .ans-symbol {
+        font-size: 1.1rem;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+
+    .empty-questions-notice {
+        text-align: center;
+        padding: 3.5rem 1.5rem;
+        background: var(--bg-surface);
+        border: 2px dashed var(--border-medium);
+        border-radius: var(--radius-lg);
+        color: var(--text-muted);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-layout-container">
+    <!-- Breadcrumbs Navigation -->
+    <div class="detail-nav-bar">
+        <a href="{% url 'quizzes:quiz_list' %}" class="btn-return">
+            &larr; Volver a la Galería
+        </a>
+        {% if user.is_authenticated and user == quiz.creator or user.is_superuser %}
+            <a href="{% url 'quizzes:quiz_edit' quiz.pk %}" class="btn-3d btn-3d-yellow" style="padding: 0.45rem 1rem; font-size: 0.85rem;">
+                Editar Quiz
+            </a>
+        {% endif %}
+    </div>
+
+    <!-- Quiz Hero Header -->
+    <div class="quiz-hero-banner">
+        <div class="hero-top-row">
+            <h1 class="quiz-hero-title">{{ quiz.title }}</h1>
+            {% if quiz.is_published %}
+                <span class="badge-status badge-published" style="font-size: 0.82rem; padding: 0.35rem 0.85rem;">Publicado</span>
+            {% else %}
+                <span class="badge-status badge-draft" style="font-size: 0.82rem; padding: 0.35rem 0.85rem;">Modo Borrador</span>
+            {% endif %}
+        </div>
+
+        <p class="quiz-hero-desc">
+            {{ quiz.description|default:"Cuestionario interactivo preparado para competencias o evaluaciones." }}
+        </p>
+
+        <div class="quiz-hero-meta">
+            <div class="hero-meta-item">
+                <span>Creador:</span> <strong>{{ quiz.creator.username }}</strong>
+            </div>
+            <div class="hero-meta-item">
+                <span>Creado:</span> <strong>{{ quiz.created_at|date:"d/m/Y H:i" }}</strong>
+            </div>
+            <div class="hero-meta-item">
+                <span>Actualizado:</span> <strong>{{ quiz.updated_at|date:"d/m/Y H:i" }}</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- Metrics Row -->
+    <div class="metrics-row">
+        <div class="stat-card-modern stat-blue-edge">
+            <div class="stat-label">Total Preguntas</div>
+            <div class="stat-number">{{ quiz.total_questions|default:quiz.questions.count }}</div>
+        </div>
+
+        <div class="stat-card-modern stat-yellow-edge">
+            <div class="stat-label">Tiempo Estimado</div>
+            <div class="stat-number">
+                {% with total_sec=quiz.total_time|default:0 %}
+                    {% if total_sec >= 60 %}
+                        {{ total_sec|divisibleby:60 }} min
+                    {% else %}
+                        {{ total_sec }} s
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+
+        <div class="stat-card-modern stat-green-edge">
+            <div class="stat-label">Puntos Máximos</div>
+            <div class="stat-number">{{ quiz.total_points|default:0 }} pts</div>
+        </div>
+    </div>
+
+    <!-- Teacher Management Toolbar -->
+    {% if user.is_authenticated and user == quiz.creator or user.is_superuser %}
+        <div class="teacher-control-bar">
+            <div class="control-bar-title">
+                Panel de Control Docente
+            </div>
+
+            <div class="control-buttons-group">
+                {% if quiz.is_published %}
+                    <a href="#" class="btn-3d btn-3d-green" title="Iniciar arena de juego multijugador">
+                        Iniciar Sala
+                    </a>
+                {% endif %}
+
+                <form action="{% url 'quizzes:quiz_toggle_publish' quiz.pk %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-3d btn-3d-purple">
+                        {% if quiz.is_published %}
+                            Pausar a Borrador
+                        {% else %}
+                            Publicar Quiz
+                        {% endif %}
+                    </button>
+                </form>
+
+                <a href="{% url 'quizzes:quiz_edit' quiz.pk %}" class="btn-3d btn-3d-yellow">
+                    Editar
+                </a>
+
+                <a href="{% url 'quizzes:quiz_delete' quiz.pk %}" class="btn-3d btn-3d-red">
+                    Eliminar
+                </a>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Questions Preview Stack -->
+    <div class="questions-overview-section">
+        <h2 class="section-headline">
+            Estructura de Preguntas ({{ quiz.questions.count }})
+        </h2>
+
+        {% if quiz.questions.all %}
+            <div class="question-items-stack">
+                {% for question in quiz.questions.all %}
+                    <div class="question-card-preview">
+                        <div class="q-preview-header">
+                            <span class="q-index-pill">Pregunta #{{ question.order }}</span>
+                            <div class="q-badge-meta">
+                                <span class="q-badge">{{ question.time_limit }}s</span>
+                                <span class="q-badge q-badge-points">{{ question.points }} pts</span>
+                            </div>
+                        </div>
+
+                        <div class="q-text-body">{{ question.text }}</div>
+
+                        {# Renderizado de opciones neutrales con colores estilo Kahoot (Cero Leaks) #}
+                        <div class="kahoot-answers-grid">
+                            {% for answer in question.answers.all %}
+                                <div class="kahoot-ans-tile {% cycle 'ans-red' 'ans-blue' 'ans-yellow' 'ans-green' %}">
+                                    <span class="ans-symbol">
+                                        {% if forloop.counter0 == 0 %}▲
+                                        {% elif forloop.counter0 == 1 %}◆
+                                        {% elif forloop.counter0 == 2 %}●
+                                        {% else %}■
+                                        {% endif %}
+                                    </span>
+                                    <span>{{ answer.text }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-questions-notice">
+                <p style="font-size: 1.05rem; font-weight: 700; color: var(--text-heading);">Este cuestionario aún no tiene preguntas configuradas.</p>
+                {% if user == quiz.creator or user.is_superuser %}
+                    <p style="margin-top: 1rem;">
+                        <a href="{% url 'quizzes:quiz_edit' quiz.pk %}" class="btn-3d btn-3d-green">
+                            + Añadir Preguntas
+                        </a>
+                    </p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

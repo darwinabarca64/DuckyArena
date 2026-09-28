@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Eliminar {{ object.title }} — Ducky Quiz Arenas{% endblock %}
+
+{% block extra_css %}
+<style>
+    .delete-wrapper {
+        max-width: 580px;
+        margin: 3.5rem auto;
+    }
+
+    .delete-modern-card {
+        background: var(--bg-surface);
+        border: 1px solid #FCA5A5;
+        border-top: 6px solid var(--kahoot-red);
+        border-radius: var(--radius-lg);
+        padding: 3rem 2.5rem;
+        text-align: center;
+        box-shadow: var(--shadow-md);
+    }
+
+    .delete-headline {
+        font-family: var(--font-display);
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--text-heading);
+        margin-bottom: 0.85rem;
+    }
+
+    .delete-desc-text {
+        color: var(--text-muted);
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 1.75rem;
+    }
+
+    .quiz-target-pill {
+        background: var(--bg-surface-secondary);
+        border: 1px solid var(--border-medium);
+        border-radius: var(--radius-md);
+        padding: 0.85rem 1.25rem;
+        color: var(--text-heading);
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 1rem;
+        margin-bottom: 2rem;
+        display: block;
+    }
+
+    .delete-buttons-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="delete-wrapper">
+    <div class="delete-modern-card">
+        <h1 class="delete-headline">¿Eliminar Cuestionario?</h1>
+        
+        <p class="delete-desc-text">
+            Esta acción es irreversible y eliminará de forma permanente el cuestionario y todas sus preguntas asociadas.
+        </p>
+
+        <div class="quiz-target-pill">
+            {{ object.title }} ({{ object.questions.count }} preguntas)
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="delete-buttons-row">
+                <a href="{% url 'quizzes:quiz_detail' object.pk %}" class="btn-3d btn-3d-neutral">
+                    Cancelar
+                </a>
+                <button type="submit" class="btn-3d btn-3d-red">
+                    Sí, Eliminar Definitivamente
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

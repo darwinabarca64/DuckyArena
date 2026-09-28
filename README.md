@@ -205,7 +205,7 @@ Este proyecto es de código abierto y libre de usar.
 
 ## 🎯 Próximas mejoras
 
-- [ ] Sistema de login de usuarios
+- [ ] Sistema de  de usuarios
 - [ ] Perfil de usuario con historial
 - [ ] Editor visual de quizzes
 - [ ] Exportar resultados a PDF

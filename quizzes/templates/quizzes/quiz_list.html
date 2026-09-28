@@ -1,0 +1,540 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Explorar Quizzes — Ducky Quiz Arenas{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Hero Banner Component */
+    .hero-banner-card {
+        background: linear-gradient(135deg, #46178F 0%, #300C66 100%);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        margin-bottom: 2.5rem;
+        box-shadow: var(--shadow-md);
+        display: grid;
+        grid-template-columns: 1.1fr 1fr;
+        align-items: center;
+        color: #FFFFFF;
+    }
+
+    .hero-text-content {
+        padding: 3rem 2.5rem;
+    }
+
+    .hero-badge-tag {
+        display: inline-block;
+        background: rgba(255, 166, 2, 0.2);
+        border: 1px solid var(--kahoot-yellow);
+        color: var(--kahoot-yellow);
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 0.8rem;
+        padding: 0.35rem 0.85rem;
+        border-radius: var(--radius-full);
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .hero-headline {
+        font-family: var(--font-display);
+        font-size: 2.5rem;
+        font-weight: 900;
+        line-height: 1.15;
+        color: #FFFFFF;
+        margin-bottom: 1rem;
+        letter-spacing: -0.02em;
+    }
+
+    .hero-headline-highlight {
+        color: var(--kahoot-yellow);
+    }
+
+    .hero-subtext {
+        font-size: 1.05rem;
+        color: #E2E8F0;
+        margin-bottom: 1.75rem;
+        line-height: 1.5;
+        max-width: 480px;
+    }
+
+    .hero-cta-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .hero-image-wrapper {
+        height: 100%;
+        min-height: 320px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* Header Bar & Search */
+    .catalog-header-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .section-title-large {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--text-heading);
+    }
+
+    .search-filter-box {
+        position: relative;
+        min-width: 280px;
+    }
+
+    .search-filter-box input {
+        width: 100%;
+        background: var(--bg-surface);
+        border: 1.5px solid var(--border-medium);
+        color: var(--text-heading);
+        padding: 0.7rem 1.2rem 0.7rem 2.5rem;
+        border-radius: var(--radius-full);
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        outline: none;
+        transition: all 0.2s ease;
+    }
+
+    .search-filter-box input:focus {
+        border-color: var(--kahoot-purple);
+        box-shadow: 0 0 0 3px rgba(70, 23, 143, 0.15);
+    }
+
+    .search-filter-box input::placeholder {
+        color: var(--text-muted);
+    }
+
+    .search-icon-symbol {
+        position: absolute;
+        left: 0.95rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        pointer-events: none;
+    }
+
+    /* Cards Grid */
+    .quiz-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3.5rem;
+    }
+
+    .quiz-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: 1.6rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.25s ease;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .quiz-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--border-medium);
+    }
+
+    /* Top Color Stripe */
+    .card-stripe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+    }
+
+    .stripe-blue { background: var(--kahoot-blue); }
+    .stripe-red { background: var(--kahoot-red); }
+    .stripe-yellow { background: var(--kahoot-yellow); }
+    .stripe-green { background: var(--kahoot-green); }
+
+    .card-top-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.75rem;
+        margin-top: 0.35rem;
+        margin-bottom: 0.85rem;
+    }
+
+    .quiz-title {
+        font-family: var(--font-display);
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--text-heading);
+        line-height: 1.3;
+    }
+
+    .badge-status {
+        font-family: var(--font-display);
+        font-size: 0.72rem;
+        font-weight: 800;
+        padding: 0.25rem 0.65rem;
+        border-radius: var(--radius-full);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        white-space: nowrap;
+    }
+
+    .badge-published {
+        background: #ECFDF5;
+        color: #065F46;
+        border: 1px solid #A7F3D0;
+    }
+
+    .badge-draft {
+        background: #FFFBEB;
+        color: #92400E;
+        border: 1px solid #FDE68A;
+    }
+
+    .quiz-description {
+        color: var(--text-body);
+        font-size: 0.92rem;
+        line-height: 1.5;
+        margin-bottom: 1.25rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .quiz-meta-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-subtle);
+        margin-bottom: 1.25rem;
+    }
+
+    .meta-stat-pill {
+        background: var(--bg-surface-secondary);
+        padding: 0.25rem 0.65rem;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border-subtle);
+    }
+
+    .meta-stat-pill strong {
+        color: var(--text-heading);
+    }
+
+    .card-actions-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-card-explore {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--kahoot-blue);
+        box-shadow: 0 3px 0 var(--kahoot-blue-shadow);
+        color: #FFFFFF;
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 0.88rem;
+        text-transform: uppercase;
+        padding: 0.6rem 1rem;
+        border-radius: var(--radius-md);
+        text-decoration: none;
+        transition: all 0.15s ease;
+    }
+
+    .btn-card-explore:hover {
+        background-color: #1A7CF5;
+    }
+
+    .btn-card-explore:active {
+        transform: translateY(2px);
+        box-shadow: 0 1px 0 var(--kahoot-blue-shadow);
+    }
+
+    .btn-tool-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.55rem 0.85rem;
+        border-radius: var(--radius-md);
+        background: var(--bg-surface-secondary);
+        border: 1px solid var(--border-medium);
+        color: var(--text-body);
+        text-decoration: none;
+        font-family: var(--font-display);
+        font-size: 0.82rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-tool-action:hover {
+        background: #E2E8F0;
+        color: var(--text-heading);
+    }
+
+    .btn-tool-delete:hover {
+        background: #FEE2E2;
+        color: #B91C1C;
+        border-color: #FCA5A5;
+    }
+
+    .btn-tool-publish:hover {
+        background: #DCFCE7;
+        color: #15803D;
+        border-color: #86EFAC;
+    }
+
+    /* Empty State */
+    .empty-state-box {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: var(--bg-surface);
+        border: 2px dashed var(--border-medium);
+        border-radius: var(--radius-lg);
+        margin: 2rem 0;
+    }
+
+    .empty-trophy-img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        margin-bottom: 1.25rem;
+        border: 2px solid var(--kahoot-yellow);
+    }
+
+    .empty-title {
+        font-family: var(--font-display);
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: var(--text-heading);
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-desc {
+        color: var(--text-muted);
+        max-width: 480px;
+        margin: 0 auto 1.75rem auto;
+        font-size: 1rem;
+    }
+
+    @media (max-width: 900px) {
+        .hero-banner-card {
+            grid-template-columns: 1fr;
+        }
+        .hero-image-wrapper {
+            min-height: 200px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-banner-card">
+    <div class="hero-text-content">
+        <span class="hero-badge-tag">Ducky Quiz Arenas</span>
+        <h1 class="hero-headline">
+            Desafía tu mente y <span class="hero-headline-highlight">gana la arena</span>
+        </h1>
+        <p class="hero-subtext">
+            Crea cuestionarios dinámicos, compite con tus compañeros y evalúa conocimientos en tiempo real.
+        </p>
+        <div class="hero-cta-group">
+            <a href="{% url 'quizzes:quiz_create' %}" class="btn-3d btn-3d-green">
+                + Crear Nuevo Quiz
+            </a>
+            <a href="#catalogo-quizzes" class="btn-3d btn-3d-blue">
+                Ver Cuestionarios
+            </a>
+        </div>
+    </div>
+    <div class="hero-image-wrapper">
+        <img src="{% static 'assets/hero_banner.jpg' %}" alt="Ducky Quiz Arena Space Tournament" class="hero-img">
+    </div>
+</section>
+
+<!-- Filter & Search Bar -->
+<div class="catalog-header-bar" id="catalogo-quizzes">
+    <h2 class="section-title-large">
+        Cuestionarios Disponibles
+    </h2>
+    <div class="search-filter-box">
+        <span class="search-icon-symbol">BUSCAR:</span>
+        <input type="text" id="quizSearchInput" placeholder="Buscar por título...">
+    </div>
+</div>
+
+{# Sección: Mis Cuestionarios #}
+{% if is_teacher and my_quizzes %}
+    <div class="my-quizzes-section" id="mis-quizzes" style="margin-bottom: 3.5rem;">
+        <h3 class="section-title-large" style="font-size: 1.3rem; margin-bottom: 1.25rem; color: var(--kahoot-purple);">
+            Mis Cuestionarios de Profesor ({{ my_quizzes.count }})
+        </h3>
+        <div class="quiz-grid" id="myQuizzesGrid">
+            {% for quiz in my_quizzes %}
+                <article class="quiz-card" data-title="{{ quiz.title|lower }}">
+                    <div class="card-stripe {% cycle 'stripe-blue' 'stripe-red' 'stripe-yellow' 'stripe-green' %}"></div>
+                    <div>
+                        <div class="card-top-info">
+                            <h4 class="quiz-title">{{ quiz.title }}</h4>
+                            {% if quiz.is_published %}
+                                <span class="badge-status badge-published">Publicado</span>
+                            {% else %}
+                                <span class="badge-status badge-draft">Borrador</span>
+                            {% endif %}
+                        </div>
+                        <p class="quiz-description">
+                            {{ quiz.description|default:"Cuestionario interactivo preparado para competencias o evaluaciones." }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <div class="quiz-meta-stats">
+                            <div class="meta-stat-pill">
+                                <span><strong>{{ quiz.total_questions }}</strong> preguntas</span>
+                            </div>
+                            <div class="meta-stat-pill">
+                                <span>{{ quiz.created_at|date:"d/m/Y" }}</span>
+                            </div>
+                        </div>
+
+                        <div class="card-actions-row">
+                            <a href="{% url 'quizzes:quiz_detail' quiz.pk %}" class="btn-card-explore">
+                                Ver Detalle
+                            </a>
+                            <form action="{% url 'quizzes:quiz_toggle_publish' quiz.pk %}" method="POST" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-tool-action btn-tool-publish" title="{% if quiz.is_published %}Cambiar a Borrador{% else %}Publicar{% endif %}">
+                                    {% if quiz.is_published %}Pausar{% else %}Publicar{% endif %}
+                                </button>
+                            </form>
+                            <a href="{% url 'quizzes:quiz_edit' quiz.pk %}" class="btn-tool-action" title="Editar">
+                                Editar
+                            </a>
+                            <a href="{% url 'quizzes:quiz_delete' quiz.pk %}" class="btn-tool-action btn-tool-delete" title="Eliminar">
+                                Eliminar
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+
+{# Sección: Cuestionarios Públicos #}
+<div class="public-quizzes-section">
+    {% if quizzes %}
+        <div class="quiz-grid" id="publicQuizzesGrid">
+            {% for quiz in quizzes %}
+                <article class="quiz-card" data-title="{{ quiz.title|lower }}">
+                    <div class="card-stripe {% cycle 'stripe-yellow' 'stripe-green' 'stripe-blue' 'stripe-red' %}"></div>
+                    <div>
+                        <div class="card-top-info">
+                            <h4 class="quiz-title">{{ quiz.title }}</h4>
+                            <span class="badge-status badge-published">Disponible</span>
+                        </div>
+                        <p class="quiz-description">
+                            {{ quiz.description|default:"Pon a prueba tus conocimientos en esta arena interactiva." }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <div class="quiz-meta-stats">
+                            <div class="meta-stat-pill">
+                                <span><strong>{{ quiz.total_questions }}</strong> preguntas</span>
+                            </div>
+                            <div class="meta-stat-pill">
+                                <span>Prof. {{ quiz.creator.username }}</span>
+                            </div>
+                            <div class="meta-stat-pill">
+                                <span>{{ quiz.created_at|date:"d/m/Y" }}</span>
+                            </div>
+                        </div>
+
+                        <div class="card-actions-row">
+                            <a href="{% url 'quizzes:quiz_detail' quiz.pk %}" class="btn-card-explore">
+                                Explorar Quiz
+                            </a>
+                            {% if user.is_authenticated and quiz.creator == user or user.is_superuser %}
+                                <a href="{% url 'quizzes:quiz_edit' quiz.pk %}" class="btn-tool-action" title="Editar">
+                                    Editar
+                                </a>
+                                <a href="{% url 'quizzes:quiz_delete' quiz.pk %}" class="btn-tool-action btn-tool-delete" title="Eliminar">
+                                    Eliminar
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state-box">
+            <img src="{% static 'assets/ducky_trophy.jpg' %}" alt="Ducky Trophy" class="empty-trophy-img">
+            <h3 class="empty-title">La Arena está esperando nuevos cuestionarios</h3>
+            <p class="empty-desc">Aún no hay cuestionarios publicados. ¡Crea el primer quiz y comienza la competencia!</p>
+            <a href="{% url 'quizzes:quiz_create' %}" class="btn-3d btn-3d-green">
+                + Crear Primer Cuestionario
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('quizSearchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                const term = e.target.value.toLowerCase().trim();
+                const cards = document.querySelectorAll('.quiz-card');
+                cards.forEach(card => {
+                    const title = card.getAttribute('data-title') || '';
+                    if (title.includes(term)) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}
