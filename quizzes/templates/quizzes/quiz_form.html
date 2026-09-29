@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{% if form.instance.pk %}Editar {{ form.instance.title }}{% else %}Crear Cuestionario{% endif %} — Ducky Quiz Arenas{% endblock %}
+{% block title %}{% if form.instance.pk %}Editar {{ form.instance.title }}{% else %}Crear Cuestionario{% endif %} — QuizArenas{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -234,23 +234,29 @@
         display: none !important;
     }
 
-    .ans-geo-icon {
-        width: 28px;
-        height: 28px;
-        border-radius: 6px;
+    .ans-letter-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.95rem;
+        font-family: var(--font-display);
+        font-size: 1.05rem;
         font-weight: 900;
         color: #FFFFFF;
         flex-shrink: 0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        border: 1.5px solid rgba(255, 255, 255, 0.4);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     }
 
     .geo-red { background: var(--kahoot-red); }
     .geo-blue { background: var(--kahoot-blue); }
     .geo-yellow { background: var(--kahoot-yellow); }
     .geo-green { background: var(--kahoot-green); }
+    .geo-purple { background: #7C3AED; }
+    .geo-orange { background: #EA580C; }
 
     .ans-input-wrapper {
         flex: 1;
@@ -336,6 +342,71 @@
         border-radius: var(--radius-md);
         margin-bottom: 1.5rem;
         box-shadow: var(--shadow-sm);
+    }
+
+    @media (max-width: 768px) {
+        .editor-wrapper {
+            padding-bottom: 8.5rem;
+        }
+        .modern-card-panel {
+            padding: 1.5rem 1.15rem;
+            margin-bottom: 1.5rem;
+        }
+        .question-builder-card {
+            padding: 1.25rem 1rem;
+        }
+        .q-params-row {
+            grid-template-columns: 1fr;
+            gap: 0.85rem;
+        }
+        .answers-builder-box {
+            padding: 1rem 0.75rem;
+        }
+        .answer-row-tile {
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.75rem;
+        }
+        .ans-input-wrapper {
+            flex: 1 1 100%;
+            order: 2;
+        }
+        .ans-geo-icon {
+            order: 1;
+        }
+        .correct-selector-badge {
+            order: 3;
+        }
+        .btn-remove-answer {
+            order: 4;
+            margin-left: auto;
+        }
+        .sticky-dock-bar {
+            padding: 0.85rem 1rem;
+        }
+        .dock-container {
+            gap: 0.75rem;
+        }
+        .dock-container .btn-3d {
+            flex: 1;
+            padding: 0.65rem 0.75rem;
+            font-size: 0.88rem;
+            text-align: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .editor-title-group h1 {
+            font-size: 1.5rem;
+        }
+        .editor-nav-bar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
+        }
+        .editor-nav-bar a {
+            text-align: center;
+        }
     }
 </style>
 {% endblock %}
@@ -462,6 +533,13 @@
                             </div>
 
                             {% with ans_fs=q_form.answer_formset %}
+                                {% if ans_fs.non_form_errors %}
+                                    <div class="formset-alert-error" style="background: #FEF2F2; border-left: 4px solid var(--kahoot-red); color: #991B1B; padding: 0.6rem 0.9rem; border-radius: var(--radius-sm); margin-bottom: 0.85rem; font-size: 0.88rem; font-weight: 700;">
+                                        {% for error in ans_fs.non_form_errors %}
+                                            <p style="margin: 0;">⚠️ {{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                                 {{ ans_fs.management_form }}
                                 <div class="answers-list-stack" id="answersList-{{ forloop.counter0 }}">
                                     {% for a_form in ans_fs %}
@@ -471,11 +549,13 @@
                                                 {{ hidden }}
                                             {% endfor %}
 
-                                            <span class="ans-geo-icon {% cycle 'geo-red' 'geo-blue' 'geo-yellow' 'geo-green' %}">
-                                                {% if forloop.counter0 == 0 %}▲
-                                                {% elif forloop.counter0 == 1 %}◆
-                                                {% elif forloop.counter0 == 2 %}●
-                                                {% else %}■
+                                            <span class="ans-letter-icon {% cycle 'geo-red' 'geo-blue' 'geo-yellow' 'geo-green' 'geo-purple' 'geo-orange' %}">
+                                                {% if forloop.counter0 == 0 %}A
+                                                {% elif forloop.counter0 == 1 %}B
+                                                {% elif forloop.counter0 == 2 %}C
+                                                {% elif forloop.counter0 == 3 %}D
+                                                {% elif forloop.counter0 == 4 %}E
+                                                {% else %}F
                                                 {% endif %}
                                             </span>
 
@@ -533,7 +613,7 @@
         <input type="hidden" name="answers_questions-__q_prefix__-__a_prefix__-id" id="id_answers_questions-__q_prefix__-__a_prefix__-id">
         <input type="checkbox" name="answers_questions-__q_prefix__-__a_prefix__-DELETE" id="id_answers_questions-__q_prefix__-__a_prefix__-DELETE" style="display:none;">
         
-        <span class="ans-geo-icon geo-yellow">●</span>
+        <span class="ans-letter-icon geo-yellow">C</span>
 
         <div class="ans-input-wrapper">
             <input type="text" name="answers_questions-__q_prefix__-__a_prefix__-text" class="input-ducky answer-text-input" placeholder="Escribe el texto de la alternativa..." id="id_answers_questions-__q_prefix__-__a_prefix__-text">
@@ -601,9 +681,9 @@
                 <div class="answer-row-tile">
                     <input type="hidden" name="answers_questions-__q_prefix__-0-id" id="id_answers_questions-__q_prefix__-0-id">
                     <input type="checkbox" name="answers_questions-__q_prefix__-0-DELETE" id="id_answers_questions-__q_prefix__-0-DELETE" style="display:none;">
-                    <span class="ans-geo-icon geo-red">▲</span>
+                    <span class="ans-letter-icon geo-red">A</span>
                     <div class="ans-input-wrapper">
-                        <input type="text" name="answers_questions-__q_prefix__-0-text" class="input-ducky answer-text-input" placeholder="Alternativa 1..." id="id_answers_questions-__q_prefix__-0-text">
+                        <input type="text" name="answers_questions-__q_prefix__-0-text" class="input-ducky answer-text-input" placeholder="Alternativa A..." id="id_answers_questions-__q_prefix__-0-text">
                     </div>
                     <label class="correct-selector-badge">
                         <input type="checkbox" name="answers_questions-__q_prefix__-0-is_correct" class="correct-answer-radio correct-answer-check" id="id_answers_questions-__q_prefix__-0-is_correct">
@@ -619,9 +699,9 @@
                 <div class="answer-row-tile">
                     <input type="hidden" name="answers_questions-__q_prefix__-1-id" id="id_answers_questions-__q_prefix__-1-id">
                     <input type="checkbox" name="answers_questions-__q_prefix__-1-DELETE" id="id_answers_questions-__q_prefix__-1-DELETE" style="display:none;">
-                    <span class="ans-geo-icon geo-blue">◆</span>
+                    <span class="ans-letter-icon geo-blue">B</span>
                     <div class="ans-input-wrapper">
-                        <input type="text" name="answers_questions-__q_prefix__-1-text" class="input-ducky answer-text-input" placeholder="Alternativa 2..." id="id_answers_questions-__q_prefix__-1-text">
+                        <input type="text" name="answers_questions-__q_prefix__-1-text" class="input-ducky answer-text-input" placeholder="Alternativa B..." id="id_answers_questions-__q_prefix__-1-text">
                     </div>
                     <label class="correct-selector-badge">
                         <input type="checkbox" name="answers_questions-__q_prefix__-1-is_correct" class="correct-answer-radio correct-answer-check" id="id_answers_questions-__q_prefix__-1-is_correct">
@@ -671,7 +751,116 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 2. Añadir Nueva Alternativa de Respuesta
+    // 2. Re-indexación Robusta de Alternativas de una Pregunta
+    function reindexAnswers(answersList, qIndex) {
+        if (!answersList) return;
+        const rows = answersList.querySelectorAll('.answer-row-tile');
+        let totalCount = 0;
+        let visibleIndex = 0;
+
+        rows.forEach((row) => {
+            const currentAIdx = totalCount;
+            const inputs = row.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (input.name) {
+                    input.name = input.name.replace(/answers_questions-\d+-\d+-/, `answers_questions-${qIndex}-${currentAIdx}-`);
+                }
+                if (input.id) {
+                    input.id = input.id.replace(/id_answers_questions-\d+-\d+-/, `id_answers_questions-${qIndex}-${currentAIdx}-`);
+                }
+            });
+
+            if (!row.classList.contains('deleted')) {
+                const iconSpan = row.querySelector('.ans-letter-icon') || row.querySelector('.ans-geo-icon');
+                if (iconSpan) {
+                    const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+                    const colors = ['geo-red', 'geo-blue', 'geo-yellow', 'geo-green', 'geo-purple', 'geo-orange'];
+                    const idx = Math.min(visibleIndex, 5);
+                    iconSpan.className = `ans-letter-icon ${colors[idx]}`;
+                    iconSpan.textContent = letters[idx];
+                }
+                const orderInput = row.querySelector('input[type="number"][name$="-order"]');
+                if (orderInput) {
+                    orderInput.value = visibleIndex + 1;
+                }
+                visibleIndex++;
+            }
+            totalCount++;
+        });
+
+        const totalFormsInput = document.getElementById(`id_answers_questions-${qIndex}-TOTAL_FORMS`);
+        if (totalFormsInput) {
+            totalFormsInput.value = totalCount;
+        }
+    }
+
+    // 3. Re-indexación Completa y Sincronización de Preguntas y Respuestas
+    function reindexAllQuestions() {
+        if (!questionsContainer) return;
+        const cards = questionsContainer.querySelectorAll('.question-builder-card');
+        let qCount = 0;
+        let visibleQNum = 1;
+
+        cards.forEach((card) => {
+            const currentQIdx = qCount;
+            card.setAttribute('data-q-index', currentQIdx);
+
+            if (!card.classList.contains('deleted')) {
+                const numSpan = card.querySelector('.q-order-num');
+                if (numSpan) numSpan.textContent = visibleQNum;
+                visibleQNum++;
+            }
+
+            // Actualizar inputs directos de la Pregunta
+            const qInputs = card.querySelectorAll(':scope > input, :scope > .form-group-ducky input, :scope > .form-group-ducky textarea, :scope > .q-params-row input');
+            qInputs.forEach(input => {
+                if (input.name && input.name.startsWith('questions-')) {
+                    input.name = input.name.replace(/questions-\d+-/, `questions-${currentQIdx}-`);
+                }
+                if (input.id && input.id.startsWith('id_questions-')) {
+                    input.id = input.id.replace(/id_questions-\d+-/, `id_questions-${currentQIdx}-`);
+                }
+            });
+
+            const qOrderInput = card.querySelector(':scope .q-params-row input[name$="-order"]');
+            if (qOrderInput) {
+                qOrderInput.value = visibleQNum - 1;
+            }
+
+            // Actualizar management form y respuestas de la Pregunta
+            const ansBox = card.querySelector('.answers-builder-box');
+            if (ansBox) {
+                const mgmtInputs = ansBox.querySelectorAll('input[type="hidden"][name^="answers_questions-"]');
+                mgmtInputs.forEach(input => {
+                    if (input.name) {
+                        input.name = input.name.replace(/answers_questions-\d+-/, `answers_questions-${currentQIdx}-`);
+                    }
+                    if (input.id) {
+                        input.id = input.id.replace(/id_answers_questions-\d+-/, `id_answers_questions-${currentQIdx}-`);
+                    }
+                });
+
+                const answersList = ansBox.querySelector('.answers-list-stack');
+                if (answersList) {
+                    answersList.id = `answersList-${currentQIdx}`;
+                    reindexAnswers(answersList, currentQIdx);
+                }
+
+                const addAnsBtn = ansBox.querySelector('.btn-add-answer');
+                if (addAnsBtn) {
+                    addAnsBtn.setAttribute('data-q-index', currentQIdx);
+                }
+            }
+
+            qCount++;
+        });
+
+        if (totalQuestionsInput) {
+            totalQuestionsInput.value = qCount;
+        }
+    }
+
+    // 4. Añadir Nueva Alternativa de Respuesta
     document.addEventListener('click', function(e) {
         const btnAddAnswer = e.target.closest('.btn-add-answer');
         if (btnAddAnswer) {
@@ -680,14 +869,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const totalFormsInput = document.getElementById(`id_answers_questions-${qIndex}-TOTAL_FORMS`);
 
             if (answersList && totalFormsInput) {
-                const currentTotal = parseInt(totalFormsInput.value, 10) || 0;
                 const visibleAnswers = answersList.querySelectorAll('.answer-row-tile:not(.deleted)').length;
-
                 if (visibleAnswers >= 6) {
                     showBanner(`Una pregunta puede tener como máximo 6 respuestas.`);
                     return;
                 }
 
+                const currentTotal = parseInt(totalFormsInput.value, 10) || 0;
                 let html = answerTemplate.innerHTML;
                 html = html.replace(/__q_prefix__/g, qIndex);
                 html = html.replace(/__a_prefix__/g, currentTotal);
@@ -696,32 +884,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 tempDiv.innerHTML = html.trim();
                 const newAnswerRow = tempDiv.firstChild;
 
-                // Asignar icono y color según el orden
-                const iconSpan = newAnswerRow.querySelector('.ans-geo-icon');
-                if (iconSpan) {
-                    if (visibleAnswers === 2) { iconSpan.className = 'ans-geo-icon geo-yellow'; iconSpan.textContent = '●'; }
-                    else if (visibleAnswers === 3) { iconSpan.className = 'ans-geo-icon geo-green'; iconSpan.textContent = '■'; }
-                    else { iconSpan.className = 'ans-geo-icon geo-blue'; iconSpan.textContent = '★'; }
-                }
-
-                // Establecer número de orden
-                const orderInput = newAnswerRow.querySelector('input[type="number"]');
-                if (orderInput) {
-                    orderInput.value = visibleAnswers + 1;
-                }
-
                 answersList.appendChild(newAnswerRow);
-                totalFormsInput.value = currentTotal + 1;
+                reindexAnswers(answersList, qIndex);
             }
         }
     });
 
-    // 3. Eliminar Alternativa de Respuesta
+    // 5. Eliminar Alternativa de Respuesta
     document.addEventListener('click', function(e) {
         const btnDeleteAnswer = e.target.closest('.btn-delete-answer');
         if (btnDeleteAnswer) {
             const answerRow = btnDeleteAnswer.closest('.answer-row-tile');
-            if (answerRow) {
+            const questionCard = btnDeleteAnswer.closest('.question-builder-card');
+            if (answerRow && questionCard) {
+                const qIndex = questionCard.getAttribute('data-q-index');
+                const answersList = document.getElementById(`answersList-${qIndex}`);
                 const idInput = answerRow.querySelector('input[name$="-id"]');
                 const deleteInput = answerRow.querySelector('input[name$="-DELETE"]');
 
@@ -733,11 +910,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     answerRow.remove();
                 }
+                reindexAnswers(answersList, qIndex);
             }
         }
     });
 
-    // 4. Añadir Nueva Pregunta Completa
+    // 6. Añadir Nueva Pregunta Completa
     if (btnAddQuestion && totalQuestionsInput) {
         btnAddQuestion.addEventListener('click', function() {
             const currentTotal = parseInt(totalQuestionsInput.value, 10) || 0;
@@ -752,12 +930,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const newQuestionCard = tempDiv.firstChild;
 
             questionsContainer.appendChild(newQuestionCard);
-            totalQuestionsInput.value = currentTotal + 1;
-            updateQuestionNumbers();
+            reindexAllQuestions();
         });
     }
 
-    // 5. Eliminar Pregunta Completa
+    // 7. Eliminar Pregunta Completa
     document.addEventListener('click', function(e) {
         const btnDeleteQuestion = e.target.closest('.btn-delete-question');
         if (btnDeleteQuestion) {
@@ -775,24 +952,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     questionCard.remove();
                 }
-                updateQuestionNumbers();
+                reindexAllQuestions();
             }
         }
     });
-
-    function updateQuestionNumbers() {
-        const cards = questionsContainer.querySelectorAll('.question-builder-card:not(.deleted)');
-        cards.forEach((card, idx) => {
-            const numSpan = card.querySelector('.q-order-num');
-            if (numSpan) {
-                numSpan.textContent = idx + 1;
-            }
-            const orderInput = card.querySelector('input[name$="-order"]');
-            if (orderInput && !orderInput.name.includes('answers_')) {
-                orderInput.value = idx + 1;
-            }
-        });
-    }
 
     function showBanner(message) {
         if (validationBanner) {
@@ -809,11 +972,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // 6. Validación Pre-Flight en Cliente antes del Submit
+    // 8. Validación Pre-Flight en Cliente antes del Submit
     if (quizForm) {
         quizForm.addEventListener('submit', function(e) {
             hideBanner();
             const questionCards = questionsContainer.querySelectorAll('.question-builder-card:not(.deleted)');
+
+            if (questionCards.length === 0) {
+                const isPublishedCb = document.querySelector('input[name="is_published"]');
+                if (isPublishedCb && isPublishedCb.checked) {
+                    e.preventDefault();
+                    showBanner("No puedes publicar un cuestionario sin preguntas. Añade al menos una pregunta o desmarca 'Publicar cuestionario'.");
+                    return;
+                }
+            }
 
             // Resetear bordes de error
             questionCards.forEach(c => c.classList.remove('has-error'));

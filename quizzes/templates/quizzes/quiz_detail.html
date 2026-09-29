@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{{ quiz.title }} — Ducky Quiz Arenas{% endblock %}
+{% block title %}{{ quiz.title }} — QuizArenas{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -280,10 +280,24 @@
     .ans-blue { background: var(--kahoot-blue); }
     .ans-yellow { background: var(--kahoot-yellow); color: #FFFFFF; }
     .ans-green { background: var(--kahoot-green); }
+    .ans-purple { background: #7C3AED; }
+    .ans-orange { background: #EA580C; }
 
-    .ans-symbol {
-        font-size: 1.1rem;
-        line-height: 1;
+    .ans-letter-badge {
+        width: 34px;
+        height: 34px;
+        border-radius: var(--radius-sm);
+        background: rgba(0, 0, 0, 0.25);
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-size: 1.15rem;
+        color: #FFFFFF;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
         flex-shrink: 0;
     }
 
@@ -294,6 +308,56 @@
         border: 2px dashed var(--border-medium);
         border-radius: var(--radius-lg);
         color: var(--text-muted);
+    }
+
+    @media (max-width: 768px) {
+        .quiz-hero-banner {
+            padding: 1.5rem;
+        }
+        .quiz-hero-title {
+            font-size: 1.65rem;
+        }
+        .metrics-row {
+            grid-template-columns: 1fr;
+            gap: 0.85rem;
+        }
+        .teacher-control-bar {
+            flex-direction: column;
+            align-items: stretch;
+            padding: 1.25rem;
+        }
+        .control-buttons-group {
+            flex-direction: column;
+            width: 100%;
+        }
+        .control-buttons-group > * {
+            width: 100%;
+            text-align: center;
+        }
+        .control-buttons-group form {
+            width: 100%;
+        }
+        .control-buttons-group form button {
+            width: 100%;
+        }
+        .kahoot-answers-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .detail-nav-bar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
+        }
+        .btn-return {
+            justify-content: center;
+        }
+        .quiz-hero-meta {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
     }
 </style>
 {% endblock %}
@@ -422,15 +486,17 @@
 
                         <div class="q-text-body">{{ question.text }}</div>
 
-                        {# Renderizado de opciones neutrales con colores estilo Kahoot (Cero Leaks) #}
+                        {# Renderizado de opciones neutrales con letras estilo QuizArenas (Cero Leaks) #}
                         <div class="kahoot-answers-grid">
                             {% for answer in question.answers.all %}
-                                <div class="kahoot-ans-tile {% cycle 'ans-red' 'ans-blue' 'ans-yellow' 'ans-green' %}">
-                                    <span class="ans-symbol">
-                                        {% if forloop.counter0 == 0 %}▲
-                                        {% elif forloop.counter0 == 1 %}◆
-                                        {% elif forloop.counter0 == 2 %}●
-                                        {% else %}■
+                                <div class="kahoot-ans-tile {% cycle 'ans-red' 'ans-blue' 'ans-yellow' 'ans-green' 'ans-purple' 'ans-orange' %}">
+                                    <span class="ans-letter-badge">
+                                        {% if forloop.counter0 == 0 %}A
+                                        {% elif forloop.counter0 == 1 %}B
+                                        {% elif forloop.counter0 == 2 %}C
+                                        {% elif forloop.counter0 == 3 %}D
+                                        {% elif forloop.counter0 == 4 %}E
+                                        {% else %}F
                                         {% endif %}
                                     </span>
                                     <span>{{ answer.text }}</span>

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Eliminar {{ object.title }} — Ducky Quiz Arenas{% endblock %}
+{% block title %}Eliminar {{ object.title }} — QuizArenas{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -54,6 +54,27 @@
         justify-content: center;
         gap: 1rem;
         flex-wrap: wrap;
+    }
+
+    @media (max-width: 600px) {
+        .delete-wrapper {
+            margin: 1.5rem auto;
+            padding: 0 0.5rem;
+        }
+        .delete-modern-card {
+            padding: 2rem 1.25rem;
+        }
+        .delete-headline {
+            font-size: 1.45rem;
+        }
+        .delete-buttons-row {
+            flex-direction: column;
+            width: 100%;
+        }
+        .delete-buttons-row > * {
+            width: 100%;
+            text-align: center;
+        }
     }
 </style>
 {% endblock %}

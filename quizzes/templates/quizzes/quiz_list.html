@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Explorar Quizzes — Ducky Quiz Arenas{% endblock %}
+{% block title %}Explorar Quizzes — QuizArenas{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -68,9 +68,12 @@
 
     .hero-image-wrapper {
         height: 100%;
-        min-height: 320px;
+        min-height: 340px;
         position: relative;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
     }
 
     .hero-img {
@@ -78,6 +81,78 @@
         height: 100%;
         object-fit: cover;
         display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    /* Hero Interactive Action Pills Overlay */
+    .hero-interactive-dock {
+        position: relative;
+        z-index: 5;
+        margin: 1rem;
+        display: flex;
+        gap: 0.65rem;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, rgba(62, 19, 124, 0.72) 0%, rgba(35, 10, 74, 0.82) 100%);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        padding: 0.55rem 0.85rem;
+        border-radius: var(--radius-full);
+        border: 1px solid rgba(192, 132, 252, 0.35);
+        box-shadow: 0 8px 24px rgba(35, 10, 74, 0.45);
+    }
+
+    .hero-dock-pill {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 0.85rem;
+        border-radius: var(--radius-full);
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        text-decoration: none;
+        color: #FFFFFF;
+        white-space: nowrap;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid transparent;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .hero-dock-pill:hover {
+        transform: translateY(-2px);
+    }
+
+    .pill-purple {
+        background: linear-gradient(135deg, var(--kahoot-purple) 0%, #5B21B6 100%);
+        border-color: rgba(167, 139, 250, 0.4);
+    }
+    .pill-purple:hover {
+        box-shadow: 0 4px 12px rgba(70, 23, 143, 0.6);
+        background: #5B21B6;
+    }
+
+    .pill-yellow {
+        background: linear-gradient(135deg, var(--kahoot-yellow) 0%, #D97706 100%);
+        border-color: rgba(253, 230, 138, 0.4);
+    }
+    .pill-yellow:hover {
+        box-shadow: 0 4px 12px rgba(255, 166, 2, 0.6);
+        background: #D97706;
+    }
+
+    .pill-green {
+        background: linear-gradient(135deg, var(--kahoot-green) 0%, #15803D 100%);
+        border-color: rgba(134, 239, 172, 0.4);
+    }
+    .pill-green:hover {
+        box-shadow: 0 4px 12px rgba(38, 137, 12, 0.6);
+        background: #15803D;
     }
 
     /* Header Bar & Search */
@@ -101,7 +176,7 @@
 
     .search-filter-box {
         position: relative;
-        min-width: 280px;
+        min-width: 320px;
     }
 
     .search-filter-box input {
@@ -109,7 +184,7 @@
         background: var(--bg-surface);
         border: 1.5px solid var(--border-medium);
         color: var(--text-heading);
-        padding: 0.7rem 1.2rem 0.7rem 2.5rem;
+        padding: 0.7rem 1.2rem 0.7rem 2.85rem;
         border-radius: var(--radius-full);
         font-family: var(--font-body);
         font-size: 0.95rem;
@@ -124,17 +199,19 @@
 
     .search-filter-box input::placeholder {
         color: var(--text-muted);
+        opacity: 0.75;
     }
 
     .search-icon-symbol {
         position: absolute;
-        left: 0.95rem;
+        left: 1rem;
         top: 50%;
         transform: translateY(-50%);
-        font-size: 0.85rem;
-        font-weight: 700;
         color: var(--text-muted);
         pointer-events: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     /* Cards Grid */
@@ -356,8 +433,52 @@
         .hero-banner-card {
             grid-template-columns: 1fr;
         }
+        .hero-text-content {
+            padding: 2.25rem 1.5rem;
+        }
+        .hero-headline {
+            font-size: 2rem;
+        }
         .hero-image-wrapper {
-            min-height: 200px;
+            min-height: 220px;
+            max-height: 280px;
+        }
+        .catalog-header-bar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 1rem;
+        }
+        .search-filter-box {
+            min-width: 100%;
+            width: 100%;
+        }
+        .quiz-grid {
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .hero-headline {
+            font-size: 1.65rem;
+        }
+        .hero-subtext {
+            font-size: 0.95rem;
+        }
+        .hero-cta-group {
+            flex-direction: column;
+            width: 100%;
+        }
+        .hero-cta-group .btn-3d {
+            width: 100%;
+            text-align: center;
+        }
+        .card-actions-row {
+            flex-wrap: wrap;
+        }
+        .btn-card-explore {
+            width: 100%;
+            margin-bottom: 0.35rem;
         }
     }
 </style>
@@ -367,7 +488,7 @@
 <!-- Hero Section -->
 <section class="hero-banner-card">
     <div class="hero-text-content">
-        <span class="hero-badge-tag">Ducky Quiz Arenas</span>
+        <span class="hero-badge-tag">QuizArenas</span>
         <h1 class="hero-headline">
             Desafía tu mente y <span class="hero-headline-highlight">gana la arena</span>
         </h1>
@@ -384,7 +505,18 @@
         </div>
     </div>
     <div class="hero-image-wrapper">
-        <img src="{% static 'assets/hero_banner.jpg' %}" alt="Ducky Quiz Arena Space Tournament" class="hero-img">
+        <img src="{% static 'assets/hero_banner.jpg' %}" alt="QuizArenas Space Tournament" class="hero-img">
+        <div class="hero-interactive-dock">
+            <a href="#catalogo-quizzes" class="hero-dock-pill pill-purple" title="Explora y participa en las partidas de cuestionarios">
+                ¡Juega en Vivo!
+            </a>
+            <a href="#catalogo-quizzes" class="hero-dock-pill pill-yellow" title="Compite y gana puntos Ducky Coins">
+                ¡Gana Puntos!
+            </a>
+            <a href="{% url 'quizzes:quiz_create' %}" class="hero-dock-pill pill-green" title="Crea un nuevo cuestionario interactivo">
+                ¡Diversión Total!
+            </a>
+        </div>
     </div>
 </section>
 
@@ -394,8 +526,13 @@
         Cuestionarios Disponibles
     </h2>
     <div class="search-filter-box">
-        <span class="search-icon-symbol">BUSCAR:</span>
-        <input type="text" id="quizSearchInput" placeholder="Buscar por título...">
+        <span class="search-icon-symbol" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+        </span>
+        <input type="text" id="quizSearchInput" placeholder="Buscar por título..." autocomplete="off">
     </div>
 </div>
 

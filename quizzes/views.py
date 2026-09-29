@@ -28,6 +28,12 @@ class TeacherRequiredMixin(UserPassesTestMixin):
 
 class QuizOwnerRequiredMixin(TeacherRequiredMixin):
     """Garantiza que el usuario sea profesor y el legítimo creador del cuestionario."""
+    def get_object(self, queryset=None):
+        if hasattr(super(), 'get_object'):
+            return super().get_object(queryset)
+        pk = self.kwargs.get('pk')
+        return get_object_or_404(Quiz, pk=pk)
+
     def test_func(self):
         if not super().test_func():
             return False
