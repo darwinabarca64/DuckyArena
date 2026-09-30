@@ -7,9 +7,17 @@
 ## 👥 ¿EN QUÉ EQUIPO ESTÁS?
 
 El proyecto está dividido en dos partes. Debes saber a cuál perteneces:
-- **PARTE 1 (Cuestionarios - quizzes):** Si tu tarea es crear, editar o gestionar preguntas y respuestas. Tu rama base es: `parte-1-quizzes`.
-- **PARTE 2 (Motor de Juego - quiz_games):** Si tu tarea es la sala en vivo, el PIN, el lobby o las puntuaciones. Tu rama base es: `parte-2-quizgames`.
-- **MENTOR / LEAD:** Supervisan y revisan en la rama principal `main`.
+- **PARTE 1 (quizzes - Rama: `parte-1-quizzes`):**
+  * Sasha (@sashasafont)
+  * Nacho (@nachopython)
+  * Robert Betancourt (@Trevor783)
+- **PARTE 2 (quiz_games - Rama: `parte-2-quizgames`):**
+  * @dalcolea
+  * Thais (@thaishps3)
+- **MENTOR / AUDITORÍA:**
+  * Oscar Burgos (@mihifidem)
+- **LEAD / APROBADOR:**
+  * Darwin (@darwinabarca64)
 
 ---
 

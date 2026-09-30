@@ -1,0 +1,21 @@
+# -------------------------------------------------------------
+# MATRIZ DE GOBERNANZA Y REVISIÓN OBLIGATORIA — quizArenas
+# -------------------------------------------------------------
+
+# Regla global: darwinabarca64 es propietario de todo el repositorio
+* @darwinabarca64
+
+# Mentor: supervisor general de la rama principal
+/ @darwinabarca64 @mihifidem
+
+# PARTE 1 (quizzes): Desarrolladores asignados y Lead
+quizzes/ @darwinabarca64 @sashasafont @nachopython @Trevor783
+
+# PARTE 2 (quiz_games): Desarrolladores asignados y Lead
+quiz_games/ @darwinabarca64 @dalcolea @thaishps3
+
+# Infraestructura base, entorno y seguridad (exclusivo Lead)
+quizz_project/ @darwinabarca64
+manage.py @darwinabarca64
+PROJECT_RULES.md @darwinabarca64
+.github/ @darwinabarca64
