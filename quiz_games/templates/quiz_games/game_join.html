@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Unirse a una Arena — QuizArenas{% endblock %}
+
+{% block extra_css %}
+<style>
+    .join-container {
+        max-width: 480px;
+        margin: 3rem auto 2rem;
+        padding: 0 1rem;
+    }
+
+    .join-card-dark {
+        background: #1E293B;
+        border: 2px solid var(--kahoot-yellow);
+        border-radius: var(--radius-lg);
+        padding: 2.5rem 2rem;
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+        color: #FFFFFF;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .join-card-dark::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, var(--kahoot-red), var(--kahoot-blue), var(--kahoot-yellow), var(--kahoot-green));
+    }
+
+    .join-icon-badge {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: rgba(255, 166, 2, 0.15);
+        border: 2px solid var(--kahoot-yellow);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .join-headline {
+        font-family: var(--font-display);
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: #FFFFFF;
+        margin-bottom: 0.5rem;
+    }
+
+    .join-subtext {
+        color: #94A3B8;
+        font-size: 0.95rem;
+        margin-bottom: 2rem;
+    }
+
+    .form-group-pin {
+        margin-bottom: 1.75rem;
+    }
+
+    .pin-input-field {
+        width: 100%;
+        font-family: var(--font-display);
+        font-size: 2.2rem;
+        font-weight: 900;
+        text-align: center;
+        letter-spacing: 0.35em;
+        color: #0F172A;
+        background: #FFFFFF;
+        border: 3px solid var(--border-medium);
+        border-radius: var(--radius-md);
+        padding: 0.85rem 1rem;
+        outline: none;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease;
+    }
+
+    .pin-input-field:focus {
+        border-color: var(--kahoot-yellow);
+        box-shadow: 0 0 0 4px rgba(255, 166, 2, 0.25);
+    }
+
+    .pin-input-field::placeholder {
+        color: #CBD5E1;
+        letter-spacing: 0.35em;
+    }
+
+    .field-errors {
+        margin-top: 0.75rem;
+        color: #F87171;
+        font-size: 0.88rem;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .btn-submit-join {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1.15rem;
+        font-weight: 900;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+    }
+
+    .join-instructions-card {
+        margin-top: 1.75rem;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 1.25rem;
+        text-align: center;
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .join-instructions-card strong {
+        color: var(--text-heading);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="join-container">
+    <div class="join-card-dark">
+        <div class="join-icon-badge">
+            🎮
+        </div>
+
+        <h1 class="join-headline">Unirse a una Arena</h1>
+        <p class="join-subtext">Ingresa el PIN de 6 dígitos proyectado por tu profesor</p>
+
+        <form method="POST" action="{% url 'quiz_games:game_join' %}" novalidate>
+            {% csrf_token %}
+
+            <div class="form-group-pin">
+                <input
+                    type="text"
+                    name="code"
+                    id="id_code"
+                    class="pin-input-field"
+                    placeholder="000000"
+                    maxlength="6"
+                    minlength="6"
+                    pattern="[0-9]{6}"
+                    inputmode="numeric"
+                    autocomplete="off"
+                    autofocus
+                    required
+                    value="{{ form.code.value|default:'' }}"
+                >
+
+                {% if form.code.errors %}
+                    <div class="field-errors">
+                        {% for error in form.code.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if form.non_field_errors %}
+                    <div class="field-errors">
+                        {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn-3d btn-3d-green btn-submit-join">
+                🚀 Entrar a la Partida
+            </button>
+        </form>
+    </div>
+
+    <div class="join-instructions-card">
+        <p>¿No tienes un PIN? <strong>Pídele a tu profesor</strong> que inicie una sala desde la galería de cuestionarios.</p>
+    </div>
+</div>
+{% endblock %}

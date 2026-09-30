@@ -1,0 +1,46 @@
+from django.urls import path
+from .views import (
+    game_create,
+    game_host_lobby,
+    host_kick_player,
+    game_host_play,
+    host_start_game,
+    host_next_question,
+    host_finish_game,
+    game_join,
+    game_player_resume,
+    game_player_lobby,
+    game_player_play,
+    submit_player_answer,
+    game_leaderboard,
+    game_player_results,
+    game_lobby_status,
+    game_question_status,
+    game_question_breakdown,
+    export_game_results_csv,
+)
+
+app_name = 'quiz_games'
+
+urlpatterns = [
+    path('create/<int:quiz_pk>/', game_create, name='game_create'),
+    path('host/<str:code>/', game_host_lobby, name='game_host_lobby'),
+    path('host/<str:code>/kick/<int:player_id>/', host_kick_player, name='host_kick_player'),
+    path('host/<str:code>/start/', host_start_game, name='host_start_game'),
+    path('host-play/<str:code>/', game_host_play, name='game_host_play'),
+    path('next-question/<str:code>/', host_next_question, name='host_next_question'),
+    path('finish/<str:code>/', host_finish_game, name='host_finish_game'),
+    path('leaderboard/<str:code>/', game_leaderboard, name='game_leaderboard'),
+    path('export-csv/<str:code>/', export_game_results_csv, name='export_game_results_csv'),
+    path('join/', game_join, name='game_join'),
+    path('resume/', game_player_resume, name='game_player_resume'),
+    path('lobby/<str:code>/', game_player_lobby, name='game_player_lobby'),
+    path('play/<str:code>/', game_player_play, name='game_player_play'),
+    path('play-question/<str:code>/', game_player_play, name='game_player_play_alias'),
+    path('submit-answer/<str:code>/', submit_player_answer, name='submit_player_answer'),
+    path('results/<str:code>/', game_player_results, name='game_player_results'),
+    path('api/status/<str:code>/', game_lobby_status, name='game_lobby_status'),
+    path('api/question-status/<str:code>/', game_question_status, name='game_question_status'),
+    path('api/breakdown/<str:code>/', game_question_breakdown, name='game_question_breakdown'),
+    path('status/<str:code>/', game_lobby_status, name='game_status_check'),
+]

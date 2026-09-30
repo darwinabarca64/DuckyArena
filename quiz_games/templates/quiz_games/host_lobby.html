@@ -1,0 +1,443 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Lobby de Partida: PIN {{ game.code }} — QuizArenas{% endblock %}
+
+{% block extra_css %}
+<style>
+    .lobby-container {
+        max-width: 1080px;
+        margin: 0 auto;
+    }
+
+    /* Top Navigation */
+    .lobby-nav-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.75rem;
+    }
+
+    .btn-return {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-medium);
+        color: var(--text-heading);
+        text-decoration: none;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 0.88rem;
+        padding: 0.55rem 1.15rem;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        transition: all 0.2s ease;
+    }
+
+    .btn-return:hover {
+        background: var(--bg-surface-secondary);
+        border-color: var(--border-subtle);
+    }
+
+    /* Hero PIN Banner */
+    .pin-hero-card {
+        background: linear-gradient(135deg, var(--kahoot-purple) 0%, #2b0b5e 100%);
+        border-radius: var(--radius-lg);
+        padding: 2.5rem;
+        color: #FFFFFF;
+        text-align: center;
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .pin-hero-card::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, var(--kahoot-red), var(--kahoot-blue), var(--kahoot-yellow), var(--kahoot-green));
+    }
+
+    .pin-hero-subtitle {
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 1.1rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--kahoot-yellow);
+        margin-bottom: 0.5rem;
+    }
+
+    .pin-display-box {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(8px);
+        border: 2px dashed rgba(255, 255, 255, 0.4);
+        border-radius: var(--radius-lg);
+        padding: 1rem 2.5rem;
+        margin: 1rem 0;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    }
+
+    .pin-digits {
+        font-family: var(--font-display);
+        font-size: 3.8rem;
+        font-weight: 900;
+        letter-spacing: 0.2em;
+        color: #FFFFFF;
+        text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .pin-actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 0.75rem;
+    }
+
+    .btn-copy-pin {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        color: #FFFFFF;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 0.45rem 1rem;
+        border-radius: var(--radius-full);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-copy-pin:hover {
+        background: rgba(255, 255, 255, 0.35);
+    }
+
+    .quiz-context-info {
+        margin-top: 1.25rem;
+        font-size: 1.05rem;
+        color: #E2E8F0;
+    }
+
+    .quiz-context-info strong {
+        color: #FFFFFF;
+    }
+
+    /* Grid Info & Stats */
+    .lobby-metrics-bar {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .lobby-stat-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 1.25rem 1.5rem;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .lobby-stat-card.edge-purple { border-left: 5px solid var(--kahoot-purple); }
+    .lobby-stat-card.edge-blue { border-left: 5px solid var(--kahoot-blue); }
+    .lobby-stat-card.edge-green { border-left: 5px solid var(--kahoot-green); }
+
+    .lobby-stat-label {
+        font-family: var(--font-display);
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--text-muted);
+        margin-bottom: 0.35rem;
+    }
+
+    .lobby-stat-value {
+        font-family: var(--font-display);
+        font-size: 1.6rem;
+        font-weight: 900;
+        color: var(--text-heading);
+    }
+
+    /* Players Section */
+    .players-arena-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 2rem;
+    }
+
+    .players-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .players-title {
+        font-family: var(--font-display);
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: var(--text-heading);
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+    .players-count-badge {
+        background: var(--kahoot-purple);
+        color: #FFFFFF;
+        font-size: 0.85rem;
+        font-weight: 800;
+        padding: 0.25rem 0.75rem;
+        border-radius: var(--radius-full);
+    }
+
+    .waiting-pulse {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        font-weight: 600;
+    }
+
+    .pulse-dot {
+        width: 10px;
+        height: 10px;
+        background-color: var(--kahoot-green);
+        border-radius: 50%;
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(38, 137, 12, 0.7); }
+        70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(38, 137, 12, 0); }
+        100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(38, 137, 12, 0); }
+    }
+
+    /* Players Grid */
+    .players-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1rem;
+        min-height: 140px;
+    }
+
+    .player-chip {
+        background: var(--bg-surface-secondary);
+        border: 1px solid var(--border-medium);
+        border-radius: var(--radius-md);
+        padding: 0.85rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        box-shadow: var(--shadow-sm);
+        transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .player-chip:hover {
+        transform: translateY(-2px);
+        border-color: var(--kahoot-purple);
+    }
+
+    .player-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--kahoot-blue), var(--kahoot-purple));
+        color: #FFFFFF;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+
+    .player-name {
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 0.92rem;
+        color: var(--text-heading);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .empty-players-notice {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 3rem 1rem;
+        border: 2px dashed var(--border-medium);
+        border-radius: var(--radius-md);
+        color: var(--text-muted);
+    }
+
+    /* Host Action Toolbar */
+    .host-action-bar {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    @media (max-width: 768px) {
+        .pin-digits {
+            font-size: 2.8rem;
+            letter-spacing: 0.15em;
+        }
+        .pin-display-box {
+            padding: 0.75rem 1.5rem;
+        }
+        .host-action-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .host-action-bar .btn-3d {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="lobby-container">
+    <!-- Top Navigation Bar -->
+    <div class="lobby-nav-bar">
+        <a href="{% url 'quizzes:quiz_detail' quiz.pk %}" class="btn-return">
+            &larr; Volver al Cuestionario
+        </a>
+        <span class="badge-status badge-published" style="padding: 0.4rem 0.9rem;">
+            Estado: {{ game.get_status_display }}
+        </span>
+    </div>
+
+    <!-- Hero PIN Presentation Card -->
+    <div class="pin-hero-card">
+        <div class="pin-hero-subtitle">Ingresa en tu dispositivo con el PIN</div>
+        <div class="pin-display-box">
+            <span class="pin-digits" id="game-pin">{{ game.code }}</span>
+        </div>
+        <div class="pin-actions">
+            <button type="button" class="btn-copy-pin" onclick="copyGamePin()">
+                📋 Copiar Código PIN
+            </button>
+        </div>
+        <div class="quiz-context-info">
+            Cuestionario: <strong>{{ quiz.title }}</strong> &bull; Anfitrión: <strong>{{ game.host.username }}</strong>
+        </div>
+    </div>
+
+    <!-- Lobby Metrics Bar -->
+    <div class="lobby-metrics-bar">
+        <div class="lobby-stat-card edge-purple">
+            <div class="lobby-stat-label">Preguntas Totales</div>
+            <div class="lobby-stat-value">{{ quiz.questions.count }}</div>
+        </div>
+
+        <div class="lobby-stat-card edge-blue">
+            <div class="lobby-stat-label">Jugadores Conectados</div>
+            <div class="lobby-stat-value" id="players-count-value">{{ players_count }}</div>
+        </div>
+
+        <div class="lobby-stat-card edge-green">
+            <div class="lobby-stat-label">Tiempo Estimado</div>
+            <div class="lobby-stat-value">{{ quiz.total_time|default:0 }}s</div>
+        </div>
+    </div>
+
+    <!-- Connected Players Arena -->
+    <div class="players-arena-card">
+        <div class="players-header">
+            <div class="players-title">
+                <span>Jugadores en la Sala</span>
+                <span class="players-count-badge" id="players-count-badge">{{ players_count }}</span>
+            </div>
+            <div class="waiting-pulse">
+                <span class="pulse-dot"></span>
+                <span>Esperando jugadores...</span>
+            </div>
+        </div>
+
+        <div class="players-grid" id="players-grid">
+            {% if players %}
+                {% for gp in players %}
+                    <div class="player-chip">
+                        <div class="player-avatar">
+                            {{ gp.player.username|slice:":1"|upper }}
+                        </div>
+                        <div class="player-name" title="{{ gp.player.username }}">
+                            {{ gp.player.username }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-players-notice" id="empty-players-notice">
+                    <p style="font-size: 1.1rem; font-weight: 700; color: var(--text-heading); margin-bottom: 0.5rem;">
+                        Aún no se ha unido ningún jugador
+                    </p>
+                    <p style="font-size: 0.9rem;">
+                        Comparte el código PIN <strong>{{ game.code }}</strong> con tus estudiantes para comenzar.
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Host Management Actions -->
+    <div class="host-action-bar">
+        <div>
+            <span style="font-family: var(--font-display); font-weight: 800; font-size: 1rem; color: var(--text-heading);">
+                Control del Anfitrión
+            </span>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">
+                Cuando todos los jugadores estén listos, inicia la partida.
+            </p>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <a href="{% url 'quizzes:quiz_detail' quiz.pk %}" class="btn-3d btn-3d-red" style="padding: 0.6rem 1.25rem;">
+                Cancelar Sala
+            </a>
+            <button type="button" class="btn-3d btn-3d-green" style="padding: 0.6rem 1.5rem;" disabled title="Próximamente disponible con WebSocket / Motor de Partidas">
+                🚀 Iniciar Partida
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyGamePin() {
+        const pinText = document.getElementById('game-pin').innerText;
+        navigator.clipboard.writeText(pinText).then(() => {
+            alert('Código PIN ' + pinText + ' copiado al portapapeles.');
+        }).catch(() => {
+            prompt('Copia el código PIN:', pinText);
+        });
+    }
+</script>
+{% endblock %}

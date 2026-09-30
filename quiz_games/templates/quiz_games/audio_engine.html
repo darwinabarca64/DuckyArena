@@ -1,0 +1,95 @@
+<div id="sound-control-container" class="position-fixed bottom-0 end-0 m-3 z-3" style="position: fixed; bottom: 1.25rem; right: 1.25rem; z-index: 9999;">
+  <button id="btn-toggle-sound" class="btn btn-sm btn-dark border-secondary rounded-pill shadow px-3 py-2 text-white" style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 50px; padding: 0.45rem 0.95rem; color: #FFFFFF; font-family: var(--font-display, sans-serif); font-size: 0.85rem; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); display: inline-flex; align-items: center; gap: 0.4rem; backdrop-filter: blur(6px); transition: all 0.2s ease;" title="Activar/Silenciar sonido">
+    <span id="sound-icon">🔊</span> <small id="sound-text">Audio ON</small>
+  </button>
+</div>
+
+<script>
+class DuckyAudioEngine {
+  constructor() {
+    this.ctx = null;
+    this.isMuted = localStorage.getItem('ducky_audio_muted') === 'true';
+    this.initUI();
+  }
+
+  initContext() {
+    if (!this.ctx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (AudioContext) {
+        this.ctx = new AudioContext();
+      }
+    }
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+  }
+
+  initUI() {
+    const btn = document.getElementById('btn-toggle-sound');
+    const icon = document.getElementById('sound-icon');
+    const text = document.getElementById('sound-text');
+    if (!btn) return;
+
+    const updateUI = () => {
+      if (icon) icon.textContent = this.isMuted ? '🔇' : '🔊';
+      if (text) text.textContent = this.isMuted ? 'Audio OFF' : 'Audio ON';
+    };
+    updateUI();
+
+    btn.addEventListener('click', () => {
+      this.initContext();
+      this.isMuted = !this.isMuted;
+      localStorage.setItem('ducky_audio_muted', this.isMuted);
+      updateUI();
+    });
+  }
+
+  playTone(freq, type, duration, delay = 0) {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx) return;
+    const startTime = this.ctx.currentTime + delay;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, startTime);
+
+    gain.gain.setValueAtTime(0.15, startTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    osc.start(startTime);
+    osc.stop(startTime + duration);
+  }
+
+  playCorrect() {
+    // Acorde ascendente alegre
+    this.playTone(523.25, 'triangle', 0.15, 0.0);  // C5
+    this.playTone(659.25, 'triangle', 0.15, 0.1);  // E5
+    this.playTone(783.99, 'triangle', 0.30, 0.2);  // G5
+  }
+
+  playIncorrect() {
+    // Tono descendente grave
+    this.playTone(330, 'sawtooth', 0.2, 0.0);
+    this.playTone(240, 'sawtooth', 0.35, 0.15);
+  }
+
+  playCountdownTick() {
+    // Tic sutil de reloj
+    this.playTone(880, 'sine', 0.05, 0.0);
+  }
+
+  playFanfare() {
+    // Fanfarria breve de victoria
+    const notes = [523.25, 523.25, 523.25, 659.25, 783.99];
+    const delays = [0.0, 0.12, 0.24, 0.36, 0.6];
+    notes.forEach((f, i) => this.playTone(f, 'square', 0.25, delays[i]));
+  }
+}
+
+window.duckyAudio = new DuckyAudioEngine();
+</script>

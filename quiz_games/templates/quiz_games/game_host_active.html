@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Partida en Vivo: {{ quiz.title }} — QuizArenas{% endblock %}
+
+{% block extra_css %}
+<style>
+    .active-game-wrapper {
+        max-width: 960px;
+        margin: 2rem auto;
+        text-align: center;
+    }
+    .active-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: 3rem 2rem;
+        box-shadow: var(--shadow-md);
+    }
+    .badge-live {
+        background: var(--kahoot-red);
+        color: #FFFFFF;
+        font-weight: 800;
+        font-size: 0.85rem;
+        padding: 0.35rem 1rem;
+        border-radius: var(--radius-full);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        display: inline-block;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="active-game-wrapper">
+    <div class="active-card">
+        <span class="badge-live">🔴 Partida en Curso</span>
+        <h1 style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 900; color: var(--text-heading); margin-bottom: 1rem;">
+            {{ quiz.title }}
+        </h1>
+        <p style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 2rem;">
+            Pregunta actual: <strong>{{ game.current_question }}</strong> &bull; Código PIN: <strong>{{ game.code }}</strong>
+        </p>
+        <div>
+            <a href="{% url 'quizzes:quiz_detail' quiz.pk %}" class="btn-3d btn-3d-neutral">
+                Volver al Cuestionario
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -439,9 +439,12 @@
 
             <div class="control-buttons-group">
                 {% if quiz.is_published %}
-                    <a href="#" class="btn-3d btn-3d-green" title="Iniciar arena de juego multijugador">
-                        Iniciar Sala
-                    </a>
+                    <form action="{% url 'quiz_games:game_create' quiz.pk %}" method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-3d btn-3d-green" title="Iniciar arena de juego multijugador">
+                            Iniciar Sala de Juego
+                        </button>
+                    </form>
                 {% endif %}
 
                 <form action="{% url 'quizzes:quiz_toggle_publish' quiz.pk %}" method="POST" style="display:inline;">

@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Tus Resultados: {{ quiz.title }} — QuizArenas{% endblock %}
+
+{% block extra_css %}
+<style>
+    .player-results-wrapper {
+        max-width: 680px;
+        margin: 2rem auto 3.5rem;
+        padding: 0 1rem;
+    }
+
+    /* Hero Congratulation Card */
+    .hero-congratulation-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: 2.5rem 2rem;
+        text-align: center;
+        box-shadow: var(--shadow-md);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .hero-congratulation-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, var(--kahoot-red), var(--kahoot-blue), var(--kahoot-yellow), var(--kahoot-green));
+    }
+
+    .medal-spotlight-icon {
+        font-size: 3.5rem;
+        margin-bottom: 0.5rem;
+        animation: medalBounce 1s ease-in-out infinite alternate;
+        display: inline-block;
+    }
+
+    @keyframes medalBounce {
+        from { transform: translateY(0); }
+        to { transform: translateY(-8px); }
+    }
+
+    .podium-banner-badge {
+        display: inline-block;
+        background: #FEF3C7;
+        color: #92400E;
+        border: 2px solid #FDE68A;
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-size: 1.15rem;
+        padding: 0.45rem 1.4rem;
+        border-radius: var(--radius-full);
+        margin-bottom: 1.25rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .position-standout-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--bg-surface-secondary);
+        border: 2px solid var(--border-medium);
+        color: var(--text-heading);
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-size: 1.2rem;
+        padding: 0.45rem 1.4rem;
+        border-radius: var(--radius-full);
+        margin-bottom: 1.25rem;
+    }
+
+    .results-player-title {
+        font-family: var(--font-display);
+        font-size: 2.1rem;
+        font-weight: 900;
+        color: var(--text-heading);
+        margin-bottom: 0.35rem;
+    }
+
+    .results-quiz-subtitle {
+        color: var(--text-muted);
+        font-size: 1rem;
+        margin-bottom: 1.75rem;
+    }
+
+    /* Accuracy Bar Component */
+    .accuracy-card-section {
+        background: var(--bg-surface-secondary);
+        border: 1px solid var(--border-medium);
+        border-radius: var(--radius-md);
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1.75rem;
+        text-align: left;
+    }
+
+    .accuracy-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.6rem;
+    }
+
+    .accuracy-label-text {
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 0.9rem;
+        color: var(--text-heading);
+    }
+
+    .accuracy-percent-val {
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-size: 1.15rem;
+        color: var(--kahoot-green);
+    }
+
+    .accuracy-track-bar {
+        width: 100%;
+        height: 12px;
+        background: #E2E8F0;
+        border-radius: var(--radius-full);
+        overflow: hidden;
+    }
+
+    .accuracy-fill-progress {
+        height: 100%;
+        background: linear-gradient(90deg, var(--kahoot-blue), var(--kahoot-green));
+        border-radius: var(--radius-full);
+        transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Grid of 4 Player Stats */
+    .player-stats-grid-4 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .player-stat-tile {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 1.25rem;
+        text-align: center;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .stat-tile-label {
+        font-family: var(--font-display);
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+        margin-bottom: 0.35rem;
+    }
+
+    .stat-tile-number {
+        font-family: var(--font-display);
+        font-size: 1.6rem;
+        font-weight: 900;
+        color: var(--text-heading);
+    }
+
+    .color-score { color: var(--kahoot-purple); }
+    .color-correct { color: var(--kahoot-green); }
+    .color-streak { color: #EA580C; }
+    .color-rank { color: var(--kahoot-blue); }
+
+    /* Actions */
+    .results-cta-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 480px) {
+        .player-stats-grid-4 {
+            grid-template-columns: 1fr;
+        }
+        .results-player-title {
+            font-size: 1.7rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="player-results-wrapper">
+    <!-- Hero Congratulation Card -->
+    <div class="hero-congratulation-card">
+        {% if medal %}
+            <div class="medal-spotlight-icon">{{ medal.icono }}</div>
+            <div class="podium-banner-badge">
+                ¡Extraordinario! Conseguiste podio (Medalla de {{ medal.tipo }})
+            </div>
+        {% else %}
+            <div class="position-standout-badge">
+                🎖️ Puesto #{{ position|default:"-" }} de {{ total_players }}
+            </div>
+        {% endif %}
+
+        <h1 class="results-player-title">¡Gran Partida, {{ user.username }}!</h1>
+        <p class="results-quiz-subtitle">{{ quiz.title }} &bull; Código PIN: {{ game.code }}</p>
+
+        <!-- Accuracy Progress Bar -->
+        <div class="accuracy-card-section">
+            <div class="accuracy-header-row">
+                <span class="accuracy-label-text">Precisión de Respuestas</span>
+                <span class="accuracy-percent-val">{{ accuracy }}%</span>
+            </div>
+            <div class="accuracy-track-bar">
+                <div class="accuracy-fill-progress" style="width: {{ accuracy }}%;"></div>
+            </div>
+        </div>
+
+        <!-- 4 Key Individual Stats -->
+        <div class="player-stats-grid-4">
+            <div class="player-stat-tile">
+                <div class="stat-tile-label">Puntos Ganados</div>
+                <div class="stat-tile-number color-score">{{ player_entry.score }} pts</div>
+            </div>
+
+            <div class="player-stat-tile">
+                <div class="stat-tile-label">Aciertos</div>
+                <div class="stat-tile-number color-correct">{{ player_entry.correct_answers }} / {{ total_questions }}</div>
+            </div>
+
+            <div class="player-stat-tile">
+                <div class="stat-tile-label">Racha Final</div>
+                <div class="stat-tile-number color-streak">🔥 {{ player_entry.current_streak }}</div>
+            </div>
+
+            <div class="player-stat-tile">
+                <div class="stat-tile-label">Posición Global</div>
+                <div class="stat-tile-number color-rank">#{{ position|default:"-" }}</div>
+            </div>
+        </div>
+
+        <!-- Call to Action Buttons -->
+        <div class="results-cta-actions">
+            <a href="{% url 'quizzes:quiz_list' %}" class="btn-3d btn-3d-green">
+                📚 Explorar Más Cuestionarios
+            </a>
+            <a href="{% url 'quiz_games:game_join' %}" class="btn-3d btn-3d-blue">
+                🎮 Unirse a Otra Sala
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

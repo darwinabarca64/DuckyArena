@@ -7,4 +7,5 @@ urlpatterns = [
     path('', lambda request: redirect('quizzes:quiz_list'), name='root_redirect'),
     path('admin/', admin.site.urls),
     path('quizzes/', include('quizzes.urls')),
+    path('games/', include('quiz_games.urls')),
 ]

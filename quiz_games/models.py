@@ -35,6 +35,7 @@ class Game(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Creada en")
     started_at = models.DateTimeField(null=True, blank=True, verbose_name="Iniciada en")
+    question_started_at = models.DateTimeField(null=True, blank=True, verbose_name="Inicio oficial de pregunta")
     finished_at = models.DateTimeField(null=True, blank=True, verbose_name="Finalizada en")
 
     class Meta:

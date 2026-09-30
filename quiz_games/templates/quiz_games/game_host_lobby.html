@@ -1,0 +1,665 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Lobby del Anfitrión: {{ quiz.title }} — QuizArenas{% endblock %}
+
+{% block extra_css %}
+<style>
+    .host-lobby-wrapper {
+        max-width: 1080px;
+        margin: 0 auto;
+    }
+
+    /* Top Nav */
+    .lobby-top-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-return-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-medium);
+        color: var(--text-heading);
+        text-decoration: none;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 0.88rem;
+        padding: 0.55rem 1.15rem;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        transition: all 0.2s ease;
+    }
+
+    .btn-return-link:hover {
+        background: var(--bg-surface-secondary);
+        border-color: var(--border-subtle);
+    }
+
+    /* Dark Hero Banner */
+    .host-hero-banner {
+        background: #0F172A;
+        border: 2px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: 2.5rem 2rem;
+        color: #FFFFFF;
+        text-align: center;
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .host-hero-banner::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, var(--kahoot-red), var(--kahoot-blue), var(--kahoot-yellow), var(--kahoot-green));
+    }
+
+    .hero-quiz-badge {
+        display: inline-block;
+        background: rgba(245, 158, 11, 0.15);
+        color: #F59E0B;
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 0.85rem;
+        padding: 0.35rem 1rem;
+        border-radius: var(--radius-full);
+        margin-bottom: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .hero-quiz-title {
+        font-family: var(--font-display);
+        font-size: 2rem;
+        font-weight: 900;
+        color: #FFFFFF;
+        margin-bottom: 1.5rem;
+        line-height: 1.25;
+    }
+
+    /* Center PIN Card */
+    .pin-spotlight-card {
+        background: rgba(30, 41, 59, 0.9);
+        border: 2px dashed #F59E0B;
+        border-radius: var(--radius-lg);
+        padding: 1.25rem 2.5rem;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        margin-bottom: 1.5rem;
+    }
+
+    .pin-label-top {
+        font-family: var(--font-display);
+        font-size: 0.85rem;
+        font-weight: 800;
+        color: #CBD5E1;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        margin-bottom: 0.25rem;
+    }
+
+    .pin-display-text {
+        font-family: var(--font-display);
+        font-size: 3.5rem;
+        font-weight: 900;
+        letter-spacing: 0.25em;
+        color: #F59E0B;
+        text-shadow: 0 2px 10px rgba(245, 158, 11, 0.4);
+        line-height: 1.1;
+    }
+
+    .pin-copy-action {
+        margin-top: 0.5rem;
+    }
+
+    .btn-pin-copy {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        color: #F8FAFC;
+        font-family: var(--font-display);
+        font-size: 0.8rem;
+        font-weight: 700;
+        padding: 0.35rem 0.9rem;
+        border-radius: var(--radius-full);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-pin-copy:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Counter Bar */
+    .lobby-counter-strip {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        font-size: 1.15rem;
+        color: #E2E8F0;
+        font-weight: 600;
+    }
+
+    .counter-highlight {
+        font-family: var(--font-display);
+        font-size: 1.6rem;
+        font-weight: 900;
+        color: #F59E0B;
+        background: rgba(245, 158, 11, 0.15);
+        padding: 0.15rem 0.75rem;
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    /* Arena Grid Card */
+    .arena-grid-section {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 2rem;
+    }
+
+    .arena-grid-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .arena-grid-title {
+        font-family: var(--font-display);
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--text-heading);
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+    .live-polling-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+
+    .pulse-dot-green {
+        width: 10px;
+        height: 10px;
+        background-color: var(--kahoot-green);
+        border-radius: 50%;
+        animation: pulseGreen 1.5s infinite;
+    }
+
+    @keyframes pulseGreen {
+        0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(38, 137, 12, 0.7); }
+        70% { transform: scale(1.15); box-shadow: 0 0 0 8px rgba(38, 137, 12, 0); }
+        100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(38, 137, 12, 0); }
+    }
+
+    /* Dynamic Players Grid */
+    .players-container-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+        gap: 1rem;
+        min-height: 120px;
+    }
+
+    .player-card-chip {
+        background: var(--bg-surface-secondary);
+        border: 1px solid var(--border-medium);
+        border-radius: var(--radius-md);
+        padding: 0.75rem 0.85rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        box-shadow: var(--shadow-sm);
+        transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .player-card-chip:hover {
+        transform: translateY(-2px);
+        border-color: var(--kahoot-purple);
+    }
+
+    .player-chip-info {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .player-avatar-circle {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--kahoot-blue), var(--kahoot-purple));
+        color: #FFFFFF;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 1rem;
+        flex-shrink: 0;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    }
+
+    .player-chip-name {
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 0.92rem;
+        color: var(--text-heading);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .btn-kick-chip {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        color: #EF4444;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+        padding: 0;
+        line-height: 1;
+    }
+
+    .btn-kick-chip:hover {
+        background: #EF4444;
+        color: #FFFFFF;
+        border-color: #EF4444;
+        transform: scale(1.1);
+    }
+
+    .no-players-placeholder {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 3rem 1rem;
+        border: 2px dashed var(--border-medium);
+        border-radius: var(--radius-md);
+        color: var(--text-muted);
+    }
+
+    /* Animation */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.92) translateY(6px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    .animate-fadeIn {
+        animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Host Toolbar */
+    .host-control-toolbar {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-start-disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+        filter: grayscale(40%);
+    }
+
+    @media (max-width: 768px) {
+        .pin-display-text {
+            font-size: 2.6rem;
+            letter-spacing: 0.15em;
+        }
+        .host-control-toolbar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .host-control-toolbar form,
+        .host-control-toolbar form button,
+        .host-control-toolbar a {
+            width: 100%;
+            text-align: center;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="host-lobby-wrapper">
+    <!-- Top Navigation Bar -->
+    <div class="lobby-top-nav">
+        <a href="{% url 'quizzes:quiz_detail' quiz.pk %}" class="btn-return-link">
+            &larr; Volver al Cuestionario
+        </a>
+        <span class="badge-status badge-published" style="padding: 0.4rem 0.95rem;">
+            Estado: {{ game.get_status_display }}
+        </span>
+    </div>
+
+    <!-- Dark Theme Hero Banner with Center PIN -->
+    <div class="host-hero-banner">
+        <div class="hero-quiz-badge">Sala de Juego en Vivo</div>
+        <h1 class="hero-quiz-title">{{ quiz.title }}</h1>
+
+        <div class="pin-spotlight-card">
+            <span class="pin-label-top">CÓDIGO PIN DE ACCESO</span>
+            <span class="pin-display-text" id="game-pin">{{ game.code }}</span>
+            <div class="pin-copy-action">
+                <button type="button" class="btn-pin-copy" onclick="copyHostGamePin()">
+                    📋 Copiar PIN
+                </button>
+            </div>
+        </div>
+
+        <div class="lobby-counter-strip">
+            <span>Esperando a los participantes:</span>
+            <span class="counter-highlight"><span id="player-count">{{ players_count }}</span></span>
+            <span>unidos a la arena</span>
+        </div>
+    </div>
+
+    <!-- Connected Players Grid Section -->
+    <div class="arena-grid-section">
+        <div class="arena-grid-header">
+            <div class="arena-grid-title">
+                <span>🦆 Jugadores Conectados</span>
+            </div>
+            <div class="live-polling-indicator">
+                <span class="pulse-dot-green"></span>
+                <span>Sincronizando en tiempo real</span>
+            </div>
+        </div>
+
+        <div class="players-container-grid" id="players-grid">
+            {% if players %}
+                {% for gp in players %}
+                    <div class="player-card-chip" data-player-id="{{ gp.id }}">
+                        <div class="player-chip-info">
+                            <div class="player-avatar-circle">
+                                {{ gp.player.username|slice:":1"|upper }}
+                            </div>
+                            <div class="player-chip-name" title="{{ gp.player.username }}">
+                                {{ gp.player.username }}
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            class="btn-kick-chip"
+                            title="Expulsar a {{ gp.player.username }}"
+                            onclick="kickPlayer('{{ game.code }}', {{ gp.id }}, '{{ gp.player.username|escapejs }}')"
+                        >
+                            ✕
+                        </button>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-players-placeholder" id="no-players-msg">
+                    <p style="font-size: 1.1rem; font-weight: 700; color: var(--text-heading); margin-bottom: 0.5rem;">
+                        Aún no se ha unido ningún estudiante
+                    </p>
+                    <p style="font-size: 0.9rem;">
+                        Proyecta el código PIN <strong>{{ game.code }}</strong> para que tus alumnos ingresen desde su dispositivo.
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Host Action Control Toolbar -->
+    <div class="host-control-toolbar">
+        <div>
+            <span style="font-family: var(--font-display); font-weight: 800; font-size: 1rem; color: var(--text-heading);">
+                Panel del Anfitrión
+            </span>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">
+                Se requiere al menos un estudiante conectado para iniciar la partida.
+            </p>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+            <a href="{% url 'quizzes:quiz_detail' quiz.pk %}" class="btn-3d btn-3d-red" style="padding: 0.6rem 1.25rem;">
+                Cancelar Sala
+            </a>
+
+            <form action="{% url 'quiz_games:host_start_game' game.code %}" method="POST" id="start-game-form" style="display: inline;">
+                {% csrf_token %}
+                <button
+                    type="submit"
+                    id="start-btn"
+                    class="btn-3d btn-3d-green {% if players_count == 0 %}btn-start-disabled{% endif %}"
+                    {% if players_count == 0 %}disabled{% endif %}
+                    style="padding: 0.6rem 1.75rem;"
+                >
+                    🚀 Iniciar Partida
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyHostGamePin() {
+        const pinElement = document.getElementById('game-pin');
+        const pin = pinElement ? pinElement.innerText.trim() : '';
+        if (!pin) return;
+
+        navigator.clipboard.writeText(pin).then(() => {
+            alert('Código PIN ' + pin + ' copiado al portapapeles.');
+        }).catch(() => {
+            prompt('Copia el código PIN:', pin);
+        });
+    }
+
+    function kickPlayer(gameCode, playerId, username) {
+        if (!confirm('¿Estás seguro de que deseas expulsar a ' + (username || 'este participante') + '?')) {
+            return;
+        }
+
+        const kickUrl = '/games/host/' + gameCode + '/kick/' + playerId + '/';
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]') ? document.querySelector('[name=csrfmiddlewaretoken]').value : '{{ csrf_token }}';
+
+        fetch(kickUrl, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(function(res) {
+            if (!res.ok) throw new Error('Error al expulsar');
+            return res.json();
+        })
+        .then(function(data) {
+            if (data.success) {
+                const chip = document.querySelector('.player-card-chip[data-player-id="' + playerId + '"]');
+                if (chip) chip.remove();
+                if (window.__lobbyCurrentIds) {
+                    window.__lobbyCurrentIds.delete(playerId);
+                }
+                const countSpan = document.getElementById('player-count');
+                const startBtn = document.getElementById('start-btn');
+                if (countSpan) {
+                    const currentVal = parseInt(countSpan.innerText, 10) || 0;
+                    const newVal = Math.max(0, currentVal - 1);
+                    countSpan.innerText = newVal;
+                    if (startBtn && newVal === 0) {
+                        startBtn.disabled = true;
+                        startBtn.classList.add('btn-start-disabled');
+                    }
+                }
+            } else {
+                alert(data.error || 'No se pudo expulsar al participante.');
+            }
+        })
+        .catch(function(err) {
+            console.error('Error al expulsar participante:', err);
+            alert('Error al expulsar participante.');
+        });
+    }
+
+    (function() {
+        const statusUrl = "{% url 'quiz_games:game_lobby_status' game.code %}";
+        const grid = document.getElementById('players-grid');
+        const countSpan = document.getElementById('player-count');
+        const startBtn = document.getElementById('start-btn');
+
+        // Mapa en memoria para reconciliación de jugadores existentes
+        const currentIds = new Set();
+        window.__lobbyCurrentIds = currentIds;
+
+        document.querySelectorAll('#players-grid [data-player-id]').forEach(function(el) {
+            const pid = parseInt(el.getAttribute('data-player-id'), 10);
+            if (!isNaN(pid)) currentIds.add(pid);
+        });
+
+        let lastLobbyEtag = null;
+
+        function pollLobbyStatus() {
+            fetch(statusUrl, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'If-None-Match': lastLobbyEtag || ''
+                }
+            })
+            .then(function(res) {
+                if (res.status === 304) return null;
+                if (!res.ok) throw new Error('Error al sincronizar estado del lobby');
+                const etag = res.headers.get('ETag');
+                if (etag) lastLobbyEtag = etag;
+                return res.json();
+            })
+            .then(function(data) {
+                if (!data) return;
+                // Actualizar contador
+                if (countSpan) {
+                    countSpan.innerText = data.player_count;
+                }
+
+                // Control del botón de inicio
+                if (startBtn) {
+                    if (data.player_count > 0) {
+                        startBtn.disabled = false;
+                        startBtn.classList.remove('btn-start-disabled');
+                    } else {
+                        startBtn.disabled = true;
+                        startBtn.classList.add('btn-start-disabled');
+                    }
+                }
+
+                // Reconciliar lista de participantes sin parpadeos
+                const placeholder = document.getElementById('no-players-msg');
+
+                if (data.player_count === 0) {
+                    if (!placeholder && grid) {
+                        grid.innerHTML = `
+                            <div class="no-players-placeholder" id="no-players-msg">
+                                <p style="font-size: 1.1rem; font-weight: 700; color: var(--text-heading); margin-bottom: 0.5rem;">
+                                    Aún no se ha unido ningún estudiante
+                                </p>
+                                <p style="font-size: 0.9rem;">
+                                    Proyecta el código PIN <strong>{{ game.code }}</strong> para que tus alumnos ingresen desde su dispositivo.
+                                </p>
+                            </div>
+                        `;
+                    }
+                    currentIds.clear();
+                    return;
+                }
+
+                // Si hay jugadores, remover placeholder si existe
+                if (placeholder) {
+                    placeholder.remove();
+                }
+
+                const receivedIds = new Set();
+
+                data.players.forEach(function(player) {
+                    receivedIds.add(player.id);
+                    if (!currentIds.has(player.id)) {
+                        // Agregar nueva tarjeta con animación fadeIn
+                        currentIds.add(player.id);
+                        const chip = document.createElement('div');
+                        chip.className = 'player-card-chip animate-fadeIn';
+                        chip.setAttribute('data-player-id', player.id);
+
+                        const initial = player.username ? player.username.charAt(0).toUpperCase() : '?';
+                        chip.innerHTML = `
+                            <div class="player-chip-info">
+                                <div class="player-avatar-circle">${initial}</div>
+                                <div class="player-chip-name" title="${player.username}">${player.username}</div>
+                            </div>
+                            <button
+                                type="button"
+                                class="btn-kick-chip"
+                                title="Expulsar a ${player.username}"
+                                onclick="kickPlayer('{{ game.code }}', ${player.id}, '${player.username}')"
+                            >
+                                ✕
+                            </button>
+                        `;
+                        grid.appendChild(chip);
+                    }
+                });
+
+                // Remover jugadores que se hayan desconectado o hayan sido expulsados
+                document.querySelectorAll('#players-grid [data-player-id]').forEach(function(el) {
+                    const pid = parseInt(el.getAttribute('data-player-id'), 10);
+                    if (!receivedIds.has(pid)) {
+                        currentIds.delete(pid);
+                        el.remove();
+                    }
+                });
+            })
+            .catch(function(err) {
+                console.warn('Sondeo del lobby en espera:', err);
+            });
+        }
+
+        // Ejecutar sondeo cada 2000 ms
+        setInterval(pollLobbyStatus, 2000);
+    })();
+</script>
+{% endblock %}

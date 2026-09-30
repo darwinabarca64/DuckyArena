@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Sala de Espera: {{ quiz.title }} — QuizArenas{% endblock %}
+
+{% block extra_css %}
+<style>
+    .player-lobby-container {
+        max-width: 620px;
+        margin: 2.5rem auto;
+        padding: 0 1rem;
+    }
+
+    .player-lobby-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: 2.5rem 2rem;
+        box-shadow: var(--shadow-md);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .player-lobby-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, var(--kahoot-red), var(--kahoot-blue), var(--kahoot-yellow), var(--kahoot-green));
+    }
+
+    .status-pulse-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        background: #FEF3C7;
+        color: #92400E;
+        border: 1px solid #FDE68A;
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 0.9rem;
+        padding: 0.45rem 1.25rem;
+        border-radius: var(--radius-full);
+        margin-bottom: 1.75rem;
+    }
+
+    .status-pulse-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: var(--kahoot-yellow);
+        animation: pulseLobby 1.5s infinite;
+    }
+
+    @keyframes pulseLobby {
+        0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(255, 166, 2, 0.7); }
+        70% { transform: scale(1.15); box-shadow: 0 0 0 8px rgba(255, 166, 2, 0); }
+        100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(255, 166, 2, 0); }
+    }
+
+    .quiz-display-title {
+        font-family: var(--font-display);
+        font-size: 1.85rem;
+        font-weight: 900;
+        color: var(--text-heading);
+        margin-bottom: 0.6rem;
+        line-height: 1.25;
+    }
+
+    .quiz-host-info {
+        font-size: 0.98rem;
+        color: var(--text-muted);
+        margin-bottom: 2rem;
+    }
+
+    .quiz-host-info strong {
+        color: var(--kahoot-purple);
+    }
+
+    /* Player Profile Box */
+    .player-profile-box {
+        background: var(--bg-surface-secondary);
+        border: 1px solid var(--border-medium);
+        border-radius: var(--radius-md);
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .player-avatar-large {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--kahoot-blue), var(--kahoot-purple));
+        color: #FFFFFF;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-size: 1.35rem;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .player-text-wrap {
+        text-align: left;
+    }
+
+    .player-sublabel {
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+    }
+
+    .player-username-text {
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 1.15rem;
+        color: var(--text-heading);
+    }
+
+    .lobby-pin-pill {
+        display: inline-block;
+        background: rgba(70, 23, 143, 0.08);
+        border: 1px solid var(--kahoot-purple);
+        color: var(--kahoot-purple);
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 0.95rem;
+        padding: 0.4rem 1rem;
+        border-radius: var(--radius-full);
+        margin-bottom: 1.5rem;
+    }
+
+    .waiting-instructions {
+        font-size: 0.92rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="player-lobby-container">
+    <div class="player-lobby-card">
+        <div class="status-pulse-badge">
+            <span class="status-pulse-dot"></span>
+            <span>⏳ Esperando al Anfitrión...</span>
+        </div>
+
+        <div class="lobby-pin-pill">
+            Sala PIN: <strong>{{ game.code }}</strong>
+        </div>
+
+        <h1 class="quiz-display-title">{{ quiz.title }}</h1>
+        <p class="quiz-host-info">
+            Profesor Anfitrión: <strong>{{ game.host.username }}</strong>
+        </p>
+
+        <div class="player-profile-box">
+            <div class="player-avatar-large">
+                {{ user.username|slice:":1"|upper }}
+            </div>
+            <div class="player-text-wrap">
+                <div class="player-sublabel">Participando como</div>
+                <div class="player-username-text">{{ user.username }}</div>
+            </div>
+        </div>
+
+        <p class="waiting-instructions">
+            ¡Estás dentro! Mantén esta pantalla abierta. El juego comenzará en cuanto tu profesor presione <strong>Iniciar Partida</strong>.
+        </p>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const checkStatusUrl = "{% url 'quiz_games:game_lobby_status' game.code %}";
+        const playerPlayUrl = "{% url 'quiz_games:game_player_play' game.code %}";
+        const joinUrl = "{% url 'quiz_games:game_join' %}";
+
+        let lastPlayerLobbyEtag = null;
+
+        const intervalId = setInterval(function() {
+            fetch(checkStatusUrl, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'If-None-Match': lastPlayerLobbyEtag || ''
+                }
+            })
+            .then(function(response) {
+                if (response.status === 304) return null;
+                if (!response.ok) {
+                    throw new Error('Error al consultar estado de la partida');
+                }
+                const etag = response.headers.get('ETag');
+                if (etag) lastPlayerLobbyEtag = etag;
+                return response.json();
+            })
+            .then(function(data) {
+                if (!data) return;
+                if (data.status === 'RUNNING') {
+                    clearInterval(intervalId);
+                    window.location.href = playerPlayUrl;
+                } else if (data.status === 'FINISHED' || data.status === 'CANCELLED') {
+                    clearInterval(intervalId);
+                    alert('La partida ha concluido o fue cancelada por el anfitrión.');
+                    window.location.href = joinUrl;
+                }
+            })
+            .catch(function(err) {
+                console.warn('Sondeo de estado de sala en pausa:', err);
+            });
+        }, 2500);
+    })();
+</script>
+{% endblock %}

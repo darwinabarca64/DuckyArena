@@ -1,217 +1,66 @@
-# 🎯 QuizzMaster - Aplicación Django para Quizzes
+# 🐥 Ducky Quiz Arenas — Plataforma Académica Gamificada
 
-Una aplicación web interactiva y moderna para crear y responder quizzes. Los datos de los quizzes se cargan desde archivos JSON, permitiendo una gestión sencilla de contenido.
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![Django](https://img.shields.io/badge/Django-4.2%2B-green.svg)](https://www.djangoproject.com/)
+[![Architecture](https://img.shields.io/badge/Architecture-Modular-orange.svg)](docs/architecture/architecture_blueprint.md)
+[![Docs](https://img.shields.io/badge/Documentation-docs%2F-brightgreen.svg)](docs/README.md)
 
-## ✨ Características
-
-- 🎮 Interfaz moderna, dinámica y divertida
-- 📝 Soporte para múltiples quizzes
-- 🎯 Tres niveles de dificultad (Fácil, Medio, Difícil)
-- 📊 Sistema de puntuación y tabla de posiciones
-- 📱 Totalmente responsive
-- 🎨 Estilos modernos con gradientes y animaciones
-- 📄 Carga de quizzes desde JSON
-
-## 🚀 Instalación
-
-### Requisitos
-- Python 3.8+
-- pip
-
-### Pasos de instalación
-
-1. **Clona o descarga el proyecto**
-```bash
-cd c:\Proyectos\quizz
-```
-
-2. **Crea un entorno virtual** (opcional pero recomendado)
-```bash
-python -m venv venv
-venv\Scripts\activate
-```
-
-3. **Instala las dependencias**
-```bash
-pip install -r requirements.txt
-```
-
-4. **Realiza las migraciones de la base de datos**
-```bash
-python manage.py migrate
-```
-
-5. **Carga los quizzes desde el archivo JSON**
-```bash
-python manage.py load_quizzes
-```
-
-6. **Inicia el servidor de desarrollo**
-```bash
-python manage.py runserver
-```
-
-7. **Abre tu navegador y ve a**
-```
-http://localhost:8000
-```
-
-## 📋 Estructura del Proyecto
-
-```
-quizz/
-├── quizz_project/          # Configuración del proyecto Django
-│   ├── settings.py         # Configuración principal
-│   ├── urls.py            # URLs del proyecto
-│   └── wsgi.py            # WSGI para producción
-├── quizz_app/              # Aplicación principal
-│   ├── models.py          # Modelos de datos (Quiz, QuizResult)
-│   ├── views.py           # Vistas de la aplicación
-│   ├── urls.py            # URLs de la aplicación
-│   ├── management/        # Comandos personalizados
-│   │   └── commands/
-│   │       └── load_quizzes.py  # Comando para cargar quizzes
-│   ├── templates/         # Plantillas HTML
-│   │   ├── base.html
-│   │   ├── index.html
-│   │   ├── quiz.html
-│   │   ├── results.html
-│   │   └── leaderboard.html
-│   └── static/            # Archivos estáticos
-│       ├── css/
-│       │   └── style.css
-│       └── js/
-│           └── main.js
-├── data/                  # Archivos JSON de quizzes
-│   └── quizzes.json
-├── manage.py              # Script de gestión de Django
-└── requirements.txt       # Dependencias del proyecto
-```
-
-## 📝 Formato del JSON de Quizzes
-
-Agrega tus propios quizzes en `data/quizzes.json`:
-
-```json
-[
-    {
-        "title": "Título del Quiz",
-        "description": "Descripción del quiz",
-        "category": "Categoría",
-        "difficulty": "fácil",
-        "questions": [
-            {
-                "question": "¿Pregunta 1?",
-                "options": ["Opción A", "Opción B", "Opción C", "Opción D"],
-                "correct_answer": "0"
-            }
-        ]
-    }
-]
-```
-
-### Parámetros:
-- **title**: Nombre del quiz
-- **description**: Descripción breve
-- **category**: Categoría (Programación, Geografía, Historia, etc.)
-- **difficulty**: Nivel de dificultad (fácil, medio, difícil)
-- **questions**: Array de preguntas
-  - **question**: Texto de la pregunta
-  - **options**: Array con 4 opciones de respuesta
-  - **correct_answer**: Índice de la respuesta correcta (0-3)
-
-## 🎮 Uso
-
-1. **Ver Quizzes**: La página de inicio muestra todos los quizzes disponibles
-2. **Responder Quiz**: Selecciona un quiz y responde todas las preguntas
-3. **Ver Resultados**: Después de enviar, verás tu puntuación y análisis detallado
-4. **Tabla de Posiciones**: Compite con otros jugadores en la tabla de puntuaciones
-
-## 🛠️ Comandos útiles
-
-```bash
-# Cargar quizzes desde JSON
-python manage.py load_quizzes
-
-# Crear superusuario (para admin)
-python manage.py createsuperuser
-
-# Acceder a admin en http://localhost:8000/admin
-# (requiere superusuario)
-
-# Realizar migraciones después de cambiar modelos
-python manage.py makemigrations
-python manage.py migrate
-```
-
-## 🎨 Personalización
-
-### Cambiar colores principales
-Edita `quizz_app/static/css/style.css` y modifica los gradientes:
-```css
-/* Gradiente principal */
-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-```
-
-### Agregar más quizzes
-Simplemente agrega más objetos al archivo `data/quizzes.json` y ejecuta:
-```bash
-python manage.py load_quizzes
-```
-
-## 📱 Características Responsive
-
-La aplicación se adapta perfectamente a:
-- 📱 Dispositivos móviles
-- 📱 Tablets
-- 🖥️ Desktops
-
-## 🔒 Seguridad
-
-- CSRF protection habilitada
-- Input validation en servidor
-- SQLite por defecto (cambiar en producción)
-
-## 📦 Producción
-
-Para desplegar en producción:
-
-1. Cambia `DEBUG = False` en `settings.py`
-2. Configura `ALLOWED_HOSTS` apropiadamente
-3. Usa una base de datos robusta (PostgreSQL, MySQL)
-4. Configura un servidor WSGI (Gunicorn, uWSGI)
-5. Usa un servidor web (Nginx, Apache)
-
-## 🐛 Solución de problemas
-
-**Error: "ModuleNotFoundError: No module named 'django'"**
-```bash
-pip install -r requirements.txt
-```
-
-**Error: "No table found"**
-```bash
-python manage.py migrate
-```
-
-**Los quizzes no aparecen**
-```bash
-python manage.py load_quizzes
-```
-
-## 📄 Licencia
-
-Este proyecto es de código abierto y libre de usar.
-
-## 🎯 Próximas mejoras
-
-- [ ] Sistema de  de usuarios
-- [ ] Perfil de usuario con historial
-- [ ] Editor visual de quizzes
-- [ ] Exportar resultados a PDF
-- [ ] Compartir resultados en redes sociales
-- [ ] Modo multijugador en tiempo real
+**Ducky Quiz Arenas** es una plataforma educativa interactiva orientada al aprendizaje gamificado y evaluación formativa. Desarrollada en **Django**, permite a los docentes diseñar bancos de preguntas temáticas y desplegar salas de competición multijugador en tiempo real mediante códigos PIN de acceso, fomentando la participación dinámica de los estudiantes a través de rankings en vivo y una economía virtual basada en **Ducky Coins**.
 
 ---
 
-¡Diviértete y aprende con QuizzMaster! 🚀
+## 🎯 ¿Qué hace el Proyecto en su Totalidad?
+
+El sistema integra de forma modular dos grandes áreas funcionales:
+
+1. **Gestión de Contenido y Banco de Preguntas (`quizzes`):**
+   - Panel del profesor para crear, editar, estructurar y publicar cuestionarios con control de tiempo límite y ponderación de puntos.
+   - Banco de preguntas de opción múltiple con validación estricta en servidor.
+   - Búsqueda, categorización y exploración de cuestionarios públicos.
+
+2. **Motor de Partidas en Tiempo Real (`quiz_games`):**
+   - Generación dinámica de salas con **código PIN de 6 dígitos** no colisionable.
+   - Lobby de espera para participantes con visualización de estado.
+   - Evaluación server-side de respuestas con protección contra fugas de información (*zero client leaks*).
+   - Motor de puntuación transaccional (`transaction.atomic`) con bonificación por tiempo de respuesta y cálculo de rachas (*streaks*).
+   - Podio y tabla de clasificación en vivo al finalizar la partida.
+
+3. **Economía Virtual y Perfiles:**
+   - Asignación y acumulación de recompensas en *Ducky Coins* asociadas al perfil del estudiante.
+
+---
+
+## 👥 Estructura del Equipo y Asignación de Módulos
+
+El desarrollo colaborativo del proyecto se encuentra estructurado en equipos de trabajo especializados bajo la metodología de revisión por pares y gobernanza con `CODEOWNERS`:
+
+| Rol / Módulo | Responsables | Rama Base / Ámbito |
+| :--- | :--- | :--- |
+| **🚀 Lead Developer & DevOps** | **Darwin** ([@darwinabarca64](https://github.com/darwinabarca64)) | `main` · Infraestructura, arquitectura base y aprobación |
+| **🔍 Mentor & Auditoría** | **Oscar Burgos** ([@mihifidem](https://github.com/mihifidem)) | `main` · Revisión técnica y aseguramiento de calidad |
+| **📝 PARTE 1: Cuestionarios (`quizzes`)** | **Sasha** ([@sashasafont](https://github.com/sashasafont))<br>**Nacho** ([@nachopython](https://github.com/nachopython))<br>**Robert Betancourt** ([@Trevor783](https://github.com/Trevor783)) | `parte-1-quizzes`<br>Banco de preguntas, respuestas y CRUD del profesor |
+| **🎮 PARTE 2: Motor de Juego (`quiz_games`)** | **[@dalcolea](https://github.com/dalcolea)**<br>**Thais** ([@thaishps3](https://github.com/thaishps3)) | `parte-2-quizgames`<br>Salas con PIN, lobby, evaluación y puntuación en vivo |
+
+---
+
+## 📚 Mapa de Documentación del Proyecto
+
+Para mantener el código limpio y modular, toda la documentación detallada se encuentra organizada en el directorio [`docs/`](docs/README.md). A continuación se describe la utilidad de cada documento:
+
+### 🚀 Guías de Instalación y Operación (`docs/guides/`)
+- [**`docs/guides/setup.md`**](docs/guides/setup.md): **Guía de Configuración Inicial.** Paso a paso simplificado para clonar el repositorio, crear el entorno virtual, instalar dependencias y levantar el servidor tanto en **Windows** como en **Mac**.
+- [**`docs/guides/github_workflow.md`**](docs/guides/github_workflow.md): **Flujo Git y Trabajo en Equipo.** Explica cómo sincronizar ramas, crear ramas personales de trabajo y solicitar revisiones mediante Pull Requests según el equipo asignado.
+- [**`docs/guides/passwords_management.md`**](docs/guides/passwords_management.md): **Gestión de Contraseñas Django.** Instrucciones prácticas para crear superusuarios/administradores y recuperar o resetear contraseñas por terminal, shell interactivo o panel web.
+- [**`docs/guides/quickstart.md`**](docs/guides/quickstart.md): **Inicio Rápido.** Referencia de comandos rápidos de consola para el entorno de desarrollo.
+
+### 🏛️ Arquitectura y Especificaciones (`docs/architecture/`)
+- [**`docs/architecture/architecture_blueprint.md`**](docs/architecture/architecture_blueprint.md): **Plano Arquitectónico.** Diagramas, modelos de datos, contratos relacionales y flujos de evaluación server-side.
+- [**`docs/architecture/ducky_arena_master_spec.pdf`**](docs/architecture/ducky_arena_master_spec.pdf): **Especificación Maestra Oficial.** Documento de requerimientos funcionales y diseño del sistema.
+
+### 📊 Informes y Registros Técnicos (`docs/reports/`)
+- [**`docs/reports/implementation_summary.md`**](docs/reports/implementation_summary.md): **Resumen de Implementación.** Detalle de componentes construidos y trazabilidad por fases.
+- [**`docs/reports/diagnostic_report.md`**](docs/reports/diagnostic_report.md): **Informe Diagnóstico.** Análisis de dependencias, base de datos y estabilidad del sistema.
+- [**`docs/reports/commits_log.md`**](docs/reports/commits_log.md): **Histórico de Commits.** Registro cronológico de cambios y transformaciones del repositorio.
+
+### ⚖️ Reglas Maestras de Código
+- [**`PROJECT_RULES.md`**](PROJECT_RULES.md): **Directivas Técnicas Inquebrantables.** Estándares de concurrencia (`transaction.atomic`), integridad (`models.PROTECT`) y seguridad de datos.

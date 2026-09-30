@@ -1,0 +1,666 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Pregunta {{ current_num }}/{{ total_questions }} — {{ quiz.title }} — QuizArenas{% endblock %}
+
+{% block extra_css %}
+<style>
+    .host-play-container {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    /* Top Bar */
+    .play-header-strip {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .q-counter-pill {
+        background: var(--kahoot-purple);
+        color: #FFFFFF;
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 0.95rem;
+        padding: 0.45rem 1.25rem;
+        border-radius: var(--radius-full);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .play-quiz-title {
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 1.15rem;
+        color: var(--text-heading);
+    }
+
+    .pin-reminder-badge {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-medium);
+        padding: 0.35rem 0.9rem;
+        border-radius: var(--radius-md);
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    /* Timer Bar Container */
+    .timer-bar-wrap {
+        width: 100%;
+        height: 12px;
+        background: var(--border-subtle);
+        border-radius: var(--radius-full);
+        overflow: hidden;
+        margin-bottom: 1.75rem;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    .timer-bar-fill {
+        height: 100%;
+        width: 100%;
+        background: linear-gradient(90deg, var(--kahoot-green), var(--kahoot-yellow), var(--kahoot-red));
+        transform-origin: left;
+        transition: width 1s linear;
+    }
+
+    /* Central Question Card */
+    .host-question-card {
+        background: #0F172A;
+        border-radius: var(--radius-lg);
+        padding: 2.5rem 2rem;
+        color: #FFFFFF;
+        text-align: center;
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        margin-bottom: 2rem;
+    }
+
+    .timer-circle-widget {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: #1E293B;
+        border: 3px solid var(--kahoot-yellow);
+        color: var(--kahoot-yellow);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .host-question-text {
+        font-family: var(--font-display);
+        font-size: 2.1rem;
+        font-weight: 900;
+        line-height: 1.3;
+        color: #FFFFFF;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    /* Answers Grid (Zero Leaks) */
+    .host-answers-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .host-ans-card {
+        border-radius: var(--radius-lg);
+        padding: 1.5rem 1.75rem;
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        color: #FFFFFF;
+        min-height: 90px;
+        box-shadow: var(--shadow-md);
+        transition: transform 0.2s ease;
+    }
+
+    .host-ans-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .ans-shape-red { background: var(--kahoot-red); }
+    .ans-shape-blue { background: var(--kahoot-blue); }
+    .ans-shape-yellow { background: var(--kahoot-yellow); color: #FFFFFF; }
+    .ans-shape-green { background: var(--kahoot-green); }
+    .ans-shape-purple { background: #7C3AED; }
+    .ans-shape-orange { background: #EA580C; }
+
+    .ans-letter-chip {
+        width: 44px;
+        height: 44px;
+        border-radius: var(--radius-md);
+        background: rgba(0, 0, 0, 0.25);
+        border: 2px solid rgba(255, 255, 255, 0.6);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-size: 1.35rem;
+        color: #FFFFFF;
+        flex-shrink: 0;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    }
+
+    .ans-text-content {
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 1.2rem;
+        line-height: 1.35;
+    }
+
+    /* Bottom Control & Status Strip */
+    .host-live-footer {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .responses-counter-card {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-family: var(--font-display);
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-heading);
+    }
+
+    .counter-badge-val {
+        background: rgba(19, 104, 206, 0.12);
+        color: var(--kahoot-blue);
+        border: 1px solid rgba(19, 104, 206, 0.25);
+        padding: 0.2rem 0.85rem;
+        border-radius: var(--radius-md);
+        font-weight: 900;
+        font-size: 1.4rem;
+    }
+
+    .host-action-buttons {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    /* Breakdown Modal */
+    .breakdown-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(8px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        padding: 1rem;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .breakdown-modal-overlay.active {
+        display: flex;
+        opacity: 1;
+    }
+
+    .breakdown-modal-card {
+        background: #0F172A;
+        border: 2px solid var(--border-medium);
+        border-radius: var(--radius-lg);
+        width: 100%;
+        max-width: 720px;
+        padding: 2rem;
+        color: #FFFFFF;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+        position: relative;
+        animation: modalScaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalScaleIn {
+        from { transform: scale(0.92) translateY(10px); opacity: 0; }
+        to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .breakdown-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--border-subtle);
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .breakdown-modal-title {
+        font-family: var(--font-display);
+        font-size: 1.4rem;
+        font-weight: 900;
+        color: #FFFFFF;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-close-modal {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #CBD5E1;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-close-modal:hover {
+        background: rgba(239, 68, 68, 0.2);
+        color: #EF4444;
+        border-color: #EF4444;
+    }
+
+    .breakdown-bars-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .breakdown-bar-item {
+        background: #1E293B;
+        border: 1px solid var(--border-medium);
+        border-radius: var(--radius-md);
+        padding: 0.9rem 1.15rem;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.2s ease;
+    }
+
+    .breakdown-bar-item.is-correct-bar {
+        border-color: #22C55E;
+        background: rgba(34, 197, 94, 0.08);
+        box-shadow: 0 0 15px rgba(34, 197, 94, 0.2);
+    }
+
+    .breakdown-bar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    .breakdown-bar-text {
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 1rem;
+        color: #FFFFFF;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+    .breakdown-bar-letter {
+        width: 28px;
+        height: 28px;
+        border-radius: var(--radius-sm);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        font-size: 0.9rem;
+        color: #FFFFFF;
+    }
+
+    .letter-bg-0 { background: var(--kahoot-red); }
+    .letter-bg-1 { background: var(--kahoot-blue); }
+    .letter-bg-2 { background: var(--kahoot-yellow); }
+    .letter-bg-3 { background: var(--kahoot-green); }
+    .letter-bg-4 { background: #7C3AED; }
+    .letter-bg-5 { background: #EA580C; }
+
+    .breakdown-bar-stats {
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 0.92rem;
+        color: #CBD5E1;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .correct-tag-badge {
+        background: rgba(34, 197, 94, 0.2);
+        color: #4ADE80;
+        border: 1px solid rgba(74, 222, 128, 0.4);
+        padding: 0.15rem 0.55rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .breakdown-progress-track {
+        height: 10px;
+        background: rgba(0, 0, 0, 0.35);
+        border-radius: var(--radius-full);
+        overflow: hidden;
+        position: relative;
+        z-index: 2;
+    }
+
+    .breakdown-progress-fill {
+        height: 100%;
+        border-radius: var(--radius-full);
+        transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @media (max-width: 768px) {
+        .host-answers-grid {
+            grid-template-columns: 1fr;
+        }
+        .host-question-text {
+            font-size: 1.5rem;
+        }
+        .host-live-footer {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .host-action-buttons {
+            flex-direction: column;
+            width: 100%;
+        }
+        .host-action-buttons button,
+        .host-action-buttons form,
+        .host-action-buttons form button {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="host-play-container">
+    <!-- Top Header -->
+    <div class="play-header-strip">
+        <span class="q-counter-pill">
+            Pregunta {{ current_num }} de {{ total_questions }}
+        </span>
+        <span class="play-quiz-title">{{ quiz.title }}</span>
+        <span class="pin-reminder-badge">PIN: <strong>{{ game.code }}</strong></span>
+    </div>
+
+    <!-- Animated Countdown Progress Bar -->
+    <div class="timer-bar-wrap">
+        <div class="timer-bar-fill" id="timer-progress"></div>
+    </div>
+
+    <!-- Central Question Spotlight -->
+    <div class="host-question-card">
+        <div class="timer-circle-widget" id="timer-seconds-display">
+            {{ question.time_limit }}
+        </div>
+        <h1 class="host-question-text">{{ question.text }}</h1>
+    </div>
+
+    <!-- Answers Grid (Zero Leaks of is_correct) -->
+    <div class="host-answers-grid">
+        {% for answer in answers %}
+            <div class="host-ans-card {% cycle 'ans-shape-red' 'ans-shape-blue' 'ans-shape-yellow' 'ans-shape-green' 'ans-shape-purple' 'ans-shape-orange' %}">
+                <span class="ans-letter-chip">
+                    {% if forloop.counter0 == 0 %}A
+                    {% elif forloop.counter0 == 1 %}B
+                    {% elif forloop.counter0 == 2 %}C
+                    {% elif forloop.counter0 == 3 %}D
+                    {% elif forloop.counter0 == 4 %}E
+                    {% else %}F
+                    {% endif %}
+                </span>
+                <span class="ans-text-content">{{ answer.text }}</span>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Live Responses Counter & Teacher Controls -->
+    <div class="host-live-footer">
+        <div class="responses-counter-card">
+            <span>Respuestas enviadas:</span>
+            <span class="counter-badge-val">
+                <span id="answered-count">{{ answered_count }}</span> / {{ total_players }}
+            </span>
+        </div>
+
+        <div class="host-action-buttons">
+            <button type="button" id="btn-show-breakdown" class="btn-3d btn-3d-yellow" style="padding: 0.6rem 1.25rem;" onclick="loadAndShowBreakdown()">
+                📊 Ver Distribución de Respuestas
+            </button>
+
+            <form action="{% url 'quiz_games:host_finish_game' game.code %}" method="POST" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn-3d btn-3d-red" style="padding: 0.6rem 1.15rem;" onclick="return confirm('¿Seguro que deseas finalizar la partida ahora?');">
+                    🏁 Finalizar Partida
+                </button>
+            </form>
+
+            <button type="button" id="btn-next" class="btn-3d btn-3d-green" style="padding: 0.6rem 1.6rem;" onclick="advanceQuestion()">
+                {% if current_num == total_questions %}
+                    🏆 Ver Podio Final
+                {% else %}
+                    ⏭️ Avanzar Pregunta
+                {% endif %}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Breakdown Flotante Proyectable -->
+<div id="modal-breakdown" class="breakdown-modal-overlay" onclick="if(event.target === this) closeBreakdownModal();">
+    <div class="breakdown-modal-card">
+        <div class="breakdown-modal-header">
+            <div class="breakdown-modal-title">
+                <span>📊 Distribución de Respuestas</span>
+            </div>
+            <button type="button" class="btn-close-modal" onclick="closeBreakdownModal()" title="Cerrar modal">&times;</button>
+        </div>
+        <p id="breakdown-question-text" style="font-size: 1.05rem; font-weight: 700; color: #E2E8F0; margin-bottom: 1.25rem;"></p>
+        <div class="breakdown-bars-container" id="breakdown-bars-container">
+            <div style="text-align: center; color: var(--text-muted); padding: 1.5rem 0;">Cargando distribución...</div>
+        </div>
+        <div style="margin-top: 1.5rem; text-align: right;">
+            <button type="button" class="btn-3d btn-3d-blue" style="padding: 0.5rem 1.25rem;" onclick="closeBreakdownModal()">
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const nextQuestionUrl = "{% url 'quiz_games:host_next_question' game.code %}";
+    const breakdownUrl = "{% url 'quiz_games:game_question_breakdown' game.code %}";
+    const csrfToken = "{{ csrf_token }}";
+
+    function advanceQuestion() {
+        const btn = document.getElementById('btn-next');
+        if (btn) btn.disabled = true;
+
+        fetch(nextQuestionUrl, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(function(res) {
+            if (!res.ok) throw new Error('Error al avanzar de pregunta');
+            return res.json();
+        })
+        .then(function(data) {
+            if (data.redirect_url) {
+                window.location.href = data.redirect_url;
+            } else {
+                window.location.reload();
+            }
+        })
+        .catch(function(err) {
+            console.error('Error:', err);
+            alert('Hubo un error al avanzar la pregunta.');
+            if (btn) btn.disabled = false;
+        });
+    }
+
+    function closeBreakdownModal() {
+        const modal = document.getElementById('modal-breakdown');
+        if (modal) modal.classList.remove('active');
+    }
+
+    function loadAndShowBreakdown() {
+        const modal = document.getElementById('modal-breakdown');
+        const container = document.getElementById('breakdown-bars-container');
+        const qTextEl = document.getElementById('breakdown-question-text');
+
+        if (modal) modal.classList.add('active');
+
+        fetch(breakdownUrl, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(function(res) {
+            if (!res.ok) throw new Error('Error al cargar la distribución');
+            return res.json();
+        })
+        .then(function(data) {
+            if (!data.success) {
+                container.innerHTML = `<div style="text-align:center; color: #EF4444;">${data.error || 'Error al cargar los datos.'}</div>`;
+                return;
+            }
+
+            if (qTextEl) qTextEl.innerText = data.question_text;
+
+            const total = data.total_answers || 0;
+            const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+            const colors = ['#EF4444', '#1368CE', '#F59E0B', '#26890C', '#7C3AED', '#EA580C'];
+
+            let html = '';
+            data.breakdown.forEach(function(item, idx) {
+                const count = item.count || 0;
+                const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
+                const isCorrect = item.is_correct;
+                const letter = letters[idx % letters.length];
+                const color = colors[idx % colors.length];
+
+                html += `
+                    <div class="breakdown-bar-item ${isCorrect ? 'is-correct-bar' : ''}">
+                        <div class="breakdown-bar-header">
+                            <div class="breakdown-bar-text">
+                                <span class="breakdown-bar-letter letter-bg-${idx % 6}">${letter}</span>
+                                <span>${item.text}</span>
+                                ${isCorrect ? '<span class="correct-tag-badge">✅ Correcta</span>' : ''}
+                            </div>
+                            <div class="breakdown-bar-stats">
+                                <span>${count} votos</span>
+                                <span style="color: #94A3B8;">(${percentage}%)</span>
+                            </div>
+                        </div>
+                        <div class="breakdown-progress-track">
+                            <div class="breakdown-progress-fill" style="width: ${percentage}%; background: ${isCorrect ? '#22C55E' : color};"></div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        })
+        .catch(function(err) {
+            console.error('Error:', err);
+            container.innerHTML = `<div style="text-align:center; color: #EF4444;">No se pudo cargar la distribución de respuestas.</div>`;
+        });
+    }
+
+    (function() {
+        const questionStatusUrl = "{% url 'quiz_games:game_question_status' game.code %}";
+        const answeredSpan = document.getElementById('answered-count');
+        const timerDisplay = document.getElementById('timer-seconds-display');
+        const timerProgress = document.getElementById('timer-progress');
+
+        const totalTime = parseInt("{{ question.time_limit }}", 10) || 30;
+        let timeLeft = totalTime;
+
+        let lastQuestionEtag = null;
+
+        // Temporizador visual descendente
+        const countdown = setInterval(function() {
+            timeLeft -= 1;
+            if (timerDisplay) {
+                timerDisplay.innerText = Math.max(0, timeLeft);
+            }
+            if (timerProgress) {
+                const percentage = Math.max(0, (timeLeft / totalTime) * 100);
+                timerProgress.style.width = percentage + "%";
+            }
+            if (timeLeft <= 5 && timeLeft > 0 && window.duckyAudio) {
+                window.duckyAudio.playCountdownTick();
+            }
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                // Mostrar automáticamente el desglose al agotarse el tiempo
+                loadAndShowBreakdown();
+            }
+        }, 1000);
+
+        // Polling en vivo para el conteo de respuestas de estudiantes con soporte ETag 304
+        const pollInterval = setInterval(function() {
+            fetch(questionStatusUrl, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'If-None-Match': lastQuestionEtag || ''
+                }
+            })
+            .then(function(res) {
+                if (res.status === 304) return null;
+                if (!res.ok) throw new Error('Error de sincronización de respuestas');
+                const etag = res.headers.get('ETag');
+                if (etag) lastQuestionEtag = etag;
+                return res.json();
+            })
+            .then(function(data) {
+                if (!data) return;
+                if (answeredSpan && data.answered_count !== undefined) {
+                    answeredSpan.innerText = data.answered_count;
+                }
+            })
+            .catch(function(err) {
+                console.warn('Sondeo de respuestas en pausa:', err);
+            });
+        }, 1500);
+    })();
+</script>
+
+{% include "quiz_games/audio_engine.html" %}
+{% endblock %}
