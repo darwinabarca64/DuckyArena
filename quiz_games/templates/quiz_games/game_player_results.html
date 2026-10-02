@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static avatar_tags %}
 
 {% block title %}Tus Resultados: {{ quiz.title }} — QuizArenas{% endblock %}
 
@@ -208,6 +208,12 @@
             </div>
         {% endif %}
 
+        <div style="display: flex; justify-content: center; margin-bottom: 1rem;">
+            <div style="width: 120px; height: 120px; border-radius: 50%; background: radial-gradient(circle, rgba(251, 191, 36, 0.2) 0%, rgba(15, 23, 42, 0.5) 80%); border: 3px solid #F59E0B; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(245, 158, 11, 0.25);">
+                {% render_ducky_avatar player_entry size="105px" extra_class="results-duck-avatar" %}
+            </div>
+        </div>
+
         <h1 class="results-player-title">¡Gran Partida, {{ user.username }}!</h1>
         <p class="results-quiz-subtitle">{{ quiz.title }} &bull; Código PIN: {{ game.code }}</p>
 
@@ -225,8 +231,8 @@
         <!-- 4 Key Individual Stats -->
         <div class="player-stats-grid-4">
             <div class="player-stat-tile">
-                <div class="stat-tile-label">Puntos Ganados</div>
-                <div class="stat-tile-number color-score">{{ player_entry.score }} pts</div>
+                <div class="stat-tile-label">DuckyCoins Ganadas</div>
+                <div class="stat-tile-number color-score">🪙 {{ player_entry.score }} DC</div>
             </div>
 
             <div class="player-stat-tile">

@@ -6,20 +6,23 @@
 {% block extra_css %}
 <style>
     /* Hero Banner Component */
-    .hero-banner-card {
-        background: linear-gradient(135deg, #46178F 0%, #300C66 100%);
-        border-radius: var(--radius-lg);
-        overflow: hidden;
-        margin-bottom: 2.5rem;
-        box-shadow: var(--shadow-md);
+    .hero-banner-container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto 2.25rem auto;
+        background: linear-gradient(135deg, #3B0764 0%, #1E1B4B 100%);
+        border-radius: 1.25rem;
+        padding: 2.25rem 2.5rem;
         display: grid;
-        grid-template-columns: 1.1fr 1fr;
+        grid-template-columns: 1fr 1.1fr;
         align-items: center;
-        color: #FFFFFF;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        gap: 2.25rem;
     }
 
     .hero-text-content {
-        padding: 3rem 2.5rem;
+        width: 100%;
     }
 
     .hero-badge-tag {
@@ -32,18 +35,18 @@
         font-size: 0.8rem;
         padding: 0.35rem 0.85rem;
         border-radius: var(--radius-full);
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
 
     .hero-headline {
         font-family: var(--font-display);
-        font-size: 2.5rem;
+        font-size: 2.15rem;
         font-weight: 900;
         line-height: 1.15;
         color: #FFFFFF;
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
         letter-spacing: -0.02em;
     }
 
@@ -52,9 +55,9 @@
     }
 
     .hero-subtext {
-        font-size: 1.05rem;
+        font-size: 1rem;
         color: #E2E8F0;
-        margin-bottom: 1.75rem;
+        margin-bottom: 1.35rem;
         line-height: 1.5;
         max-width: 480px;
     }
@@ -62,46 +65,54 @@
     .hero-cta-group {
         display: flex;
         flex-wrap: wrap;
-        gap: 1rem;
+        gap: 0.85rem;
         align-items: center;
     }
 
-    .hero-image-wrapper {
-        height: 100%;
-        min-height: 340px;
+    .hero-image-content {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .hero-image-card {
         position: relative;
+        width: 100%;
+        border-radius: 1rem;
         overflow: hidden;
         display: flex;
         flex-direction: column;
-        justify-content: flex-end;
+        align-items: center;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+        border: 1.5px solid rgba(255, 255, 255, 0.18);
+        background: rgba(15, 23, 42, 0.6);
     }
 
-    .hero-img {
+    .hero-mascot-image {
         width: 100%;
-        height: 100%;
+        height: 280px;
         object-fit: cover;
         display: block;
-        position: absolute;
-        top: 0;
-        left: 0;
+        transition: transform 0.3s ease;
     }
 
-    /* Hero Interactive Action Pills Overlay */
+    .hero-image-card:hover .hero-mascot-image {
+        transform: scale(1.03);
+    }
+
+    /* Hero Interactive Action Pills Overlay/Dock */
     .hero-interactive-dock {
-        position: relative;
-        z-index: 5;
-        margin: 1rem;
+        width: 100%;
         display: flex;
-        gap: 0.65rem;
+        gap: 0.5rem;
         justify-content: center;
         align-items: center;
-        background: linear-gradient(135deg, rgba(62, 19, 124, 0.72) 0%, rgba(35, 10, 74, 0.82) 100%);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        padding: 0.55rem 0.85rem;
-        border-radius: var(--radius-full);
-        border: 1px solid rgba(192, 132, 252, 0.35);
-        box-shadow: 0 8px 24px rgba(35, 10, 74, 0.45);
+        background: linear-gradient(135deg, rgba(59, 7, 100, 0.92) 0%, rgba(30, 27, 75, 0.96) 100%);
+        backdrop-filter: blur(10px);
+        padding: 0.65rem 0.75rem;
+        border-top: 1px solid rgba(192, 132, 252, 0.3);
     }
 
     .hero-dock-pill {
@@ -109,19 +120,19 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 0.5rem 0.85rem;
+        padding: 0.45rem 0.6rem;
         border-radius: var(--radius-full);
         font-family: var(--font-display);
         font-weight: 800;
-        font-size: 0.78rem;
+        font-size: 0.75rem;
         text-transform: uppercase;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.03em;
         text-decoration: none;
         color: #FFFFFF;
         white-space: nowrap;
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         border: 1px solid transparent;
-        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
     }
 
     .hero-dock-pill:hover {
@@ -155,28 +166,28 @@
         background: #15803D;
     }
 
-    /* Header Bar & Search */
-    .catalog-header-bar {
+    /* Section Header & Search Bar */
+    .section-header-row {
         display: flex;
-        flex-wrap: wrap;
-        align-items: center;
         justify-content: space-between;
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-        padding-bottom: 1rem;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding-bottom: 0.75rem;
         border-bottom: 1px solid var(--border-subtle);
     }
 
     .section-title-large {
         font-family: var(--font-display);
-        font-size: 1.5rem;
+        font-size: 1.45rem;
         font-weight: 800;
         color: var(--text-heading);
     }
 
     .search-filter-box {
         position: relative;
-        min-width: 320px;
+        min-width: 280px;
     }
 
     .search-filter-box input {
@@ -184,10 +195,10 @@
         background: var(--bg-surface);
         border: 1.5px solid var(--border-medium);
         color: var(--text-heading);
-        padding: 0.7rem 1.2rem 0.7rem 2.85rem;
+        padding: 0.65rem 1.2rem 0.65rem 2.85rem;
         border-radius: var(--radius-full);
         font-family: var(--font-body);
-        font-size: 0.95rem;
+        font-size: 0.92rem;
         outline: none;
         transition: all 0.2s ease;
     }
@@ -215,31 +226,34 @@
     }
 
     /* Cards Grid */
-    .quiz-grid {
+    .quiz-cards-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 3.5rem;
+        gap: 1.75rem;
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 3rem;
     }
 
     .quiz-card {
-        background: var(--bg-surface);
-        border: 1px solid var(--border-subtle);
-        border-radius: var(--radius-lg);
-        padding: 1.6rem;
+        background: #ffffff;
+        border: 1px solid #E2E8F0;
+        border-radius: 1rem;
+        padding: 1.25rem;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        min-height: 250px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
         position: relative;
         overflow: hidden;
-        transition: all 0.25s ease;
-        box-shadow: var(--shadow-sm);
+        width: 100%;
     }
 
     .quiz-card:hover {
         transform: translateY(-4px);
-        box-shadow: var(--shadow-md);
-        border-color: var(--border-medium);
+        box-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.1);
     }
 
     /* Top Color Stripe */
@@ -261,13 +275,13 @@
         justify-content: space-between;
         align-items: flex-start;
         gap: 0.75rem;
-        margin-top: 0.35rem;
-        margin-bottom: 0.85rem;
+        margin-top: 0.25rem;
+        margin-bottom: 0.75rem;
     }
 
     .quiz-title {
         font-family: var(--font-display);
-        font-size: 1.25rem;
+        font-size: 1.2rem;
         font-weight: 800;
         color: var(--text-heading);
         line-height: 1.3;
@@ -298,9 +312,9 @@
 
     .quiz-description {
         color: var(--text-body);
-        font-size: 0.92rem;
-        line-height: 1.5;
-        margin-bottom: 1.25rem;
+        font-size: 0.9rem;
+        line-height: 1.45;
+        margin-bottom: 1rem;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -310,17 +324,17 @@
     .quiz-meta-stats {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.75rem;
-        font-size: 0.85rem;
+        gap: 0.6rem;
+        font-size: 0.82rem;
         color: var(--text-muted);
-        padding-top: 1rem;
+        padding-top: 0.75rem;
         border-top: 1px solid var(--border-subtle);
-        margin-bottom: 1.25rem;
+        margin-bottom: 0.75rem;
     }
 
     .meta-stat-pill {
         background: var(--bg-surface-secondary);
-        padding: 0.25rem 0.65rem;
+        padding: 0.2rem 0.55rem;
         border-radius: var(--radius-sm);
         border: 1px solid var(--border-subtle);
     }
@@ -329,10 +343,20 @@
         color: var(--text-heading);
     }
 
-    .card-actions-row {
+    .card-actions {
         display: flex;
-        align-items: center;
         gap: 0.5rem;
+        align-items: center;
+        margin-top: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .card-actions .btn,
+    .card-actions .btn-tool-action,
+    .card-actions .btn-card-explore {
+        font-size: 0.8rem;
+        padding: 0.45rem 0.75rem;
+        white-space: nowrap;
     }
 
     .btn-card-explore {
@@ -345,9 +369,7 @@
         color: #FFFFFF;
         font-family: var(--font-display);
         font-weight: 800;
-        font-size: 0.88rem;
         text-transform: uppercase;
-        padding: 0.6rem 1rem;
         border-radius: var(--radius-md);
         text-decoration: none;
         transition: all 0.15s ease;
@@ -366,14 +388,12 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 0.55rem 0.85rem;
         border-radius: var(--radius-md);
         background: var(--bg-surface-secondary);
         border: 1px solid var(--border-medium);
         color: var(--text-body);
         text-decoration: none;
         font-family: var(--font-display);
-        font-size: 0.82rem;
         font-weight: 700;
         cursor: pointer;
         transition: all 0.2s ease;
@@ -399,7 +419,7 @@
     /* Empty State */
     .empty-state-box {
         text-align: center;
-        padding: 4rem 2rem;
+        padding: 3.5rem 2rem;
         background: var(--bg-surface);
         border: 2px dashed var(--border-medium);
         border-radius: var(--radius-lg);
@@ -407,8 +427,8 @@
     }
 
     .empty-trophy-img {
-        width: 120px;
-        height: 120px;
+        width: 100px;
+        height: 100px;
         border-radius: 50%;
         margin-bottom: 1.25rem;
         border: 2px solid var(--kahoot-yellow);
@@ -416,7 +436,7 @@
 
     .empty-title {
         font-family: var(--font-display);
-        font-size: 1.6rem;
+        font-size: 1.5rem;
         font-weight: 800;
         color: var(--text-heading);
         margin-bottom: 0.5rem;
@@ -425,60 +445,131 @@
     .empty-desc {
         color: var(--text-muted);
         max-width: 480px;
-        margin: 0 auto 1.75rem auto;
-        font-size: 1rem;
+        margin: 0 auto 1.5rem auto;
+        font-size: 0.95rem;
     }
 
-    @media (max-width: 900px) {
-        .hero-banner-card {
-            grid-template-columns: 1fr;
+    @media (max-width: 868px) {
+        .hero-banner-container {
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            padding: 1.5rem 1rem;
+            gap: 1.5rem;
+            border-radius: 1rem;
+            width: 100%;
+            box-sizing: border-box;
         }
         .hero-text-content {
-            padding: 2.25rem 1.5rem;
-        }
-        .hero-headline {
-            font-size: 2rem;
-        }
-        .hero-image-wrapper {
-            min-height: 220px;
-            max-height: 280px;
-        }
-        .catalog-header-bar {
-            flex-direction: column;
-            align-items: stretch;
-            gap: 1rem;
-        }
-        .search-filter-box {
-            min-width: 100%;
             width: 100%;
         }
-        .quiz-grid {
-            grid-template-columns: 1fr;
-            gap: 1.25rem;
-        }
-    }
-
-    @media (max-width: 480px) {
         .hero-headline {
-            font-size: 1.65rem;
+            font-size: 1.6rem;
+            line-height: 1.25;
+            word-break: break-word;
         }
         .hero-subtext {
-            font-size: 0.95rem;
+            font-size: 0.92rem;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 1.15rem;
         }
         .hero-cta-group {
+            display: flex;
             flex-direction: column;
             width: 100%;
+            gap: 0.65rem;
         }
         .hero-cta-group .btn-3d {
             width: 100%;
             text-align: center;
+            padding: 0.65rem 1rem;
+            font-size: 0.88rem;
         }
-        .card-actions-row {
+        .hero-image-content {
+            width: 100%;
+            max-width: 100%;
+        }
+        .hero-image-card {
+            width: 100%;
+            border-radius: 0.85rem;
+        }
+        .hero-mascot-image {
+            height: 180px;
+            width: 100%;
+            object-fit: cover;
+        }
+        .hero-interactive-dock {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 0.4rem;
+            padding: 0.5rem 0.6rem;
+        }
+        .hero-dock-pill {
+            width: 100%;
+            font-size: 0.75rem;
+            padding: 0.4rem 0.5rem;
+            white-space: normal;
+            text-align: center;
+        }
+        .section-header-row {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
+            width: 100%;
+        }
+        .search-filter-box {
+            min-width: 0;
+            width: 100%;
+        }
+        .quiz-cards-grid {
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .quiz-card {
+            width: 100%;
+            padding: 1.15rem;
+            box-sizing: border-box;
+        }
+        .card-actions {
+            display: flex;
             flex-wrap: wrap;
+            gap: 0.4rem;
+            width: 100%;
         }
         .btn-card-explore {
             width: 100%;
-            margin-bottom: 0.35rem;
+            margin-bottom: 0.25rem;
+        }
+        .btn-tool-action {
+            flex: 1;
+            min-width: 65px;
+            justify-content: center;
+            text-align: center;
+            padding: 0.45rem 0.5rem;
+            font-size: 0.78rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .hero-banner-container {
+            padding: 1.25rem 0.75rem;
+        }
+        .hero-headline {
+            font-size: 1.35rem;
+        }
+        .hero-mascot-image {
+            height: 145px;
+        }
+        .section-title-large {
+            font-size: 1.2rem;
+        }
+        .meta-stat-pill {
+            font-size: 0.75rem;
+            padding: 0.15rem 0.45rem;
         }
     }
 </style>
@@ -486,7 +577,7 @@
 
 {% block content %}
 <!-- Hero Section -->
-<section class="hero-banner-card">
+<section class="hero-banner-container">
     <div class="hero-text-content">
         <span class="hero-badge-tag">QuizArenas</span>
         <h1 class="hero-headline">
@@ -504,24 +595,26 @@
             </a>
         </div>
     </div>
-    <div class="hero-image-wrapper">
-        <img src="{% static 'assets/hero_banner.jpg' %}" alt="QuizArenas Space Tournament" class="hero-img">
-        <div class="hero-interactive-dock">
-            <a href="#catalogo-quizzes" class="hero-dock-pill pill-purple" title="Explora y participa en las partidas de cuestionarios">
-                ¡Juega en Vivo!
-            </a>
-            <a href="#catalogo-quizzes" class="hero-dock-pill pill-yellow" title="Compite y gana puntos Ducky Coins">
-                ¡Gana Puntos!
-            </a>
-            <a href="{% url 'quizzes:quiz_create' %}" class="hero-dock-pill pill-green" title="Crea un nuevo cuestionario interactivo">
-                ¡Diversión Total!
-            </a>
+    <div class="hero-image-content">
+        <div class="hero-image-card">
+            <img src="{% static 'assets/hero_banner.jpg' %}" alt="QuizArenas Space Tournament" class="hero-mascot-image">
+            <div class="hero-interactive-dock">
+                <a href="#catalogo-quizzes" class="hero-dock-pill pill-purple" title="Explora y participa en las partidas de cuestionarios">
+                    ¡Juega en Vivo!
+                </a>
+                <a href="#catalogo-quizzes" class="hero-dock-pill pill-yellow" title="Compite y gana puntos Ducky Coins">
+                    ¡Gana Puntos!
+                </a>
+                <a href="{% url 'quizzes:quiz_create' %}" class="hero-dock-pill pill-green" title="Crea un nuevo cuestionario interactivo">
+                    ¡Diversión Total!
+                </a>
+            </div>
         </div>
     </div>
 </section>
 
 <!-- Filter & Search Bar -->
-<div class="catalog-header-bar" id="catalogo-quizzes">
+<div class="section-header-row" id="catalogo-quizzes">
     <h2 class="section-title-large">
         Cuestionarios Disponibles
     </h2>
@@ -538,11 +631,11 @@
 
 {# Sección: Mis Cuestionarios #}
 {% if is_teacher and my_quizzes %}
-    <div class="my-quizzes-section" id="mis-quizzes" style="margin-bottom: 3.5rem;">
-        <h3 class="section-title-large" style="font-size: 1.3rem; margin-bottom: 1.25rem; color: var(--kahoot-purple);">
+    <div class="my-quizzes-section" id="mis-quizzes" style="margin-bottom: 2.5rem;">
+        <h3 class="section-title-large" style="font-size: 1.25rem; margin-bottom: 1rem; color: var(--kahoot-purple);">
             Mis Cuestionarios de Profesor ({{ my_quizzes.count }})
         </h3>
-        <div class="quiz-grid" id="myQuizzesGrid">
+        <div class="quiz-cards-grid" id="myQuizzesGrid">
             {% for quiz in my_quizzes %}
                 <article class="quiz-card" data-title="{{ quiz.title|lower }}">
                     <div class="card-stripe {% cycle 'stripe-blue' 'stripe-red' 'stripe-yellow' 'stripe-green' %}"></div>
@@ -570,7 +663,7 @@
                             </div>
                         </div>
 
-                        <div class="card-actions-row">
+                        <div class="card-actions">
                             <a href="{% url 'quizzes:quiz_detail' quiz.pk %}" class="btn-card-explore">
                                 Ver Detalle
                             </a>
@@ -597,7 +690,7 @@
 {# Sección: Cuestionarios Públicos #}
 <div class="public-quizzes-section">
     {% if quizzes %}
-        <div class="quiz-grid" id="publicQuizzesGrid">
+        <div class="quiz-cards-grid" id="publicQuizzesGrid">
             {% for quiz in quizzes %}
                 <article class="quiz-card" data-title="{{ quiz.title|lower }}">
                     <div class="card-stripe {% cycle 'stripe-yellow' 'stripe-green' 'stripe-blue' 'stripe-red' %}"></div>
@@ -624,7 +717,7 @@
                             </div>
                         </div>
 
-                        <div class="card-actions-row">
+                        <div class="card-actions">
                             <a href="{% url 'quizzes:quiz_detail' quiz.pk %}" class="btn-card-explore">
                                 Explorar Quiz
                             </a>

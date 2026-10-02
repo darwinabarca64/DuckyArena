@@ -75,7 +75,13 @@ class GamePlayer(models.Model):
     score = models.PositiveIntegerField(default=0, verbose_name="Puntuación")
     correct_answers = models.PositiveIntegerField(default=0, verbose_name="Respuestas correctas")
     current_streak = models.PositiveIntegerField(default=0, verbose_name="Racha actual")
+    is_settled = models.BooleanField(default=False, verbose_name="¿Liquidado a Profile?")
     joined_at = models.DateTimeField(auto_now_add=True, verbose_name="Unido en")
+
+    avatar_body = models.CharField(max_length=50, default='body_yellow', verbose_name="Cuerpo del Avatar")
+    avatar_clothes = models.CharField(max_length=50, default='', blank=True, verbose_name="Ropa del Avatar")
+    avatar_head = models.CharField(max_length=50, default='', blank=True, verbose_name="Sombrero del Avatar")
+    avatar_face = models.CharField(max_length=50, default='face_calm', verbose_name="Expresión del Avatar")
 
     class Meta:
         verbose_name = "Jugador de Partida"
@@ -86,6 +92,15 @@ class GamePlayer(models.Model):
                 name='unique_player_per_quiz_game'
             )
         ]
+
+    @property
+    def avatar_dict(self):
+        return {
+            'body': self.avatar_body or 'body_yellow',
+            'clothes': self.avatar_clothes or '',
+            'head': self.avatar_head or '',
+            'face': self.avatar_face or 'face_calm'
+        }
 
     def __str__(self):
         return f"{self.player.username} en Partida {self.game.code} ({self.score} pts)"

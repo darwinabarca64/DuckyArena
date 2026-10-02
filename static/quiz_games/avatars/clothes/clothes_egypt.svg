@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <filter id="clothShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <!-- CAPA 1: ROPA (Z-INDEX 20) - EGIPTO -->
+  <g id="clothes-egypt" filter="url(#clothShadow)">
+    <!-- Faldellín Shendyt de lino blanco -->
+    <path d="M 180 320 L 332 320 L 325 400 L 285 410 L 256 390 L 227 410 L 187 400 Z" 
+          fill="#F8FAFC" stroke="#CBD5E1" stroke-width="4"/>
+    <!-- Cinturón de oro real y banda central -->
+    <path d="M 180 320 Q 256 335 332 320 L 332 338 Q 256 353 180 338 Z" 
+          fill="#F59E0B" stroke="#B45309" stroke-width="2"/>
+    <path d="M 240 335 L 272 335 L 268 405 L 244 405 Z" 
+          fill="#FBBF24" stroke="#D97706" stroke-width="2"/>
+    <rect x="246" y="348" width="20" height="6" fill="#0284C7"/>
+    <rect x="246" y="362" width="20" height="6" fill="#DC2626"/>
+    <rect x="246" y="376" width="20" height="6" fill="#0284C7"/>
+    <!-- Collar Usekh circular ceremonial -->
+    <path d="M 195 230 C 190 295, 322 295, 317 230 C 295 260, 217 260, 195 230 Z" 
+          fill="#F59E0B" stroke="#B45309" stroke-width="3"/>
+    <path d="M 205 240 C 205 285, 307 285, 307 240" 
+          stroke="#0284C7" stroke-width="5" fill="none"/>
+    <path d="M 215 248 C 215 278, 297 278, 297 248" 
+          stroke="#DC2626" stroke-width="4" fill="none"/>
+    <circle cx="256" cy="275" r="5" fill="#10B981" stroke="#047857" stroke-width="1"/>
+  </g>
+</svg>

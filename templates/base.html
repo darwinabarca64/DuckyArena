@@ -57,10 +57,19 @@
             --font-body: 'Inter', sans-serif;
         }
 
-        * {
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            min-height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto !important; /* Scroll natural habilitado */
+            touch-action: auto;          /* Eventos de puntero normales */
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -71,7 +80,6 @@
             display: flex;
             flex-direction: column;
             line-height: 1.5;
-            overflow-x: hidden;
         }
 
         /* Top Accent Strip */
@@ -366,10 +374,16 @@
         /* Main Container */
         .main-content {
             flex: 1;
-            max-width: 1280px;
             width: 100%;
+            overflow-x: hidden;
+        }
+
+        .app-main-wrapper {
+            width: 100%;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 2.25rem 1.5rem 4rem 1.5rem;
+            padding: 1.5rem 1.25rem 3rem 1.25rem;
+            box-sizing: border-box;
         }
 
         /* Alerts & Messages */
@@ -517,8 +531,11 @@
                 padding-top: 0.65rem;
                 border-top: 1px dashed var(--border-subtle);
             }
+            .app-main-wrapper {
+                padding: 1rem 0.75rem 2.5rem 0.75rem;
+            }
             .main-content {
-                padding: 1rem 0.85rem 3rem 0.85rem;
+                padding: 0;
             }
         }
 
@@ -599,9 +616,9 @@
                                 <span class="user-role-badge">DOCENTE</span>
                             {% endif %}
                         </div>
-                        <a href="{% url 'admin:logout' %}" class="btn-logout" title="Cerrar sesión">Salir</a>
+                        <a href="{% url 'logout' %}" class="btn-logout" title="Cerrar sesión">Salir</a>
                     {% else %}
-                        <a href="{% url 'admin:login' %}" class="btn-3d btn-3d-yellow" style="padding: 0.45rem 1rem; font-size: 0.85rem;">
+                        <a href="{% url 'login' %}" class="btn-3d btn-3d-yellow" style="padding: 0.45rem 1rem; font-size: 0.85rem;">
                             Iniciar Sesión
                         </a>
                     {% endif %}
@@ -611,18 +628,20 @@
     </header>
 
     <main class="main-content">
-        {% if messages %}
-            <div class="messages-container">
-                {% for message in messages %}
-                    <div class="ducky-alert ducky-alert-{{ message.tags|default:'info' }}">
-                        <span>{{ message }}</span>
-                        <button class="alert-close-btn" onclick="this.parentElement.remove()">&times;</button>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
+        <div class="app-main-wrapper">
+            {% if messages %}
+                <div class="messages-container">
+                    {% for message in messages %}
+                        <div class="ducky-alert ducky-alert-{{ message.tags|default:'info' }}">
+                            <span>{{ message }}</span>
+                            <button class="alert-close-btn" onclick="this.parentElement.remove()">&times;</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
 
-        {% block content %}{% endblock %}
+            {% block content %}{% endblock %}
+        </div>
     </main>
 
     <footer class="ducky-footer">

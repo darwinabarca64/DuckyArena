@@ -9,6 +9,7 @@ class DuckyAudioEngine {
   constructor() {
     this.ctx = null;
     this.isMuted = localStorage.getItem('ducky_audio_muted') === 'true';
+    this.countdownInterval = null;
     this.initUI();
   }
 
@@ -44,7 +45,7 @@ class DuckyAudioEngine {
     });
   }
 
-  playTone(freq, type, duration, delay = 0) {
+  playTone(freq, type, duration, delay = 0, gainVal = 0.15) {
     if (this.isMuted) return;
     this.initContext();
     if (!this.ctx) return;
@@ -55,7 +56,7 @@ class DuckyAudioEngine {
     osc.type = type;
     osc.frequency.setValueAtTime(freq, startTime);
 
-    gain.gain.setValueAtTime(0.15, startTime);
+    gain.gain.setValueAtTime(gainVal, startTime);
     gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
 
     osc.connect(gain);
@@ -66,28 +67,55 @@ class DuckyAudioEngine {
   }
 
   playCorrect() {
-    // Acorde ascendente alegre
-    this.playTone(523.25, 'triangle', 0.15, 0.0);  // C5
-    this.playTone(659.25, 'triangle', 0.15, 0.1);  // E5
-    this.playTone(783.99, 'triangle', 0.30, 0.2);  // G5
+    // Brillo de acierto: arpegio ascendente brillante en Do Mayor
+    if (this.isMuted) return;
+    this.initContext();
+    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+    notes.forEach((freq, idx) => {
+      this.playTone(freq, 'triangle', 0.18, idx * 0.07, 0.2);
+    });
   }
 
   playIncorrect() {
-    // Tono descendente grave
-    this.playTone(330, 'sawtooth', 0.2, 0.0);
-    this.playTone(240, 'sawtooth', 0.35, 0.15);
+    // Golpe sordo y disonancia de fallo
+    if (this.isMuted) return;
+    this.initContext();
+    this.playTone(220.00, 'sawtooth', 0.25, 0.0, 0.25); // A3
+    this.playTone(207.65, 'sawtooth', 0.35, 0.08, 0.25); // G#3 (disonancia)
   }
 
-  playCountdownTick() {
-    // Tic sutil de reloj
-    this.playTone(880, 'sine', 0.05, 0.0);
+  playTensionCountdown(secondsRemaining) {
+    // Tic-tac de alta tensión: doble pulso rápido con frecuencia ascendente según se agota el tiempo
+    if (this.isMuted || secondsRemaining > 5 || secondsRemaining <= 0) return;
+    this.initContext();
+    
+    // La frecuencia base sube a medida que quedan menos segundos
+    const baseFreq = 800 + (5 - secondsRemaining) * 80;
+    
+    // Pulso 1
+    this.playTone(baseFreq, 'sine', 0.06, 0.0, 0.25);
+    // Pulso 2 (estilo latido cardíaco acelerado)
+    this.playTone(baseFreq * 1.25, 'sine', 0.08, 0.12, 0.3);
   }
 
-  playFanfare() {
-    // Fanfarria breve de victoria
-    const notes = [523.25, 523.25, 523.25, 659.25, 783.99];
-    const delays = [0.0, 0.12, 0.24, 0.36, 0.6];
-    notes.forEach((f, i) => this.playTone(f, 'square', 0.25, delays[i]));
+  playVictoryOrchestration() {
+    // Fanfarria polifónica triunfal para podio
+    if (this.isMuted) return;
+    this.initContext();
+
+    const chord1 = [523.25, 659.25, 783.99]; // C Mayor
+    const chord2 = [587.33, 739.99, 880.00]; // D Mayor
+    const chord3 = [659.25, 830.61, 987.77]; // E Mayor
+    const finalChord = [783.99, 987.77, 1174.66, 1567.98]; // Sol Mayor triunfal
+
+    const playChord = (chord, delay, duration) => {
+      chord.forEach(f => this.playTone(f, 'triangle', duration, delay, 0.12));
+    };
+
+    playChord(chord1, 0.0, 0.2);
+    playChord(chord2, 0.25, 0.2);
+    playChord(chord3, 0.5, 0.25);
+    playChord(finalChord, 0.8, 1.2);
   }
 }
 

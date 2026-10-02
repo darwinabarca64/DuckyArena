@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <filter id="headShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="6" stdDeviation="4" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  <!-- CAPA 3: SOMBRERO / CABEZA (Z-INDEX 40) - EGIPTO -->
+  <g id="head-egypt" filter="url(#headShadow)">
+    <!-- Tocado Nemes superior y aletas laterales cayendo sobre hombros -->
+    <!-- Aleta Izquierda -->
+    <path d="M 180 120 L 155 220 L 190 215 L 200 140 Z" fill="#0284C7" stroke="#0369A1" stroke-width="3"/>
+    <path d="M 163 150 L 197 150 M 158 180 L 193 180" stroke="#F59E0B" stroke-width="6"/>
+    <!-- Aleta Derecha -->
+    <path d="M 332 120 L 357 220 L 322 215 L 312 140 Z" fill="#0284C7" stroke="#0369A1" stroke-width="3"/>
+    <path d="M 315 150 L 349 150 M 319 180 L 354 180" stroke="#F59E0B" stroke-width="6"/>
+    <!-- Corona Nemes Principal arqueada -->
+    <path d="M 175 130 C 170 55, 342 55, 337 130 C 300 110, 212 110, 175 130 Z" 
+          fill="#0284C7" stroke="#0369A1" stroke-width="4"/>
+    <!-- Franjas doradas radiantes -->
+    <path d="M 210 75 Q 220 115 220 115" stroke="#F59E0B" stroke-width="8" fill="none"/>
+    <path d="M 240 65 Q 244 112 244 112" stroke="#F59E0B" stroke-width="8" fill="none"/>
+    <path d="M 272 65 Q 268 112 268 112" stroke="#F59E0B" stroke-width="8" fill="none"/>
+    <path d="M 302 75 Q 292 115 292 115" stroke="#F59E0B" stroke-width="8" fill="none"/>
+    <!-- Banda frontal dorada -->
+    <path d="M 175 125 C 210 110, 302 110, 337 125 L 335 140 C 300 125, 210 125, 177 140 Z" 
+          fill="#F59E0B" stroke="#B45309" stroke-width="2"/>
+    <!-- Uraeus (Cobra sagrada erguida frontal) -->
+    <g transform="translate(256, 105)">
+      <path d="M 0 15 Q -10 5 -5 -8 Q 0 -18 5 -8 Q 10 5 0 15 Z" fill="#FBBF24" stroke="#B45309" stroke-width="2"/>
+      <circle cx="0" cy="-12" r="5" fill="#DC2626" stroke="#B45309" stroke-width="1.5"/>
+      <circle cx="-1.5" cy="-13" r="1" fill="#000"/>
+      <circle cx="1.5" cy="-13" r="1" fill="#000"/>
+    </g>
+  </g>
+</svg>

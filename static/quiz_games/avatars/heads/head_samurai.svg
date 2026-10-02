@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <filter id="headShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="6" stdDeviation="4" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+  <!-- CAPA 3: SOMBRERO / CABEZA (Z-INDEX 40) - SAMURAI -->
+  <g id="head-samurai" filter="url(#headShadow)">
+    <!-- Protector de nuca laminado (Shikoro) -->
+    <path d="M 160 140 C 150 185, 200 195, 210 160" stroke="#DC2626" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <path d="M 352 140 C 362 185, 312 195, 302 160" stroke="#DC2626" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <!-- Casco semiesférico Kabuto negro laqueado -->
+    <path d="M 175 130 C 170 55, 342 55, 337 130 C 300 115, 212 115, 175 130 Z" 
+          fill="#0F172A" stroke="#000" stroke-width="4"/>
+    <!-- Visera Mabizashi con ribete dorado -->
+    <path d="M 180 125 Q 256 105 332 125 L 330 138 Q 256 120 182 138 Z" 
+          fill="#F59E0B" stroke="#B45309" stroke-width="2"/>
+    <!-- Aletas laterales Fukigaeshi -->
+    <g transform="translate(178, 125) rotate(20)">
+      <rect x="-8" y="-15" width="16" height="30" rx="3" fill="#991B1B" stroke="#F59E0B" stroke-width="2"/>
+      <circle cx="0" cy="0" r="3" fill="#FBBF24"/>
+    </g>
+    <g transform="translate(334, 125) rotate(-20)">
+      <rect x="-8" y="-15" width="16" height="30" rx="3" fill="#991B1B" stroke="#F59E0B" stroke-width="2"/>
+      <circle cx="0" cy="0" r="3" fill="#FBBF24"/>
+    </g>
+    <!-- Gran Maedate: Medialuna dorada frontal gigante -->
+    <g transform="translate(256, 75)">
+      <path d="M 0 -45 C 35 -40, 60 -10, 50 15 C 35 0, 15 -15, 0 -15 C -15 -15, -35 0, -50 15 C -60 -10, -35 -40, 0 -45 Z" 
+            fill="#FBBF24" stroke="#D97706" stroke-width="3"/>
+      <!-- Sol / Emblema central -->
+      <circle cx="0" cy="10" r="10" fill="#DC2626" stroke="#FBBF24" stroke-width="2"/>
+    </g>
+  </g>
+</svg>

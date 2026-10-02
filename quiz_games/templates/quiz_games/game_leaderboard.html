@@ -1,243 +1,109 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static avatar_tags %}
 
-{% block title %}Cuadro de Honor: {{ quiz.title }} — QuizArenas{% endblock %}
+{% block title %}Clasificación General — {{ quiz.title }} — QuizArenas{% endblock %}
 
 {% block extra_css %}
 <style>
-    .leaderboard-wrapper {
-        max-width: 1040px;
-        margin: 1.5rem auto 3.5rem;
-        padding: 0 1rem;
+    .leaderboard-container {
+        max-width: 1000px;
+        margin: 0 auto 3rem;
     }
 
-    /* Hero Header */
-    .leaderboard-header-banner {
-        background: #0F172A;
-        border: 2px solid var(--border-subtle);
-        border-radius: var(--radius-lg);
-        padding: 2.5rem 1.5rem;
-        color: #FFFFFF;
+    /* Header Strip */
+    .leaderboard-header {
         text-align: center;
-        box-shadow: var(--shadow-lg);
-        position: relative;
-        overflow: hidden;
         margin-bottom: 2rem;
     }
 
-    .leaderboard-header-banner::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 6px;
-        background: linear-gradient(90deg, var(--kahoot-red), var(--kahoot-blue), var(--kahoot-yellow), var(--kahoot-green));
-    }
-
-    .badge-finished-tag {
-        display: inline-block;
-        background: rgba(38, 137, 12, 0.2);
-        color: #4ADE80;
-        border: 1px solid rgba(74, 222, 128, 0.4);
+    .leaderboard-title {
         font-family: var(--font-display);
-        font-weight: 800;
-        font-size: 0.85rem;
-        padding: 0.35rem 1.1rem;
-        border-radius: var(--radius-full);
-        margin-bottom: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-    }
-
-    .leaderboard-main-title {
-        font-family: var(--font-display);
-        font-size: 2.3rem;
+        font-size: 2.2rem;
         font-weight: 900;
-        color: #FFFFFF;
-        margin-bottom: 0.4rem;
+        color: var(--text-heading);
+        margin-bottom: 0.5rem;
     }
 
-    .leaderboard-quiz-sub {
-        color: #94A3B8;
-        font-size: 1.1rem;
+    .leaderboard-subtitle {
+        color: var(--text-muted);
+        font-size: 1.05rem;
+        font-weight: 500;
     }
 
-    /* Global Metrics Row */
+    /* Global Stats Row */
     .global-stats-row {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        grid-template-columns: repeat(3, 1fr);
         gap: 1.25rem;
-        margin-bottom: 2.5rem;
+        margin-bottom: 2.25rem;
     }
 
     .stat-display-box {
         background: var(--bg-surface);
         border: 1px solid var(--border-subtle);
-        border-radius: var(--radius-md);
+        border-radius: var(--radius-lg);
         padding: 1.5rem;
-        box-shadow: var(--shadow-sm);
         text-align: center;
-        transition: transform 0.2s ease;
+        box-shadow: var(--shadow-sm);
+        position: relative;
+        overflow: hidden;
     }
 
-    .stat-display-box:hover {
-        transform: translateY(-2px);
+    .stat-display-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
     }
 
-    .stat-edge-yellow { border-top: 4px solid var(--kahoot-yellow); }
-    .stat-edge-blue { border-top: 4px solid var(--kahoot-blue); }
-    .stat-edge-purple { border-top: 4px solid var(--kahoot-purple); }
+    .stat-edge-yellow::before { background: var(--kahoot-yellow); }
+    .stat-edge-blue::before { background: var(--kahoot-blue); }
+    .stat-edge-purple::before { background: var(--kahoot-purple); }
 
     .stat-box-label {
         font-family: var(--font-display);
-        font-size: 0.82rem;
+        font-size: 0.85rem;
         font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
         color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
         margin-bottom: 0.4rem;
     }
 
     .stat-box-number {
         font-family: var(--font-display);
-        font-size: 1.9rem;
+        font-size: 1.85rem;
         font-weight: 900;
         color: var(--text-heading);
     }
 
-    /* Olympic Podium Section */
-    .podium-section-card {
-        background: #1E293B;
-        border: 1px solid var(--border-medium);
-        border-radius: var(--radius-lg);
-        padding: 2.5rem 1.5rem 0;
-        box-shadow: var(--shadow-md);
-        margin-bottom: 2.5rem;
-        text-align: center;
-    }
-
-    .podium-section-headline {
-        font-family: var(--font-display);
-        font-size: 1.4rem;
-        font-weight: 900;
-        color: #FFFFFF;
-        margin-bottom: 2rem;
-    }
-
-    .olympic-podium-grid {
-        display: flex;
-        justify-content: center;
-        align-items: flex-end;
-        gap: 1rem;
-        max-width: 680px;
-        margin: 0 auto;
-    }
-
-    .podium-slot {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .podium-slot.slot-2 { order: 1; }
-    .podium-slot.slot-1 { order: 2; z-index: 2; }
-    .podium-slot.slot-3 { order: 3; }
-
-    .podium-user-badge {
-        background: #0F172A;
-        border: 2px solid var(--border-medium);
-        border-radius: var(--radius-md);
-        padding: 0.75rem 0.5rem;
-        width: 100%;
-        text-align: center;
-        margin-bottom: 0.6rem;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
-    }
-
-    .podium-crown {
-        font-size: 1.75rem;
-        line-height: 1;
-        margin-bottom: 0.25rem;
-        display: block;
-    }
-
-    .podium-username {
-        font-family: var(--font-display);
-        font-weight: 800;
-        font-size: 0.95rem;
-        color: #FFFFFF;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        margin-bottom: 0.2rem;
-    }
-
-    .podium-score-val {
-        font-family: var(--font-display);
-        font-weight: 900;
-        font-size: 1.1rem;
-        color: #F59E0B;
-    }
-
-    .podium-step-pedestal {
-        width: 100%;
-        border-radius: var(--radius-md) var(--radius-md) 0 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: var(--font-display);
-        font-weight: 900;
-        font-size: 2.4rem;
-        color: #FFFFFF;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
-    }
-
-    .pedestal-gold {
-        height: 170px;
-        background: linear-gradient(180deg, #F59E0B 0%, #D97706 100%);
-        border: 2px solid #FDE68A;
-        border-bottom: none;
-    }
-
-    .pedestal-silver {
-        height: 125px;
-        background: linear-gradient(180deg, #94A3B8 0%, #64748B 100%);
-        border: 2px solid #E2E8F0;
-        border-bottom: none;
-    }
-
-    .pedestal-bronze {
-        height: 95px;
-        background: linear-gradient(180deg, #D97706 0%, #92400E 100%);
-        border: 2px solid #FCD34D;
-        border-bottom: none;
-    }
-
-    .podium-empty-placeholder {
-        color: #64748B;
-        font-size: 0.85rem;
-        font-style: italic;
-        padding: 1rem 0;
-    }
-
-    /* Table Section */
-    .ranking-rest-card {
+    /* Main Table Card */
+    .ranking-table-card {
         background: var(--bg-surface);
         border: 1px solid var(--border-subtle);
         border-radius: var(--radius-lg);
-        padding: 2rem;
-        box-shadow: var(--shadow-sm);
-        margin-bottom: 2.5rem;
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+        margin-bottom: 2.25rem;
     }
 
-    .table-section-title {
+    .table-card-header {
+        padding: 1.25rem 1.75rem;
+        border-bottom: 1px solid var(--border-subtle);
+        background: var(--bg-surface-secondary);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .table-card-title {
         font-family: var(--font-display);
-        font-size: 1.3rem;
-        font-weight: 800;
+        font-size: 1.15rem;
+        font-weight: 900;
         color: var(--text-heading);
-        margin-bottom: 1.25rem;
+        margin: 0;
     }
 
     .ranking-table-styled {
@@ -248,102 +114,123 @@
 
     .ranking-table-styled th {
         background: var(--bg-surface-secondary);
-        padding: 0.85rem 1rem;
+        padding: 1rem 1.5rem;
         font-family: var(--font-display);
-        font-size: 0.8rem;
+        font-size: 0.82rem;
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         color: var(--text-muted);
-        border-bottom: 1px solid var(--border-medium);
-    }
-
-    .ranking-table-styled td {
-        padding: 1rem;
         border-bottom: 1px solid var(--border-subtle);
     }
 
-    .ranking-table-styled tr:hover td {
-        background: var(--bg-surface-secondary);
+    .ranking-table-styled td {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--border-subtle);
+        font-size: 0.95rem;
+        color: var(--text-body);
+    }
+
+    .ranking-table-styled tbody tr:hover {
+        background: #F8FAFC;
     }
 
     .pos-number-badge {
         font-family: var(--font-display);
         font-weight: 900;
-        font-size: 1.05rem;
+        font-size: 1rem;
         color: var(--text-heading);
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #E2E8F0;
     }
+
+    .pos-top-1 { background: #FEF3C7; color: #B45309; }
+    .pos-top-2 { background: #F1F5F9; color: #475569; }
+    .pos-top-3 { background: #FFEDD5; color: #C2410C; }
 
     .player-row-wrap {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
-        font-family: var(--font-display);
-        font-weight: 700;
-        color: var(--text-heading);
+        gap: 0.85rem;
     }
 
     .player-initial-circle {
-        width: 32px;
-        height: 32px;
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
-        background: linear-gradient(135deg, var(--kahoot-blue), var(--kahoot-purple));
+        background: var(--kahoot-purple);
         color: #FFFFFF;
-        display: flex;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.85rem;
-        font-weight: 800;
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-size: 0.95rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .player-name-text {
+        font-weight: 700;
+        color: var(--text-heading);
     }
 
     .score-highlight {
         font-family: var(--font-display);
         font-weight: 900;
-        color: var(--kahoot-purple);
-        font-size: 1.1rem;
+        font-size: 1.05rem;
+        color: #B45309;
     }
 
-    /* Actions */
+    /* Actions Row */
     .leaderboard-actions-row {
         display: flex;
+        align-items: center;
         justify-content: center;
-        gap: 1rem;
         flex-wrap: wrap;
+        gap: 1.25rem;
     }
 
-    @media (max-width: 640px) {
-        .olympic-podium-grid {
-            gap: 0.5rem;
+    @media (max-width: 768px) {
+        .global-stats-row {
+            grid-template-columns: 1fr;
         }
-        .pedestal-gold { height: 130px; font-size: 1.8rem; }
-        .pedestal-silver { height: 95px; font-size: 1.5rem; }
-        .pedestal-bronze { height: 75px; font-size: 1.3rem; }
-        .leaderboard-main-title { font-size: 1.8rem; }
+        .leaderboard-title {
+            font-size: 1.6rem;
+        }
+        .ranking-table-styled th,
+        .ranking-table-styled td {
+            padding: 0.85rem 1rem;
+        }
+        .leaderboard-actions-row {
+            flex-direction: column;
+            width: 100%;
+        }
+        .leaderboard-actions-row a {
+            width: 100%;
+            text-align: center;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="leaderboard-wrapper">
-    <!-- Header Banner -->
-    <div class="leaderboard-header-banner">
-        <span class="badge-finished-tag">Partida Finalizada</span>
-        <h1 class="leaderboard-main-title">🏆 Cuadro de Honor</h1>
-        <p class="leaderboard-quiz-sub">{{ quiz.title }} &bull; Código PIN: <strong>{{ game.code }}</strong></p>
-        {% if is_host %}
-            <div style="margin-top: 1.25rem;">
-                <a href="{% url 'quiz_games:export_game_results_csv' game.code %}" class="btn-3d btn-3d-yellow" style="padding: 0.6rem 1.4rem; font-size: 0.95rem;">
-                    📥 Descargar Calificaciones (CSV)
-                </a>
-            </div>
-        {% endif %}
+<div class="leaderboard-container">
+    <!-- Header -->
+    <div class="leaderboard-header">
+        <h1 class="leaderboard-title">📊 Clasificación General</h1>
+        <p class="leaderboard-subtitle">Partida finalizada — Cuestionario: <strong>{{ quiz.title }}</strong> (PIN: {{ game.code }})</p>
     </div>
 
     <!-- Global Session Metrics -->
     <div class="global-stats-row">
         <div class="stat-display-box stat-edge-yellow">
-            <div class="stat-box-label">⭐ Puntuación Máxima</div>
-            <div class="stat-box-number">{{ max_score }} pts</div>
+            <div class="stat-box-label">🪙 DuckyCoins Máximas</div>
+            <div class="stat-box-number">{{ max_score }} DC</div>
         </div>
 
         <div class="stat-display-box stat-edge-blue">
@@ -357,123 +244,73 @@
         </div>
     </div>
 
-    <!-- Visual Olympic Podium -->
-    <div class="podium-section-card">
-        <h2 class="podium-section-headline">Podio de Campeones</h2>
-
-        <div class="olympic-podium-grid">
-            <!-- 2nd Place: Silver -->
-            <div class="podium-slot slot-2">
-                {% if second_place %}
-                    <div class="podium-user-badge">
-                        <span class="podium-crown">🥈</span>
-                        <div class="podium-username" title="{{ second_place.player.username }}">{{ second_place.player.username }}</div>
-                        <div class="podium-score-val">{{ second_place.score }} pts</div>
-                    </div>
-                {% else %}
-                    <div class="podium-user-badge">
-                        <div class="podium-empty-placeholder">Sin 2º puesto</div>
-                    </div>
-                {% endif %}
-                <div class="podium-step-pedestal pedestal-silver">2</div>
-            </div>
-
-            <!-- 1st Place: Gold (Center & Elevated) -->
-            <div class="podium-slot slot-1">
-                {% if first_place %}
-                    <div class="podium-user-badge" style="border-color: #F59E0B;">
-                        <span class="podium-crown">👑</span>
-                        <div class="podium-username" title="{{ first_place.player.username }}">{{ first_place.player.username }}</div>
-                        <div class="podium-score-val" style="color: #F59E0B;">{{ first_place.score }} pts</div>
-                    </div>
-                {% else %}
-                    <div class="podium-user-badge">
-                        <div class="podium-empty-placeholder">Sin 1º puesto</div>
-                    </div>
-                {% endif %}
-                <div class="podium-step-pedestal pedestal-gold">1</div>
-            </div>
-
-            <!-- 3rd Place: Bronze -->
-            <div class="podium-slot slot-3">
-                {% if third_place %}
-                    <div class="podium-user-badge">
-                        <span class="podium-crown">🥉</span>
-                        <div class="podium-username" title="{{ third_place.player.username }}">{{ third_place.player.username }}</div>
-                        <div class="podium-score-val">{{ third_place.score }} pts</div>
-                    </div>
-                {% else %}
-                    <div class="podium-user-badge">
-                        <div class="podium-empty-placeholder">Sin 3º puesto</div>
-                    </div>
-                {% endif %}
-                <div class="podium-step-pedestal pedestal-bronze">3</div>
-            </div>
+    <!-- Full Participants Table -->
+    <div class="ranking-table-card">
+        <div class="table-card-header">
+            <h2 class="table-card-title">Tabla Completa de Posiciones</h2>
+            <span style="font-size: 0.88rem; color: var(--text-muted); font-weight: 600;">
+                {{ ranking|length }} participantes registrados
+            </span>
+        </div>
+        <div style="overflow-x: auto;">
+            <table class="ranking-table-styled">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">Posición</th>
+                        <th>Participante</th>
+                        <th>Aciertos</th>
+                        <th>Racha Máx.</th>
+                        <th>DuckyCoins Ganadas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for gp in ranking %}
+                        <tr>
+                            <td>
+                                <span class="pos-number-badge {% if forloop.counter == 1 %}pos-top-1{% elif forloop.counter == 2 %}pos-top-2{% elif forloop.counter == 3 %}pos-top-3{% endif %}">
+                                    {{ forloop.counter }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="player-row-wrap">
+                                    {% render_ducky_avatar gp size="42px" extra_class="leaderboard-duck-avatar" %}
+                                    <span class="player-name-text">{{ gp.player.username }}</span>
+                                </div>
+                            </td>
+                            <td><strong>{{ gp.correct_answers }}</strong> / {{ total_questions }}</td>
+                            <td>🔥 {{ gp.current_streak }}</td>
+                            <td class="score-highlight">🪙 {{ gp.score }} DC</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                                No hubo participantes en esta partida.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <!-- Rest of Participants Table -->
-    {% if rest_players %}
-        <div class="ranking-rest-card">
-            <h3 class="table-section-title">Posiciones Generales (Puesto 4+)</h3>
-            <div style="overflow-x: auto;">
-                <table class="ranking-table-styled">
-                    <thead>
-                        <tr>
-                            <th style="width: 80px;">Posición</th>
-                            <th>Participante</th>
-                            <th>Aciertos</th>
-                            <th>Puntuación</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for gp in rest_players %}
-                            <tr>
-                                <td class="pos-number-badge">#{{ forloop.counter|add:3 }}</td>
-                                <td>
-                                    <div class="player-row-wrap">
-                                        <div class="player-initial-circle">{{ gp.player.username|slice:":1"|upper }}</div>
-                                        <span>{{ gp.player.username }}</span>
-                                    </div>
-                                </td>
-                                <td><strong>{{ gp.correct_answers }}</strong> / {{ total_questions }}</td>
-                                <td class="score-highlight">{{ gp.score }} pts</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    {% endif %}
-
-    <!-- Bottom Navigation Actions -->
+    <!-- Actions Row -->
     <div class="leaderboard-actions-row">
-        <a href="{% url 'quizzes:quiz_list' %}" class="btn-3d btn-3d-blue">
-            📚 Galería de Quizzes
+        <a href="{% url 'quiz_games:game_podium' game.code %}" class="btn-3d btn-3d-yellow" style="padding: 0.85rem 2rem; font-size: 1.05rem;">
+            🏆 Revelar Podio Olímpico
         </a>
+
         {% if is_host %}
-            <a href="{% url 'quiz_games:export_game_results_csv' game.code %}" class="btn-3d btn-3d-yellow">
+            <a href="{% url 'quiz_games:export_game_results_csv' game.code %}" class="btn-3d btn-3d-blue">
                 📥 Descargar Calificaciones (CSV)
             </a>
-            <a href="{% url 'quizzes:quiz_detail' quiz.pk %}" class="btn-3d btn-3d-green">
+            <a href="{% url 'quizzes:quiz_detail' quiz.pk %}" class="btn-3d btn-3d-neutral">
                 🎮 Volver al Cuestionario
             </a>
         {% endif %}
+
+        <a href="{% url 'quizzes:quiz_list' %}" class="btn-3d btn-3d-neutral">
+            📚 Galería de Quizzes
+        </a>
     </div>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        if (window.duckyAudio) {
-            // Intentar reproducir fanfare o en el primer clic de interacción
-            window.duckyAudio.playFanfare();
-            document.body.addEventListener('click', function fanfareOnce() {
-                window.duckyAudio.playFanfare();
-                document.body.removeEventListener('click', fanfareOnce);
-            }, { once: true });
-        }
-    });
-</script>
-
-{% include "quiz_games/audio_engine.html" %}
 {% endblock %}

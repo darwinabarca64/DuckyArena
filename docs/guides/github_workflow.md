@@ -44,6 +44,8 @@ El proyecto está dividido en dos partes. Debes saber a cuál perteneces:
 ## 🚀 PASO 2: CREAR TU RAMA DE TRABAJO (CADA VEZ QUE VAYAS A HACER ALGO)
 
 > ⚠️ **REGLA DE ORO:** Nunca programes directamente en `main`, ni en `parte-1-quizzes`, ni en `parte-2-quizgames`. Siempre crea tu propia rama personal.
+> 
+> 🔄 **¿Ya tienes una copia y quieres actualizarla con los últimos cambios de Daphne/Channels/WebSockets?** Consulta el [**Protocolo de Sincronización Oficial (`github_management.md`)**](file:///c:/Users/Dar/Desktop/Python/DuckyQuizzArena/docs/guides/github_management.md).
 
 ### Si estás en el Equipo de la PARTE 1:
 ```bash

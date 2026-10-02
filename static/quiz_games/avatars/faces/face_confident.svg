@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <filter id="faceGlow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <!-- CAPA 2: EXPRESIÓN FACIAL (Z-INDEX 30) - CONFIADO -->
+  <g id="face-confident" filter="url(#faceGlow)">
+    <!-- Ceja izquierda arqueada confiada -->
+    <path d="M 198 152 Q 220 144 238 156" stroke="#0F172A" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+    <!-- Ceja derecha pícara -->
+    <path d="M 274 158 Q 294 150 314 156" stroke="#0F172A" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+    <!-- Ojo Izquierdo abierto brillante -->
+    <ellipse cx="218" cy="172" rx="12" ry="14" fill="#0F172A"/>
+    <circle cx="214" cy="167" r="5" fill="#FFFFFF"/>
+    <circle cx="222" cy="177" r="2" fill="#FFFFFF"/>
+    <!-- Ojo Derecho GUIÑADO (estrella de triunfo / wink) -->
+    <path d="M 280 174 Q 295 162 310 174" stroke="#0F172A" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <!-- Estrella dorada de brillo en el guiño -->
+    <polygon points="314,162 316,168 322,170 316,172 314,178 312,172 306,170 312,168" fill="#F59E0B"/>
+    <!-- Sonrojo pícaro -->
+    <ellipse cx="198" cy="184" rx="9" ry="5" fill="#FB7185" opacity="0.6"/>
+    <ellipse cx="314" cy="184" rx="9" ry="5" fill="#FB7185" opacity="0.6"/>
+  </g>
+</svg>

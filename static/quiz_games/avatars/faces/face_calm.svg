@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <filter id="faceGlow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <!-- CAPA 2: EXPRESIÓN FACIAL (Z-INDEX 30) - CALMADO -->
+  <g id="face-calm" filter="url(#faceGlow)">
+    <!-- Ojos en arco sereno y feliz (^ ^) -->
+    <path d="M 204 172 Q 218 158 232 172" stroke="#0F172A" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M 280 172 Q 294 158 308 172" stroke="#0F172A" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <!-- Cejas suaves relajadas -->
+    <path d="M 206 150 Q 218 145 230 150" stroke="#475569" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M 282 150 Q 294 145 306 150" stroke="#475569" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Mejillas sonrojadas suaves y tiernas -->
+    <ellipse cx="198" cy="180" rx="12" ry="7" fill="#FB7185" opacity="0.65"/>
+    <ellipse cx="314" cy="180" rx="12" ry="7" fill="#FB7185" opacity="0.65"/>
+    <!-- Pequeño brillo zen -->
+    <circle cx="256" cy="165" r="3" fill="#38BDF8" opacity="0.8"/>
+  </g>
+</svg>

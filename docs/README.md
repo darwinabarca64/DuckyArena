@@ -20,6 +20,7 @@ docs/
 | Documento | Audiencia | Descripción |
 | :--- | :--- | :--- |
 | [**`setup.md`**](file:///c:/Users/Dar/Desktop/Python/DuckyQuizzArena/docs/guides/setup.md) | Todos los Desarrolladores | Guía de instalación rápida y arranque local para **Windows** y **Mac**. |
+| [**`github_management.md`**](file:///c:/Users/Dar/Desktop/Python/DuckyQuizzArena/docs/guides/github_management.md) | Todos los Desarrolladores | Protocolo oficial de sincronización y actualización local sin conflictos ni pérdidas. |
 | [**`github_workflow.md`**](file:///c:/Users/Dar/Desktop/Python/DuckyQuizzArena/docs/guides/github_workflow.md) | Todos los Equipos | Flujo Git, asignación de equipos (`quizzes` vs `quiz_games`) y política de Pull Requests. |
 | [**`passwords_management.md`**](file:///c:/Users/Dar/Desktop/Python/DuckyQuizzArena/docs/guides/passwords_management.md) | Todos los Desarrolladores | Creación de superusuarios y reseteo de contraseñas en Django vía CLI, shell y admin. |
 | [**`quickstart.md`**](file:///c:/Users/Dar/Desktop/Python/DuckyQuizzArena/docs/guides/quickstart.md) | Onboarding | Guía introductoria de comandos rápidos de entorno. |

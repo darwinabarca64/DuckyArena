@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <filter id="neonGlowHead" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#06B6D4" flood-opacity="0.95"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#EC4899" flood-opacity="0.8"/>
+    </filter>
+  </defs>
+  <!-- CAPA 3: SOMBRERO / CABEZA (Z-INDEX 40) - CYBERPUNK 2099 -->
+  <g id="head-cyberpunk">
+    <!-- Diadema / headset techwear temporal -->
+    <path d="M 175 145 C 190 120, 322 120, 337 145" stroke="#1E293B" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <!-- Nodo auditivo con antena izquierda -->
+    <circle cx="178" cy="145" r="9" fill="#0F172A" stroke="#06B6D4" stroke-width="3"/>
+    <line x1="178" y1="145" x2="162" y2="95" stroke="#06B6D4" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="162" cy="95" r="3" fill="#EC4899"/>
+    <!-- Nodo derecho con LED -->
+    <circle cx="334" cy="145" r="9" fill="#0F172A" stroke="#EC4899" stroke-width="3"/>
+    <circle cx="334" cy="145" r="3" fill="#06B6D4"/>
+    <!-- Gran Visor Holográfico AR translúcido neón cian/magenta -->
+    <g filter="url(#neonGlowHead)">
+      <!-- Panel de vidrio holográfico frontal envolvente (y=140 a y=185) -->
+      <polygon points="190,145 322,145 315,185 285,190 256,182 227,190 197,185" 
+               fill="#06B6D4" fill-opacity="0.35" stroke="#06B6D4" stroke-width="3"/>
+      <!-- Retícula digital y datos HUD holográficos -->
+      <circle cx="295" cy="165" r="10" stroke="#EC4899" stroke-width="2" fill="none"/>
+      <line x1="280" y1="165" x2="310" y2="165" stroke="#EC4899" stroke-width="1.5"/>
+      <line x1="295" y1="150" x2="295" y2="180" stroke="#EC4899" stroke-width="1.5"/>
+      <!-- Barras de estado en visor izquierdo -->
+      <rect x="205" y="155" width="22" height="3" fill="#06B6D4"/>
+      <rect x="205" y="162" width="16" height="3" fill="#06B6D4"/>
+      <rect x="205" y="169" width="28" height="3" fill="#EC4899"/>
+    </g>
+  </g>
+</svg>

@@ -237,7 +237,7 @@ class QuizViewsSecurityTest(TestCase):
     def test_anonymous_user_redirected_to_login(self):
         response = self.client.get(reverse('quizzes:quiz_list'))
         self.assertEqual(response.status_code, 302)
-        self.assertIn('admin/login', response.url)
+        self.assertIn('login', response.url)
 
     def test_quiz_list_view_authenticated(self):
         self.client.force_login(self.teacher_owner)

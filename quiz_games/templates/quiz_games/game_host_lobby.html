@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static avatar_tags %}
 
 {% block title %}Lobby del Anfitrión: {{ quiz.title }} — QuizArenas{% endblock %}
 
@@ -418,8 +418,8 @@
                 {% for gp in players %}
                     <div class="player-card-chip" data-player-id="{{ gp.id }}">
                         <div class="player-chip-info">
-                            <div class="player-avatar-circle">
-                                {{ gp.player.username|slice:":1"|upper }}
+                            <div class="player-avatar-wrapper" id="player-avatar-{{ gp.id }}">
+                                {% render_ducky_avatar gp size="46px" extra_class="host-duck-chip" %}
                             </div>
                             <div class="player-chip-name" title="{{ gp.player.username }}">
                                 {{ gp.player.username }}
@@ -480,6 +480,7 @@
     </div>
 </div>
 
+<script src="{% static 'quiz_games/js/ducky_avatar.js' %}"></script>
 <script>
     function copyHostGamePin() {
         const pinElement = document.getElementById('game-pin');
@@ -546,7 +547,7 @@
         const countSpan = document.getElementById('player-count');
         const startBtn = document.getElementById('start-btn');
 
-        // Mapa en memoria para reconciliación de jugadores existentes
+        // Mapa en memoria para reconciliación de jugadores existentes y sus avatares
         const currentIds = new Set();
         window.__lobbyCurrentIds = currentIds;
 
@@ -554,6 +555,30 @@
             const pid = parseInt(el.getAttribute('data-player-id'), 10);
             if (!isNaN(pid)) currentIds.add(pid);
         });
+
+        // WebSocket para actualización instantánea de avatares cuando los alumnos personalizan
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const socketUrl = `${wsProtocol}//${window.location.host}/ws/game/{{ game.code }}/`;
+        let gameSocket = null;
+
+        try {
+            gameSocket = new WebSocket(socketUrl);
+            gameSocket.onmessage = function(e) {
+                try {
+                    const data = JSON.parse(e.data);
+                    if (data.event === 'player_avatar_updated' && data.player_id && data.avatar) {
+                        const avatarWrapper = document.getElementById(`player-avatar-${data.player_id}`);
+                        if (avatarWrapper && window.DuckyAvatar) {
+                            avatarWrapper.innerHTML = window.DuckyAvatar.renderHtml(data.avatar, '46px', 'host-duck-chip');
+                            avatarWrapper.classList.add('animate-fadeIn');
+                            setTimeout(() => avatarWrapper.classList.remove('animate-fadeIn'), 350);
+                        }
+                    }
+                } catch(err) {}
+            };
+        } catch(e) {
+            console.warn("WebSocket no disponible para anfitrión, usando HTTP polling.", e);
+        }
 
         let lastLobbyEtag = null;
 
@@ -618,6 +643,8 @@
 
                 data.players.forEach(function(player) {
                     receivedIds.add(player.id);
+                    const duckHtml = window.DuckyAvatar ? window.DuckyAvatar.renderHtml(player.avatar, '46px', 'host-duck-chip') : `<div class="player-avatar-circle">${player.username.charAt(0).toUpperCase()}</div>`;
+
                     if (!currentIds.has(player.id)) {
                         // Agregar nueva tarjeta con animación fadeIn
                         currentIds.add(player.id);
@@ -625,10 +652,11 @@
                         chip.className = 'player-card-chip animate-fadeIn';
                         chip.setAttribute('data-player-id', player.id);
 
-                        const initial = player.username ? player.username.charAt(0).toUpperCase() : '?';
                         chip.innerHTML = `
                             <div class="player-chip-info">
-                                <div class="player-avatar-circle">${initial}</div>
+                                <div class="player-avatar-wrapper" id="player-avatar-${player.id}">
+                                    ${duckHtml}
+                                </div>
                                 <div class="player-chip-name" title="${player.username}">${player.username}</div>
                             </div>
                             <button
@@ -641,6 +669,12 @@
                             </button>
                         `;
                         grid.appendChild(chip);
+                    } else {
+                        // Actualizar avatar del jugador existente si ha cambiado
+                        const wrapper = document.getElementById(`player-avatar-${player.id}`);
+                        if (wrapper && player.avatar) {
+                            wrapper.innerHTML = duckHtml;
+                        }
                     }
                 });
 

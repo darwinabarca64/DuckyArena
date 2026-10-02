@@ -37,9 +37,9 @@ El desarrollo colaborativo del proyecto se encuentra estructurado en equipos de 
 | Rol / Módulo | Responsables | Rama Base / Ámbito |
 | :--- | :--- | :--- |
 | **🚀 Lead Developer & DevOps** | **Darwin** ([@darwinabarca64](https://github.com/darwinabarca64)) | `main` · Infraestructura, arquitectura base y aprobación |
-| **🔍 Mentor & Auditoría** | **Oscar Burgos** ([@mihifidem](https://github.com/mihifidem)) | `main` · Revisión técnica y aseguramiento de calidad |
-| **📝 PARTE 1: Cuestionarios (`quizzes`)** | **Sasha** ([@sashasafont](https://github.com/sashasafont))<br>**Nacho** ([@nachopython](https://github.com/nachopython))<br>**Robert Betancourt** ([@Trevor783](https://github.com/Trevor783)) | `parte-1-quizzes`<br>Banco de preguntas, respuestas y CRUD del profesor |
-| **🎮 PARTE 2: Motor de Juego (`quiz_games`)** | **[@dalcolea](https://github.com/dalcolea)**<br>**Thais** ([@thaishps3](https://github.com/thaishps3)) | `parte-2-quizgames`<br>Salas con PIN, lobby, evaluación y puntuación en vivo |
+| **🔍 Mentor & Auditoría** | **Oscar** ([@mihifidem](https://github.com/mihifidem)) | `main` · Revisión técnica y aseguramiento de calidad |
+| **📝 PARTE 1: Cuestionarios (`quizzes`)** | **Sasha** ([@sashasafont](https://github.com/sashasafont))<br>**Nacho** ([@nachopython](https://github.com/nachopython))<br>**Robert** ([@Trevor783](https://github.com/Trevor783)) | `parte-1-quizzes`<br>Banco de preguntas, respuestas y CRUD del profesor |
+| **🎮 PARTE 2: Motor de Juego (`quiz_games`)** | **David** ([@dalcolea](https://github.com/dalcolea))<br>**Thais** ([@thaishps3](https://github.com/thaishps3)) | `parte-2-quizgames`<br>Salas con PIN, lobby, evaluación y puntuación en vivo |
 
 ---
 
@@ -49,6 +49,7 @@ Para mantener el código limpio y modular, toda la documentación detallada se e
 
 ### 🚀 Guías de Instalación y Operación (`docs/guides/`)
 - [**`docs/guides/setup.md`**](docs/guides/setup.md): **Guía de Configuración Inicial.** Paso a paso simplificado para clonar el repositorio, crear el entorno virtual, instalar dependencias y levantar el servidor tanto en **Windows** como en **Mac**.
+- [**`docs/guides/github_management.md`**](docs/guides/github_management.md): **Protocolo de Actualización y Sincronización.** Procedimiento obligatorio para sincronizar cambios remotos (Daphne, Channels, WebSockets), resolver incidencias frecuentes y resguardar cambios locales con `git stash`.
 - [**`docs/guides/github_workflow.md`**](docs/guides/github_workflow.md): **Flujo Git y Trabajo en Equipo.** Explica cómo sincronizar ramas, crear ramas personales de trabajo y solicitar revisiones mediante Pull Requests según el equipo asignado.
 - [**`docs/guides/passwords_management.md`**](docs/guides/passwords_management.md): **Gestión de Contraseñas Django.** Instrucciones prácticas para crear superusuarios/administradores y recuperar o resetear contraseñas por terminal, shell interactivo o panel web.
 - [**`docs/guides/quickstart.md`**](docs/guides/quickstart.md): **Inicio Rápido.** Referencia de comandos rápidos de consola para el entorno de desarrollo.

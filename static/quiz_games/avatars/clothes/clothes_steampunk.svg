@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <filter id="clothShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <!-- CAPA 1: ROPA (Z-INDEX 20) - STEAMPUNK -->
+  <g id="clothes-steampunk" filter="url(#clothShadow)">
+    <!-- Camisa marfil / cuello alto -->
+    <path d="M 215 230 L 297 230 L 290 320 L 222 320 Z" fill="#FEF3C7" stroke="#FDE68A" stroke-width="2"/>
+    <!-- Corbata de lazo / Plastrón de terciopelo burdeos -->
+    <polygon points="256,245 240,265 272,265" fill="#881337"/>
+    <circle cx="256" cy="245" r="4" fill="#D97706"/>
+    <polygon points="256,245 245,290 256,285 267,290" fill="#9F1239" stroke="#881337" stroke-width="1.5"/>
+    <!-- Chaleco de cuero marrón victoriano -->
+    <path d="M 180 240 L 235 240 L 245 340 L 256 370 L 267 340 L 277 240 L 332 240 L 335 385 L 256 405 L 177 385 Z" 
+          fill="#78350F" stroke="#451A03" stroke-width="4"/>
+    <!-- Solapas con ribete de bronce -->
+    <path d="M 180 240 L 235 290 L 210 365" stroke="#D97706" stroke-width="3" fill="none"/>
+    <path d="M 332 240 L 277 290 L 302 365" stroke="#D97706" stroke-width="3" fill="none"/>
+    <!-- Cadena de reloj de bolsillo leontina dorada -->
+    <path d="M 215 320 Q 240 350 256 335" stroke="#F59E0B" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Manómetro de vapor miniatura en el pecho -->
+    <circle cx="295" cy="305" r="12" fill="#FEF3C7" stroke="#B45309" stroke-width="3"/>
+    <line x1="295" y1="305" x2="302" y2="298" stroke="#DC2626" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="295" cy="305" r="2" fill="#000"/>
+    <!-- Engranajes de bronce decorativos -->
+    <g transform="translate(205, 335) scale(0.6)">
+      <circle cx="0" cy="0" r="10" fill="#D97706" stroke="#92400E" stroke-width="2"/>
+      <circle cx="0" cy="0" r="4" fill="#78350F"/>
+    </g>
+  </g>
+</svg>

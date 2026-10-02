@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <filter id="headShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <!-- CAPA 3: SOMBRERO / CABEZA (Z-INDEX 40) - CAVERNICOLA -->
+  <g id="head-caveman" filter="url(#headShadow)">
+    <!-- Cinta de cuero rústica rodeando la frente (y=125-135) -->
+    <path d="M 175 130 C 210 115, 302 115, 337 130 L 335 145 C 300 130, 210 130, 177 145 Z" 
+          fill="#78350F" stroke="#451A03" stroke-width="3"/>
+    <!-- Costuras de tendón -->
+    <line x1="200" y1="125" x2="204" y2="137" stroke="#FEF3C7" stroke-width="2"/>
+    <line x1="230" y1="122" x2="234" y2="134" stroke="#FEF3C7" stroke-width="2"/>
+    <line x1="280" y1="122" x2="284" y2="134" stroke="#FEF3C7" stroke-width="2"/>
+    <line x1="310" y1="125" x2="314" y2="137" stroke="#FEF3C7" stroke-width="2"/>
+    <!-- Gran hueso prehistórico atado al centro (inclinado) -->
+    <g transform="translate(256, 115) rotate(-12)">
+      <rect x="-35" y="-8" width="70" height="16" rx="6" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="3"/>
+      <!-- Nódulos de articulación del hueso -->
+      <circle cx="-35" cy="-8" r="8" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
+      <circle cx="-35" cy="8" r="8" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
+      <circle cx="35" cy="-8" r="8" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
+      <circle cx="35" cy="8" r="8" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
+      <!-- Amarre de cuerda cruzada en X -->
+      <line x1="-12" y1="-9" x2="12" y2="9" stroke="#78350F" stroke-width="3"/>
+      <line x1="-12" y1="9" x2="12" y2="-9" stroke="#78350F" stroke-width="3"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <filter id="clothShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+    <pattern id="chainmail" width="8" height="8" patternUnits="userSpaceOnUse">
+      <circle cx="4" cy="4" r="3" fill="none" stroke="#64748B" stroke-width="1.2"/>
+    </pattern>
+  </defs>
+  <!-- CAPA 1: ROPA (Z-INDEX 20) - MEDIEVAL -->
+  <g id="clothes-medieval" filter="url(#clothShadow)">
+    <!-- Cota de malla en cuello y base -->
+    <path d="M 175 240 L 337 240 L 340 405 L 172 405 Z" fill="url(#chainmail)" stroke="#475569" stroke-width="3"/>
+    <!-- Tabardo partido (Mitad Azul Real, Mitad Rojo Escarlata) -->
+    <!-- Mitad Izquierda (Azul) -->
+    <path d="M 190 235 L 256 235 L 256 395 L 185 395 Z" 
+          fill="#1D4ED8" stroke="#1E3A8A" stroke-width="3"/>
+    <!-- Mitad Derecha (Rojo) -->
+    <path d="M 256 235 L 322 235 L 327 395 L 256 395 Z" 
+          fill="#DC2626" stroke="#991B1B" stroke-width="3"/>
+    <!-- Emblema Heráldico Central: Cruz Dorada Paté -->
+    <g transform="translate(256, 305)">
+      <path d="M -6 -24 L 6 -24 L 4 -6 L 24 -4 L 24 6 L 4 4 L 6 24 L -6 24 L -4 4 L -24 6 L -24 -4 L -4 -6 Z" 
+            fill="#FBBF24" stroke="#D97706" stroke-width="2"/>
+      <circle cx="0" cy="0" r="4" fill="#FFFFFF"/>
+    </g>
+    <!-- Cinturón de caballero con tachas de acero -->
+    <rect x="180" y="345" width="152" height="16" fill="#334155" stroke="#1E293B" stroke-width="2"/>
+    <circle cx="256" cy="353" r="6" fill="#FBBF24" stroke="#B45309" stroke-width="2"/>
+    <!-- Caída del cinturón -->
+    <rect x="251" y="353" width="10" height="35" fill="#334155" stroke="#1E293B" stroke-width="2"/>
+    <polygon points="251,388 261,388 256,396" fill="#FBBF24"/>
+  </g>
+</svg>

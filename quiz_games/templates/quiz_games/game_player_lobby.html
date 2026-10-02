@@ -1,13 +1,13 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static avatar_tags %}
 
 {% block title %}Sala de Espera: {{ quiz.title }} — QuizArenas{% endblock %}
 
 {% block extra_css %}
 <style>
     .player-lobby-container {
-        max-width: 620px;
-        margin: 2.5rem auto;
+        max-width: 760px;
+        margin: 1.5rem auto 3rem;
         padding: 0 1rem;
     }
 
@@ -15,7 +15,7 @@
         background: var(--bg-surface);
         border: 1px solid var(--border-subtle);
         border-radius: var(--radius-lg);
-        padding: 2.5rem 2rem;
+        padding: 2rem 1.75rem;
         box-shadow: var(--shadow-md);
         text-align: center;
         position: relative;
@@ -44,7 +44,7 @@
         font-size: 0.9rem;
         padding: 0.45rem 1.25rem;
         border-radius: var(--radius-full);
-        margin-bottom: 1.75rem;
+        margin-bottom: 1.25rem;
     }
 
     .status-pulse-dot {
@@ -66,65 +66,18 @@
         font-size: 1.85rem;
         font-weight: 900;
         color: var(--text-heading);
-        margin-bottom: 0.6rem;
+        margin-bottom: 0.4rem;
         line-height: 1.25;
     }
 
     .quiz-host-info {
-        font-size: 0.98rem;
+        font-size: 0.95rem;
         color: var(--text-muted);
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
     }
 
     .quiz-host-info strong {
         color: var(--kahoot-purple);
-    }
-
-    /* Player Profile Box */
-    .player-profile-box {
-        background: var(--bg-surface-secondary);
-        border: 1px solid var(--border-medium);
-        border-radius: var(--radius-md);
-        padding: 1.25rem 1.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-
-    .player-avatar-large {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--kahoot-blue), var(--kahoot-purple));
-        color: #FFFFFF;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: var(--font-display);
-        font-weight: 900;
-        font-size: 1.35rem;
-        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-    }
-
-    .player-text-wrap {
-        text-align: left;
-    }
-
-    .player-sublabel {
-        font-size: 0.78rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--text-muted);
-    }
-
-    .player-username-text {
-        font-family: var(--font-display);
-        font-weight: 800;
-        font-size: 1.15rem;
-        color: var(--text-heading);
     }
 
     .lobby-pin-pill {
@@ -135,15 +88,284 @@
         font-family: var(--font-display);
         font-weight: 800;
         font-size: 0.95rem;
-        padding: 0.4rem 1rem;
+        padding: 0.35rem 1rem;
         border-radius: var(--radius-full);
+        margin-bottom: 1rem;
+    }
+
+    /* ==========================================================================
+       DUCKY AVATAR STUDIO (CUSTOMIZER INTERACTIVO)
+       ========================================================================== */
+    .avatar-studio-box {
+        background: radial-gradient(circle at top, #1E293B 0%, #0F172A 100%);
+        border: 2px solid #334155;
+        border-radius: var(--radius-lg);
+        padding: 1.75rem 1.25rem;
+        color: #FFFFFF;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+        margin-bottom: 1.75rem;
+    }
+
+    .studio-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.25rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 0.75rem;
+    }
+
+    .studio-title {
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-size: 1.2rem;
+        color: #FBBF24;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+    }
+
+    .studio-subtitle {
+        font-size: 0.82rem;
+        color: #94A3B8;
+        margin: 0;
+    }
+
+    .avatar-stage-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         margin-bottom: 1.5rem;
+    }
+
+    .avatar-stage-circle {
+        width: 170px;
+        height: 170px;
+        border-radius: 50%;
+        background: radial-gradient(circle at center, rgba(251, 191, 36, 0.15) 0%, rgba(15, 23, 42, 0.6) 80%);
+        border: 3px solid #F59E0B;
+        box-shadow: 0 0 25px rgba(245, 158, 11, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 0.75rem;
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .avatar-stage-circle.bounce {
+        transform: scale(1.08) rotate(3deg);
+    }
+
+    .avatar-player-tag {
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid #475569;
+        border-radius: var(--radius-full);
+        padding: 0.3rem 1rem;
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 0.95rem;
+        color: #F8FAFC;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .avatar-save-indicator {
+        font-size: 0.78rem;
+        color: #34D399;
+        font-weight: 700;
+        margin-top: 0.4rem;
+        height: 18px;
+        transition: opacity 0.3s ease;
+    }
+
+    /* Studio Navigation Tabs */
+    .studio-tabs-nav {
+        display: flex;
+        justify-content: center;
+        gap: 0.4rem;
+        margin-bottom: 1.25rem;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    .studio-tab-btn {
+        background: #1E293B;
+        border: 1px solid #334155;
+        color: #94A3B8;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 0.82rem;
+        padding: 0.45rem 0.9rem;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .studio-tab-btn:hover {
+        background: #334155;
+        color: #FFFFFF;
+    }
+
+    .studio-tab-btn.active {
+        background: #F59E0B;
+        border-color: #D97706;
+        color: #0F172A;
+        font-weight: 800;
+        box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
+    }
+
+    /* Category Grids */
+    .studio-panel {
+        display: none;
+        animation: fadeIn 0.25s ease forwards;
+    }
+
+    .studio-panel.active {
+        display: block;
+    }
+
+    /* Bodies Color Palette Grid */
+    .bodies-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: 0.6rem;
+    }
+
+    .body-chip {
+        background: #1E293B;
+        border: 2px solid #334155;
+        border-radius: var(--radius-md);
+        padding: 0.6rem 0.4rem;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.35rem;
+        transition: all 0.2s ease;
+    }
+
+    .body-chip:hover {
+        border-color: #64748B;
+        transform: translateY(-2px);
+    }
+
+    .body-chip.selected {
+        border-color: #F59E0B;
+        background: rgba(245, 158, 11, 0.15);
+        box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+    }
+
+    .color-swatch-circle {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 2px solid #FFFFFF;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    .item-chip-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #E2E8F0;
+        text-align: center;
+    }
+
+    /* Items Visual Grid (Clothes, Heads, Faces) */
+    .items-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+        gap: 0.6rem;
+        max-height: 240px;
+        overflow-y: auto;
+        padding: 0.25rem 0.5rem 0.5rem 0.25rem;
+    }
+
+    .item-card-btn {
+        background: #1E293B;
+        border: 2px solid #334155;
+        border-radius: var(--radius-md);
+        padding: 0.6rem 0.4rem;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.35rem;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+
+    .item-card-btn:hover {
+        border-color: #64748B;
+        transform: translateY(-2px);
+    }
+
+    .item-card-btn.selected {
+        border-color: #F59E0B;
+        background: rgba(245, 158, 11, 0.15);
+        box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+    }
+
+    .item-thumb-preview {
+        width: 46px;
+        height: 46px;
+        object-fit: contain;
+    }
+
+    .item-badge-civ {
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #FBBF24;
+    }
+
+    /* Actions Row */
+    .studio-actions-row {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+        margin-top: 1.25rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-random-duck {
+        background: #334155;
+        border: 1px solid #475569;
+        color: #F8FAFC;
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 0.85rem;
+        padding: 0.5rem 1.15rem;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .btn-random-duck:hover {
+        background: #475569;
+        transform: translateY(-1px);
+        color: #FBBF24;
     }
 
     .waiting-instructions {
         font-size: 0.92rem;
         color: var(--text-muted);
         line-height: 1.5;
+        margin: 0;
     }
 </style>
 {% endblock %}
@@ -165,13 +387,234 @@
             Profesor Anfitrión: <strong>{{ game.host.username }}</strong>
         </p>
 
-        <div class="player-profile-box">
-            <div class="player-avatar-large">
-                {{ user.username|slice:":1"|upper }}
+        <!-- =====================================================================
+             DUCKY AVATAR STUDIO — PERSONALIZADOR EN TIEMPO REAL
+             ===================================================================== -->
+        <div class="avatar-studio-box">
+            <div class="studio-header">
+                <div>
+                    <h2 class="studio-title">🎨 Ducky Avatar Studio</h2>
+                    <p class="studio-subtitle">Personaliza tu patito mientras el profesor inicia la partida</p>
+                </div>
+                <button type="button" class="btn-random-duck" id="btn-randomize" onclick="randomizeDuckyAvatar()">
+                    🎲 Pato Aleatorio
+                </button>
             </div>
-            <div class="player-text-wrap">
-                <div class="player-sublabel">Participando como</div>
-                <div class="player-username-text">{{ user.username }}</div>
+
+            <!-- Stage de Vista Previa -->
+            <div class="avatar-stage-wrapper">
+                <div class="avatar-stage-circle" id="avatar-live-stage">
+                    {% render_ducky_avatar player_entry.avatar_dict size="145px" extra_class="live-duck-preview" %}
+                </div>
+                <div class="avatar-player-tag">
+                    <span>🦆</span>
+                    <span>{{ user.username }}</span>
+                </div>
+                <div class="avatar-save-indicator" id="save-indicator">
+                    ✓ Guardado en tiempo real
+                </div>
+            </div>
+
+            <!-- Categorías de Personalización (Tabs) -->
+            <div class="studio-tabs-nav">
+                <button type="button" class="studio-tab-btn active" onclick="switchStudioTab('bodies', this)">
+                    <span>🦆</span> Color Pato
+                </button>
+                <button type="button" class="studio-tab-btn" onclick="switchStudioTab('clothes', this)">
+                    <span>🛡️</span> Ropa / Civilización
+                </button>
+                <button type="button" class="studio-tab-btn" onclick="switchStudioTab('heads', this)">
+                    <span>👑</span> Sombreros
+                </button>
+                <button type="button" class="studio-tab-btn" onclick="switchStudioTab('faces', this)">
+                    <span>👀</span> Expresión
+                </button>
+            </div>
+
+            <!-- Panel 1: Cuerpos Inclusivos -->
+            <div class="studio-panel active" id="tab-bodies">
+                <div class="bodies-grid">
+                    <div class="body-chip {% if player_entry.avatar_body == 'body_yellow' or not player_entry.avatar_body %}selected{% endif %}" onclick="selectAvatarPart('body', 'body_yellow', this)">
+                        <div class="color-swatch-circle" style="background: #FBBF24;"></div>
+                        <span class="item-chip-label">Canario</span>
+                    </div>
+                    <div class="body-chip {% if player_entry.avatar_body == 'body_brown' %}selected{% endif %}" onclick="selectAvatarPart('body', 'body_brown', this)">
+                        <div class="color-swatch-circle" style="background: #78350F;"></div>
+                        <span class="item-chip-label">Chocolate</span>
+                    </div>
+                    <div class="body-chip {% if player_entry.avatar_body == 'body_black' %}selected{% endif %}" onclick="selectAvatarPart('body', 'body_black', this)">
+                        <div class="color-swatch-circle" style="background: #1E293B;"></div>
+                        <span class="item-chip-label">Ónix</span>
+                    </div>
+                    <div class="body-chip {% if player_entry.avatar_body == 'body_white' %}selected{% endif %}" onclick="selectAvatarPart('body', 'body_white', this)">
+                        <div class="color-swatch-circle" style="background: #F8FAFC;"></div>
+                        <span class="item-chip-label">Ártico</span>
+                    </div>
+                    <div class="body-chip {% if player_entry.avatar_body == 'body_pink' %}selected{% endif %}" onclick="selectAvatarPart('body', 'body_pink', this)">
+                        <div class="color-swatch-circle" style="background: #F472B6;"></div>
+                        <span class="item-chip-label">Rosa</span>
+                    </div>
+                    <div class="body-chip {% if player_entry.avatar_body == 'body_blue' %}selected{% endif %}" onclick="selectAvatarPart('body', 'body_blue', this)">
+                        <div class="color-swatch-circle" style="background: #38BDF8;"></div>
+                        <span class="item-chip-label">Cerúleo</span>
+                    </div>
+                    <div class="body-chip {% if player_entry.avatar_body == 'body_green' %}selected{% endif %}" onclick="selectAvatarPart('body', 'body_green', this)">
+                        <div class="color-swatch-circle" style="background: #10B981;"></div>
+                        <span class="item-chip-label">Esmeralda</span>
+                    </div>
+                    <div class="body-chip {% if player_entry.avatar_body == 'body_lavender' %}selected{% endif %}" onclick="selectAvatarPart('body', 'body_lavender', this)">
+                        <div class="color-swatch-circle" style="background: #A78BFA;"></div>
+                        <span class="item-chip-label">Lavanda</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel 2: Ropas y Armaduras (10 Civilizaciones) -->
+            <div class="studio-panel" id="tab-clothes">
+                <div class="items-grid">
+                    <div class="item-card-btn {% if not player_entry.avatar_clothes %}selected{% endif %}" onclick="selectAvatarPart('clothes', '', this)">
+                        <div style="font-size: 1.8rem; height: 46px; display: flex; align-items: center; justify-content: center;">🚫</div>
+                        <span class="item-badge-civ">Básico</span>
+                        <span class="item-chip-label">Sin Ropa</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_clothes == 'clothes_caveman' %}selected{% endif %}" onclick="selectAvatarPart('clothes', 'clothes_caveman', this)">
+                        <img src="{% static 'quiz_games/avatars/clothes/clothes_caveman.svg' %}" class="item-thumb-preview" alt="Cavernícola">
+                        <span class="item-badge-civ">Prehistoria</span>
+                        <span class="item-chip-label">Cavernícola</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_clothes == 'clothes_egypt' %}selected{% endif %}" onclick="selectAvatarPart('clothes', 'clothes_egypt', this)">
+                        <img src="{% static 'quiz_games/avatars/clothes/clothes_egypt.svg' %}" class="item-thumb-preview" alt="Egipto">
+                        <span class="item-badge-civ">Egipto</span>
+                        <span class="item-chip-label">Faraón</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_clothes == 'clothes_greek' %}selected{% endif %}" onclick="selectAvatarPart('clothes', 'clothes_greek', this)">
+                        <img src="{% static 'quiz_games/avatars/clothes/clothes_greek.svg' %}" class="item-thumb-preview" alt="Grecia">
+                        <span class="item-badge-civ">Grecia</span>
+                        <span class="item-chip-label">Quitón</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_clothes == 'clothes_roman' %}selected{% endif %}" onclick="selectAvatarPart('clothes', 'clothes_roman', this)">
+                        <img src="{% static 'quiz_games/avatars/clothes/clothes_roman.svg' %}" class="item-thumb-preview" alt="Roma">
+                        <span class="item-badge-civ">Roma</span>
+                        <span class="item-chip-label">Centurión</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_clothes == 'clothes_viking' %}selected{% endif %}" onclick="selectAvatarPart('clothes', 'clothes_viking', this)">
+                        <img src="{% static 'quiz_games/avatars/clothes/clothes_viking.svg' %}" class="item-thumb-preview" alt="Vikingo">
+                        <span class="item-badge-civ">Nórdico</span>
+                        <span class="item-chip-label">Vikingo</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_clothes == 'clothes_samurai' %}selected{% endif %}" onclick="selectAvatarPart('clothes', 'clothes_samurai', this)">
+                        <img src="{% static 'quiz_games/avatars/clothes/clothes_samurai.svg' %}" class="item-thumb-preview" alt="Samurái">
+                        <span class="item-badge-civ">Japón</span>
+                        <span class="item-chip-label">Samurái</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_clothes == 'clothes_medieval' %}selected{% endif %}" onclick="selectAvatarPart('clothes', 'clothes_medieval', this)">
+                        <img src="{% static 'quiz_games/avatars/clothes/clothes_medieval.svg' %}" class="item-thumb-preview" alt="Medieval">
+                        <span class="item-badge-civ">Medieval</span>
+                        <span class="item-chip-label">Caballero</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_clothes == 'clothes_pirate' %}selected{% endif %}" onclick="selectAvatarPart('clothes', 'clothes_pirate', this)">
+                        <img src="{% static 'quiz_games/avatars/clothes/clothes_pirate.svg' %}" class="item-thumb-preview" alt="Pirata">
+                        <span class="item-badge-civ">Mares</span>
+                        <span class="item-chip-label">Pirata</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_clothes == 'clothes_steampunk' %}selected{% endif %}" onclick="selectAvatarPart('clothes', 'clothes_steampunk', this)">
+                        <img src="{% static 'quiz_games/avatars/clothes/clothes_steampunk.svg' %}" class="item-thumb-preview" alt="Steampunk">
+                        <span class="item-badge-civ">Vapor</span>
+                        <span class="item-chip-label">Steampunk</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_clothes == 'clothes_cyberpunk' %}selected{% endif %}" onclick="selectAvatarPart('clothes', 'clothes_cyberpunk', this)">
+                        <img src="{% static 'quiz_games/avatars/clothes/clothes_cyberpunk.svg' %}" class="item-thumb-preview" alt="Cyberpunk">
+                        <span class="item-badge-civ">Futuro</span>
+                        <span class="item-chip-label">Cyber 2099</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel 3: Sombreros y Cascos (10 Civilizaciones) -->
+            <div class="studio-panel" id="tab-heads">
+                <div class="items-grid">
+                    <div class="item-card-btn {% if not player_entry.avatar_head %}selected{% endif %}" onclick="selectAvatarPart('head', '', this)">
+                        <div style="font-size: 1.8rem; height: 46px; display: flex; align-items: center; justify-content: center;">🚫</div>
+                        <span class="item-badge-civ">Básico</span>
+                        <span class="item-chip-label">Sin Sombrero</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_head == 'head_caveman' %}selected{% endif %}" onclick="selectAvatarPart('head', 'head_caveman', this)">
+                        <img src="{% static 'quiz_games/avatars/heads/head_caveman.svg' %}" class="item-thumb-preview" alt="Hueso">
+                        <span class="item-badge-civ">Prehistoria</span>
+                        <span class="item-chip-label">Cinta Hueso</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_head == 'head_egypt' %}selected{% endif %}" onclick="selectAvatarPart('head', 'head_egypt', this)">
+                        <img src="{% static 'quiz_games/avatars/heads/head_egypt.svg' %}" class="item-thumb-preview" alt="Nemes">
+                        <span class="item-badge-civ">Egipto</span>
+                        <span class="item-chip-label">Tocado Nemes</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_head == 'head_greek' %}selected{% endif %}" onclick="selectAvatarPart('head', 'head_greek', this)">
+                        <img src="{% static 'quiz_games/avatars/heads/head_greek.svg' %}" class="item-thumb-preview" alt="Laurel">
+                        <span class="item-badge-civ">Grecia</span>
+                        <span class="item-chip-label">Laurel Dorado</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_head == 'head_roman' %}selected{% endif %}" onclick="selectAvatarPart('head', 'head_roman', this)">
+                        <img src="{% static 'quiz_games/avatars/heads/head_roman.svg' %}" class="item-thumb-preview" alt="Galea">
+                        <span class="item-badge-civ">Roma</span>
+                        <span class="item-chip-label">Casco Galea</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_head == 'head_viking' %}selected{% endif %}" onclick="selectAvatarPart('head', 'head_viking', this)">
+                        <img src="{% static 'quiz_games/avatars/heads/head_viking.svg' %}" class="item-thumb-preview" alt="Vikingo">
+                        <span class="item-badge-civ">Nórdico</span>
+                        <span class="item-chip-label">Yelmo Nórdico</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_head == 'head_samurai' %}selected{% endif %}" onclick="selectAvatarPart('head', 'head_samurai', this)">
+                        <img src="{% static 'quiz_games/avatars/heads/head_samurai.svg' %}" class="item-thumb-preview" alt="Kabuto">
+                        <span class="item-badge-civ">Japón</span>
+                        <span class="item-chip-label">Kabuto Lunar</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_head == 'head_medieval' %}selected{% endif %}" onclick="selectAvatarPart('head', 'head_medieval', this)">
+                        <img src="{% static 'quiz_games/avatars/heads/head_medieval.svg' %}" class="item-thumb-preview" alt="Gran Yelmo">
+                        <span class="item-badge-civ">Medieval</span>
+                        <span class="item-chip-label">Gran Yelmo</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_head == 'head_pirate' %}selected{% endif %}" onclick="selectAvatarPart('head', 'head_pirate', this)">
+                        <img src="{% static 'quiz_games/avatars/heads/head_pirate.svg' %}" class="item-thumb-preview" alt="Tricornio">
+                        <span class="item-badge-civ">Mares</span>
+                        <span class="item-chip-label">Tricornio Pirata</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_head == 'head_steampunk' %}selected{% endif %}" onclick="selectAvatarPart('head', 'head_steampunk', this)">
+                        <img src="{% static 'quiz_games/avatars/heads/head_steampunk.svg' %}" class="item-thumb-preview" alt="Chistera">
+                        <span class="item-badge-civ">Vapor</span>
+                        <span class="item-chip-label">Chistera Bronce</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_head == 'head_cyberpunk' %}selected{% endif %}" onclick="selectAvatarPart('head', 'head_cyberpunk', this)">
+                        <img src="{% static 'quiz_games/avatars/heads/head_cyberpunk.svg' %}" class="item-thumb-preview" alt="Visor AR">
+                        <span class="item-badge-civ">Futuro</span>
+                        <span class="item-chip-label">Visor AR 2099</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel 4: Expresiones Faciales -->
+            <div class="studio-panel" id="tab-faces">
+                <div class="items-grid">
+                    <div class="item-card-btn {% if player_entry.avatar_face == 'face_calm' or not player_entry.avatar_face %}selected{% endif %}" onclick="selectAvatarPart('face', 'face_calm', this)">
+                        <img src="{% static 'quiz_games/avatars/faces/face_calm.svg' %}" class="item-thumb-preview" alt="Calmado">
+                        <span class="item-badge-civ">Zen</span>
+                        <span class="item-chip-label">Calmado (^ ^)</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_face == 'face_confident' %}selected{% endif %}" onclick="selectAvatarPart('face', 'face_confident', this)">
+                        <img src="{% static 'quiz_games/avatars/faces/face_confident.svg' %}" class="item-thumb-preview" alt="Confiado">
+                        <span class="item-badge-civ">Victoria</span>
+                        <span class="item-chip-label">Pícaro / Guiño</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_face == 'face_focused' %}selected{% endif %}" onclick="selectAvatarPart('face', 'face_focused', this)">
+                        <img src="{% static 'quiz_games/avatars/faces/face_focused.svg' %}" class="item-thumb-preview" alt="Concentrado">
+                        <span class="item-badge-civ">Focus</span>
+                        <span class="item-chip-label">Concentrado</span>
+                    </div>
+                    <div class="item-card-btn {% if player_entry.avatar_face == 'face_surprised' %}selected{% endif %}" onclick="selectAvatarPart('face', 'face_surprised', this)">
+                        <img src="{% static 'quiz_games/avatars/faces/face_surprised.svg' %}" class="item-thumb-preview" alt="Sorprendido">
+                        <span class="item-badge-civ">Emoción</span>
+                        <span class="item-chip-label">Sorprendido</span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -181,7 +624,161 @@
     </div>
 </div>
 
+<script src="{% static 'quiz_games/js/ducky_avatar.js' %}"></script>
 <script>
+    // Estado local del Avatar del Jugador
+    const currentAvatar = {
+        body: "{{ player_entry.avatar_body|default:'body_yellow' }}",
+        clothes: "{{ player_entry.avatar_clothes|default:'' }}",
+        head: "{{ player_entry.avatar_head|default:'' }}",
+        face: "{{ player_entry.avatar_face|default:'face_calm' }}"
+    };
+
+    const updateAvatarApiUrl = "{% url 'quiz_games:update_player_avatar' game.code %}";
+    const csrfToken = "{{ csrf_token }}";
+
+    // Conexión WebSocket para sincronización ultra rápida
+    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const socketUrl = `${wsProtocol}//${window.location.host}/ws/game/{{ game.code }}/`;
+    let gameSocket = null;
+
+    try {
+        gameSocket = new WebSocket(socketUrl);
+        gameSocket.onopen = function() {
+            console.log("WebSocket conectado para personalización de Avatar.");
+        };
+        gameSocket.onmessage = function(e) {
+            try {
+                const data = JSON.parse(e.data);
+                if (data.event === 'game_started' || data.type === 'game_started') {
+                    window.location.href = "{% url 'quiz_games:game_player_play' game.code %}";
+                }
+            } catch(err) {}
+        };
+    } catch(e) {
+        console.warn("WebSocket no disponible, operando en modo polling HTTP.", e);
+    }
+
+    function switchStudioTab(tabKey, tabBtn) {
+        document.querySelectorAll('.studio-tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.studio-panel').forEach(panel => panel.classList.remove('active'));
+
+        tabBtn.classList.add('active');
+        const targetPanel = document.getElementById(`tab-${tabKey}`);
+        if (targetPanel) targetPanel.classList.add('active');
+    }
+
+    let saveDebounceTimer = null;
+
+    function selectAvatarPart(category, value, chipElement) {
+        // Actualizar selección visual en la grilla del panel activo
+        const parent = chipElement.parentElement;
+        parent.querySelectorAll('.body-chip, .item-card-btn').forEach(el => el.classList.remove('selected'));
+        chipElement.classList.add('selected');
+
+        // Actualizar estado local
+        currentAvatar[category] = value;
+
+        // Renderizar vista previa en el stage
+        renderLiveStage();
+
+        // Guardar con debounce y enviar a la sala
+        triggerAvatarSave();
+    }
+
+    function renderLiveStage() {
+        const stage = document.getElementById('avatar-live-stage');
+        if (!stage) return;
+
+        stage.innerHTML = window.DuckyAvatar.renderHtml(currentAvatar, '145px', 'live-duck-preview');
+        stage.classList.add('bounce');
+        setTimeout(() => stage.classList.remove('bounce'), 250);
+    }
+
+    function triggerAvatarSave() {
+        const indicator = document.getElementById('save-indicator');
+        if (indicator) {
+            indicator.innerText = "⏳ Guardando...";
+            indicator.style.color = "#FBBF24";
+        }
+
+        clearTimeout(saveDebounceTimer);
+        saveDebounceTimer = setTimeout(() => {
+            // 1. Enviar vía WebSocket para transmisión en tiempo real a la sala
+            if (gameSocket && gameSocket.readyState === WebSocket.OPEN) {
+                gameSocket.send(JSON.stringify({
+                    action: 'update_avatar',
+                    body: currentAvatar.body,
+                    clothes: currentAvatar.clothes,
+                    head: currentAvatar.head,
+                    face: currentAvatar.face
+                }));
+            }
+
+            // 2. Persistir vía AJAX POST para máxima fiabilidad
+            fetch(updateAvatarApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(currentAvatar)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && indicator) {
+                    indicator.innerText = "✓ ¡Pato actualizado y visible en la sala!";
+                    indicator.style.color = "#34D399";
+                }
+            })
+            .catch(err => {
+                console.warn("Error al persistir avatar:", err);
+            });
+        }, 300);
+    }
+
+    const ALL_BODIES = ['body_yellow', 'body_brown', 'body_black', 'body_white', 'body_pink', 'body_blue', 'body_green', 'body_lavender'];
+    const ALL_CLOTHES = ['', 'clothes_caveman', 'clothes_egypt', 'clothes_greek', 'clothes_roman', 'clothes_viking', 'clothes_samurai', 'clothes_medieval', 'clothes_pirate', 'clothes_steampunk', 'clothes_cyberpunk'];
+    const ALL_HEADS = ['', 'head_caveman', 'head_egypt', 'head_greek', 'head_roman', 'head_viking', 'head_samurai', 'head_medieval', 'head_pirate', 'head_steampunk', 'head_cyberpunk'];
+    const ALL_FACES = ['face_calm', 'face_confident', 'face_focused', 'face_surprised'];
+
+    function randomizeDuckyAvatar() {
+        currentAvatar.body = ALL_BODIES[Math.floor(Math.random() * ALL_BODIES.length)];
+        currentAvatar.clothes = ALL_CLOTHES[Math.floor(Math.random() * ALL_CLOTHES.length)];
+        currentAvatar.head = ALL_HEADS[Math.floor(Math.random() * ALL_HEADS.length)];
+        currentAvatar.face = ALL_FACES[Math.floor(Math.random() * ALL_FACES.length)];
+
+        // Actualizar seleccionados visuales en todas las grillas
+        syncUiSelection();
+        renderLiveStage();
+        triggerAvatarSave();
+    }
+
+    function syncUiSelection() {
+        // Bodies
+        document.querySelectorAll('#tab-bodies .body-chip').forEach(chip => {
+            const isMatch = chip.getAttribute('onclick').includes(`'${currentAvatar.body}'`);
+            chip.classList.toggle('selected', isMatch);
+        });
+        // Clothes
+        document.querySelectorAll('#tab-clothes .item-card-btn').forEach(chip => {
+            const isMatch = chip.getAttribute('onclick').includes(`'${currentAvatar.clothes}'`);
+            chip.classList.toggle('selected', isMatch);
+        });
+        // Heads
+        document.querySelectorAll('#tab-heads .item-card-btn').forEach(chip => {
+            const isMatch = chip.getAttribute('onclick').includes(`'${currentAvatar.head}'`);
+            chip.classList.toggle('selected', isMatch);
+        });
+        // Faces
+        document.querySelectorAll('#tab-faces .item-card-btn').forEach(chip => {
+            const isMatch = chip.getAttribute('onclick').includes(`'${currentAvatar.face}'`);
+            chip.classList.toggle('selected', isMatch);
+        });
+    }
+
+    // Polling de seguridad para cambio de estado a RUNNING
     (function() {
         const checkStatusUrl = "{% url 'quiz_games:game_lobby_status' game.code %}";
         const playerPlayUrl = "{% url 'quiz_games:game_player_play' game.code %}";
@@ -198,9 +795,7 @@
             })
             .then(function(response) {
                 if (response.status === 304) return null;
-                if (!response.ok) {
-                    throw new Error('Error al consultar estado de la partida');
-                }
+                if (!response.ok) throw new Error('Error al consultar estado');
                 const etag = response.headers.get('ETag');
                 if (etag) lastPlayerLobbyEtag = etag;
                 return response.json();
@@ -217,7 +812,7 @@
                 }
             })
             .catch(function(err) {
-                console.warn('Sondeo de estado de sala en pausa:', err);
+                console.warn('Sondeo en pausa:', err);
             });
         }, 2500);
     })();

@@ -1,0 +1,320 @@
+{% extends "base.html" %}
+{% load static avatar_tags %}
+
+{% block title %}🏆 Podio Olímpico de Campeones — {{ quiz.title }} — QuizArenas{% endblock %}
+
+{% block extra_css %}
+<style>
+    .podium-page-container {
+        max-width: 960px;
+        margin: 0 auto 3rem;
+        text-align: center;
+    }
+
+    /* Celebration Banner */
+    .podium-celebration-strip {
+        margin-bottom: 2.5rem;
+    }
+
+    .podium-page-title {
+        font-family: var(--font-display);
+        font-size: 2.6rem;
+        font-weight: 900;
+        color: var(--text-heading);
+        letter-spacing: -0.02em;
+        margin-bottom: 0.5rem;
+    }
+
+    .podium-page-subtitle {
+        font-size: 1.15rem;
+        color: var(--text-muted);
+        font-weight: 600;
+    }
+
+    /* Olympic Podium Layout */
+    .olympic-podium-wrapper {
+        background: radial-gradient(circle at center, #1E293B 0%, #0F172A 100%);
+        border: 2px solid var(--border-medium);
+        border-radius: var(--radius-lg);
+        padding: 3.5rem 1.5rem 2.5rem 1.5rem;
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.4);
+        margin-bottom: 2.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .olympic-podium-grid {
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        gap: 1.5rem;
+        max-width: 780px;
+        margin: 0 auto;
+        min-height: 380px;
+    }
+
+    .podium-slot {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        position: relative;
+    }
+
+    /* Animation on Entrance */
+    .slot-2 { animation: risePodium 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards; }
+    .slot-1 { animation: risePodium 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards; }
+    .slot-3 { animation: risePodium 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.0s forwards; }
+
+    @keyframes risePodium {
+        from { transform: translateY(60px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* User Info Cards */
+    .podium-user-badge {
+        background: rgba(30, 41, 59, 0.95);
+        border: 2px solid rgba(255, 255, 255, 0.15);
+        border-radius: var(--radius-lg);
+        padding: 1.25rem 1rem;
+        width: 100%;
+        max-width: 220px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        margin-bottom: 0.75rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.4rem;
+        position: relative;
+    }
+
+    .podium-slot.slot-1 .podium-user-badge {
+        border-color: #F59E0B;
+        background: rgba(245, 158, 11, 0.15);
+        backdrop-filter: blur(8px);
+        transform: scale(1.06);
+    }
+
+    .podium-crown {
+        font-size: 2.4rem;
+        line-height: 1;
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    }
+
+    .crown-gold {
+        animation: floatCrown 2s infinite ease-in-out;
+    }
+
+    @keyframes floatCrown {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-6px) rotate(3deg); }
+    }
+
+    .podium-username {
+        font-family: var(--font-display);
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #FFFFFF;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 180px;
+    }
+
+    .podium-slot.slot-1 .podium-username {
+        font-size: 1.35rem;
+        font-weight: 900;
+        color: #FBBF24;
+    }
+
+    .podium-score-val {
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-size: 1.1rem;
+        color: #E2E8F0;
+    }
+
+    .podium-slot.slot-1 .podium-score-val {
+        color: #FDE68A;
+        font-size: 1.25rem;
+    }
+
+    /* Pedestals */
+    .podium-step-pedestal {
+        width: 100%;
+        border-radius: var(--radius-md) var(--radius-md) 0 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-size: 2.5rem;
+        color: #FFFFFF;
+        box-shadow: inset 0 4px 12px rgba(255, 255, 255, 0.2);
+    }
+
+    .pedestal-silver {
+        height: 140px;
+        background: linear-gradient(180deg, #94A3B8 0%, #475569 100%);
+    }
+
+    .pedestal-gold {
+        height: 200px;
+        background: linear-gradient(180deg, #F59E0B 0%, #B45309 100%);
+    }
+
+    .pedestal-bronze {
+        height: 100px;
+        background: linear-gradient(180deg, #EA580C 0%, #9A3412 100%);
+    }
+
+    .podium-empty-placeholder {
+        color: #64748B;
+        font-size: 0.9rem;
+        font-weight: 700;
+        padding: 1.5rem 0;
+    }
+
+    /* Actions */
+    .podium-actions-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+    }
+
+    @media (max-width: 680px) {
+        .olympic-podium-grid {
+            gap: 0.6rem;
+            min-height: auto;
+        }
+        .podium-page-title {
+            font-size: 1.8rem;
+        }
+        .podium-crown {
+            font-size: 1.8rem;
+        }
+        .podium-username {
+            font-size: 0.95rem;
+            max-width: 90px;
+        }
+        .podium-slot.slot-1 .podium-username {
+            font-size: 1.05rem;
+        }
+        .podium-score-val {
+            font-size: 0.88rem;
+        }
+        .pedestal-silver { height: 100px; font-size: 1.8rem; }
+        .pedestal-gold { height: 140px; font-size: 2rem; }
+        .pedestal-bronze { height: 75px; font-size: 1.6rem; }
+        .podium-actions-row {
+            flex-direction: column;
+            width: 100%;
+        }
+        .podium-actions-row a {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="podium-page-container">
+    <!-- Celebration Banner -->
+    <div class="podium-celebration-strip">
+        <h1 class="podium-page-title">🏆 Podio de Campeones</h1>
+        <p class="podium-page-subtitle">¡Gran partida! Cuestionario: <strong>{{ quiz.title }}</strong></p>
+    </div>
+
+    <!-- Visual Olympic Podium Top 3 -->
+    <div class="olympic-podium-wrapper">
+        <div class="olympic-podium-grid">
+            <!-- 2nd Place (Silver) -->
+            <div class="podium-slot slot-2">
+                {% if second_place %}
+                    <div style="margin-bottom: -15px; z-index: 5;">
+                        {% render_ducky_avatar second_place size="110px" extra_class="podium-duck-avatar" %}
+                    </div>
+                    <div class="podium-user-badge">
+                        <span class="podium-crown">🥈</span>
+                        <div class="podium-username" title="{{ second_place.player.username }}">{{ second_place.player.username }}</div>
+                        <div class="podium-score-val">{{ second_place.score }} DC</div>
+                    </div>
+                {% else %}
+                    <div class="podium-user-badge">
+                        <div class="podium-empty-placeholder">Sin 2º puesto</div>
+                    </div>
+                {% endif %}
+                <div class="podium-step-pedestal pedestal-silver">2</div>
+            </div>
+
+            <!-- 1st Place (Gold) -->
+            <div class="podium-slot slot-1">
+                {% if first_place %}
+                    <div style="margin-bottom: -15px; z-index: 5;">
+                        {% render_ducky_avatar first_place size="135px" extra_class="podium-duck-avatar" %}
+                    </div>
+                    <div class="podium-user-badge">
+                        <span class="podium-crown crown-gold">👑</span>
+                        <div class="podium-username" title="{{ first_place.player.username }}">{{ first_place.player.username }}</div>
+                        <div class="podium-score-val">{{ first_place.score }} DC</div>
+                    </div>
+                {% else %}
+                    <div class="podium-user-badge">
+                        <div class="podium-empty-placeholder">Sin 1º puesto</div>
+                    </div>
+                {% endif %}
+                <div class="podium-step-pedestal pedestal-gold">1</div>
+            </div>
+
+            <!-- 3rd Place (Bronze) -->
+            <div class="podium-slot slot-3">
+                {% if third_place %}
+                    <div style="margin-bottom: -15px; z-index: 5;">
+                        {% render_ducky_avatar third_place size="95px" extra_class="podium-duck-avatar" %}
+                    </div>
+                    <div class="podium-user-badge">
+                        <span class="podium-crown">🥉</span>
+                        <div class="podium-username" title="{{ third_place.player.username }}">{{ third_place.player.username }}</div>
+                        <div class="podium-score-val">{{ third_place.score }} DC</div>
+                    </div>
+                {% else %}
+                    <div class="podium-user-badge">
+                        <div class="podium-empty-placeholder">Sin 3º puesto</div>
+                    </div>
+                {% endif %}
+                <div class="podium-step-pedestal pedestal-bronze">3</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="podium-actions-row">
+        <a href="{% url 'quiz_games:game_leaderboard' game.code %}" class="btn-3d btn-3d-blue" style="padding: 0.75rem 1.75rem;">
+            📊 Ver Tabla Completa de Posiciones
+        </a>
+        <a href="{% url 'quizzes:quiz_list' %}" class="btn-3d btn-3d-green" style="padding: 0.75rem 1.75rem;">
+            📚 Volver a la Galería de Quizzes
+        </a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (window.duckyAudio) {
+            setTimeout(() => {
+                window.duckyAudio.playVictoryOrchestration();
+            }, 400);
+
+            document.body.addEventListener('click', function victoryOnce() {
+                window.duckyAudio.playVictoryOrchestration();
+                document.body.removeEventListener('click', victoryOnce);
+            }, { once: true });
+        }
+    });
+</script>
+
+{% include "quiz_games/audio_engine.html" %}
+{% endblock %}

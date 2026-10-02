@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <filter id="headShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <!-- CAPA 3: SOMBRERO / CABEZA (Z-INDEX 40) - GRECIA -->
+  <g id="head-greek" filter="url(#headShadow)">
+    <!-- Rama izquierda de hojas de laurel doradas -->
+    <path d="M 180 135 C 190 90, 240 85, 252 88" stroke="#D97706" stroke-width="3" fill="none"/>
+    <!-- Hojas izquierda -->
+    <g fill="#FBBF24" stroke="#B45309" stroke-width="1.5">
+      <path d="M 185 130 Q 170 120 180 110 Q 192 120 185 130 Z"/>
+      <path d="M 198 115 Q 185 100 200 95 Q 208 108 198 115 Z"/>
+      <path d="M 215 102 Q 205 85 220 80 Q 228 95 215 102 Z"/>
+      <path d="M 235 94 Q 230 75 245 74 Q 248 88 235 94 Z"/>
+    </g>
+    <!-- Rama derecha de hojas de laurel doradas -->
+    <path d="M 332 135 C 322 90, 272 85, 260 88" stroke="#D97706" stroke-width="3" fill="none"/>
+    <!-- Hojas derecha -->
+    <g fill="#FBBF24" stroke="#B45309" stroke-width="1.5">
+      <path d="M 327 130 Q 342 120 332 110 Q 320 120 327 130 Z"/>
+      <path d="M 314 115 Q 327 100 312 95 Q 304 108 314 115 Z"/>
+      <path d="M 297 102 Q 307 85 292 80 Q 284 95 297 102 Z"/>
+      <path d="M 277 94 Q 282 75 267 74 Q 264 88 277 94 Z"/>
+    </g>
+    <!-- Broche / Lazo central frontal -->
+    <circle cx="256" cy="88" r="5" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+  </g>
+</svg>

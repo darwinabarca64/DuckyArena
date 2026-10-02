@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <filter id="headShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="6" stdDeviation="4" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  <!-- CAPA 3: SOMBRERO / CABEZA (Z-INDEX 40) - STEAMPUNK -->
+  <g id="head-steampunk" filter="url(#headShadow)">
+    <!-- Copa cilíndrica alta de la chistera de cuero -->
+    <path d="M 205 115 L 212 35 L 300 35 L 307 115 Z" 
+          fill="#451A03" stroke="#291003" stroke-width="4"/>
+    <ellipse cx="256" cy="35" rx="44" ry="12" fill="#78350F" stroke="#291003" stroke-width="3"/>
+    <!-- Cinta ancha de cuero con hebilla de bronce -->
+    <path d="M 206 100 L 306 100 L 307 115 L 205 115 Z" fill="#991B1B" stroke="#78350F" stroke-width="2"/>
+    <!-- Ala ancha curvada de la chistera -->
+    <ellipse cx="256" cy="118" rx="76" ry="18" fill="#451A03" stroke="#291003" stroke-width="4"/>
+    <!-- Gafas de aviador de bronce montadas sobre el ala -->
+    <!-- Correa de las gafas -->
+    <path d="M 195 118 Q 256 128 317 118" stroke="#1E293B" stroke-width="5" fill="none"/>
+    <!-- Lente Izquierda -->
+    <circle cx="230" cy="118" r="16" fill="#0284C7" stroke="#D97706" stroke-width="4"/>
+    <circle cx="230" cy="118" r="12" fill="#38BDF8" opacity="0.7"/>
+    <line x1="222" y1="112" x2="238" y2="124" stroke="#FFF" stroke-width="2" stroke-linecap="round"/>
+    <!-- Lente Derecha -->
+    <circle cx="282" cy="118" r="16" fill="#0284C7" stroke="#D97706" stroke-width="4"/>
+    <circle cx="282" cy="118" r="12" fill="#38BDF8" opacity="0.7"/>
+    <line x1="274" y1="112" x2="290" y2="124" stroke="#FFF" stroke-width="2" stroke-linecap="round"/>
+    <!-- Puente de las gafas con engranaje central -->
+    <line x1="246" y1="118" x2="266" y2="118" stroke="#D97706" stroke-width="4"/>
+  </g>
+</svg>

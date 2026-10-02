@@ -24,12 +24,13 @@ def game_create(request, quiz_pk):
     Garantiza atómicamente la asignación del anfitrión y el PIN sin colisión.
     """
     user = request.user
-    if not hasattr(user, 'profile') or user.profile.role != 'TEACHER':
+    is_teacher = user.is_superuser or user.is_staff or (hasattr(user, 'profile') and getattr(user.profile, 'role', None) == 'TEACHER')
+    if not is_teacher:
         raise PermissionDenied("Solo los usuarios con rol de PROFESOR pueden iniciar salas de juego.")
 
     quiz = get_object_or_404(Quiz, pk=quiz_pk)
 
-    if quiz.creator != user:
+    if quiz.creator != user and not (user.is_superuser or user.is_staff):
         raise PermissionDenied("Solo el profesor creador del cuestionario puede iniciar la partida.")
 
     if not quiz.is_published:
@@ -103,18 +104,18 @@ def game_lobby_status(request, code):
     if not (is_host or is_player):
         return HttpResponseForbidden("No perteneces a esta partida.")
 
-    player_count = game.players.count()
-    etag = _generate_etag(game.status, game.current_question, player_count)
+    players_data = list(
+        game.players.select_related('player')
+        .order_by('joined_at')
+        .values('id', 'player__username', 'joined_at', 'avatar_body', 'avatar_clothes', 'avatar_head', 'avatar_face')
+    )
+    player_count = len(players_data)
+    avatar_tokens = "".join(f"{p['id']}:{p['avatar_body']}:{p['avatar_clothes']}:{p['avatar_head']}:{p['avatar_face']}" for p in players_data)
+    etag = _generate_etag(game.status, game.current_question, player_count, avatar_tokens)
 
     client_etag = request.headers.get('If-None-Match')
     if client_etag and client_etag == etag:
         return HttpResponseNotModified()
-
-    players_data = list(
-        game.players.select_related('player')
-        .order_by('joined_at')
-        .values('id', 'player__username', 'joined_at')
-    )
 
     response = JsonResponse({
         'status': game.status,
@@ -124,13 +125,60 @@ def game_lobby_status(request, code):
             {
                 'id': p['id'],
                 'username': p['player__username'],
-                'joined_at': p['joined_at'].strftime('%H:%M:%S')
+                'joined_at': p['joined_at'].strftime('%H:%M:%S'),
+                'avatar': {
+                    'body': p['avatar_body'] or 'body_yellow',
+                    'clothes': p['avatar_clothes'] or '',
+                    'head': p['avatar_head'] or '',
+                    'face': p['avatar_face'] or 'face_calm'
+                }
             }
             for p in players_data
         ]
     })
     response['ETag'] = etag
     return response
+
+
+@login_required
+@require_POST
+def update_player_avatar(request, code):
+    """
+    Actualiza la personalización modular del avatar de un participante en la sala.
+    """
+    game = get_object_or_404(Game, code=code)
+    try:
+        data = json.loads(request.body) if request.content_type == 'application/json' else request.POST
+        body = data.get('body', 'body_yellow')
+        clothes = data.get('clothes', '')
+        head = data.get('head', '')
+        face = data.get('face', 'face_calm')
+    except (ValueError, TypeError):
+        return JsonResponse({'success': False, 'error': 'Parámetros inválidos.'}, status=400)
+
+    VALID_BODIES = {'body_yellow', 'body_brown', 'body_black', 'body_white', 'body_pink', 'body_blue', 'body_green', 'body_lavender'}
+    VALID_FACES = {'face_focused', 'face_confident', 'face_surprised', 'face_calm'}
+    VALID_CLOTHES = {'', 'clothes_caveman', 'clothes_egypt', 'clothes_greek', 'clothes_roman', 'clothes_viking', 'clothes_samurai', 'clothes_medieval', 'clothes_pirate', 'clothes_steampunk', 'clothes_cyberpunk'}
+    VALID_HEADS = {'', 'head_caveman', 'head_egypt', 'head_greek', 'head_roman', 'head_viking', 'head_samurai', 'head_medieval', 'head_pirate', 'head_steampunk', 'head_cyberpunk'}
+
+    if body not in VALID_BODIES or face not in VALID_FACES or clothes not in VALID_CLOTHES or head not in VALID_HEADS:
+        return JsonResponse({'success': False, 'error': 'Componente de avatar no válido.'}, status=400)
+
+    with transaction.atomic():
+        player_entry = GamePlayer.objects.select_for_update().filter(game=game, player=request.user).first()
+        if not player_entry:
+            return JsonResponse({'success': False, 'error': 'Participante no registrado en la sala.'}, status=403)
+
+        player_entry.avatar_body = body
+        player_entry.avatar_clothes = clothes
+        player_entry.avatar_head = head
+        player_entry.avatar_face = face
+        player_entry.save(update_fields=['avatar_body', 'avatar_clothes', 'avatar_head', 'avatar_face'])
+
+    return JsonResponse({
+        'success': True,
+        'avatar': player_entry.avatar_dict
+    })
 
 
 @login_required
@@ -262,6 +310,7 @@ def game_host_play(request, code):
         game_player__game=game,
         question=current_question
     ).count()
+    top_players = game.players.select_related('player').order_by('-score', '-correct_answers', 'joined_at')[:5]
 
     context = {
         'game': game,
@@ -272,6 +321,7 @@ def game_host_play(request, code):
         'total_questions': total_questions,
         'total_players': total_players,
         'answered_count': answered_count,
+        'top_players': top_players,
     }
     return render(request, 'quiz_games/game_host_play.html', context)
 
@@ -313,6 +363,13 @@ def game_player_play(request, code):
     raw_answers = current_question.answers.all().order_by('?')
     answers_data = [{'id': a.id, 'text': a.text} for a in raw_answers]
 
+    ranked_players = list(game.players.select_related('player').order_by('-score', '-correct_answers', 'joined_at'))
+    player_position = None
+    for idx, p in enumerate(ranked_players, 1):
+        if p.id == player_entry.id:
+            player_position = idx
+            break
+
     context = {
         'game': game,
         'player_entry': player_entry,
@@ -322,6 +379,8 @@ def game_player_play(request, code):
         'existing_answer': existing_answer,
         'current_num': game.current_question,
         'total_questions': len(questions),
+        'players': ranked_players,
+        'player_position': player_position,
     }
     return render(request, 'quiz_games/game_player_play.html', context)
 
@@ -405,41 +464,54 @@ def submit_player_answer(request, code):
 @login_required
 def game_leaderboard(request, code):
     """
-    Pantalla general de resultados y podio Top 3 de la partida terminada.
-    Calcula métricas globales de la sesión mediante agregaciones ORM.
+    Pantalla 1 de Cierre: Tabla de Posiciones Completa y Liquidación de Saldo.
+    Transfiere atómicamente los DuckyCoins ganados a profile.ducky_coins.
     """
     game = get_object_or_404(Game.objects.select_related('quiz', 'host'), code=code)
 
-    # Si la partida aún no finaliza, redirige a la pantalla activa
     if game.status != Game.Status.FINISHED:
         if game.host == request.user:
             return redirect('quiz_games:game_host_play', code=game.code)
         return redirect('quiz_games:game_player_play', code=game.code)
 
-    # Control de acceso: solo el host o los participantes pueden consultar el podio
     is_host = (game.host == request.user)
     is_participant = game.players.filter(player=request.user).exists()
     if not (is_host or is_participant):
         raise PermissionDenied("No tienes autorización para ver los resultados de esta sala.")
 
-    # Clasificación completa ordenada por puntuación y respuestas correctas
-    ranking_qs = game.players.select_related('player').order_by('-score', '-correct_answers', 'joined_at')
-    ranking = list(ranking_qs)
+    # Liquidación transaccional en Profile (idempotente mediante is_settled)
+    with transaction.atomic():
+        players_to_settle = game.players.select_for_update().select_related('player')
+        for gp in players_to_settle:
+            if not gp.is_settled and gp.score > 0 and hasattr(gp.player, 'profile'):
+                profile = gp.player.profile
+                if hasattr(profile, 'ducky_coins'):
+                    profile.ducky_coins += gp.score
+                if hasattr(profile, 'xp'):
+                    profile.xp += gp.score
+                if callable(getattr(profile, 'save', None)):
+                    try:
+                        profile.save(update_fields=['ducky_coins', 'xp'])
+                    except Exception:
+                        profile.save()
+                gp.is_settled = True
+                gp.save(update_fields=['is_settled'])
+            elif not gp.is_settled:
+                gp.is_settled = True
+                gp.save(update_fields=['is_settled'])
 
-    # Top 3 para el podio
+    ranking = list(game.players.select_related('player').order_by('-score', '-correct_answers', 'joined_at'))
+
     first_place = ranking[0] if len(ranking) > 0 else None
     second_place = ranking[1] if len(ranking) > 1 else None
     third_place = ranking[2] if len(ranking) > 2 else None
     rest_players = ranking[3:] if len(ranking) > 3 else []
 
-    # Métricas agregadas de la sesión
     stats = game.players.aggregate(
         max_score=Max('score'),
         avg_correct=Avg('correct_answers'),
         total_participants=Count('id')
     )
-
-    total_questions = game.quiz.questions.count()
 
     context = {
         'game': game,
@@ -449,13 +521,46 @@ def game_leaderboard(request, code):
         'second_place': second_place,
         'third_place': third_place,
         'rest_players': rest_players,
-        'total_questions': total_questions,
         'max_score': stats['max_score'] or 0,
         'avg_correct': round(stats['avg_correct'] or 0, 1),
         'total_participants': stats['total_participants'] or 0,
+        'total_questions': game.quiz.questions.count(),
         'is_host': is_host,
     }
     return render(request, 'quiz_games/game_leaderboard.html', context)
+
+
+@login_required
+def game_podium(request, code):
+    """
+    Pantalla 2 de Cierre: Ceremonia Visual Exclusiva del Podio Olímpico Top 3.
+    """
+    game = get_object_or_404(Game.objects.select_related('quiz', 'host'), code=code)
+
+    if game.status != Game.Status.FINISHED:
+        return redirect('quiz_games:game_leaderboard', code=game.code)
+
+    is_host = (game.host == request.user)
+    is_participant = game.players.filter(player=request.user).exists()
+    if not (is_host or is_participant):
+        raise PermissionDenied("No tienes autorización para ver el podio de esta sala.")
+
+    ranking = list(game.players.select_related('player').order_by('-score', '-correct_answers', 'joined_at'))
+
+    first_place = ranking[0] if len(ranking) > 0 else None
+    second_place = ranking[1] if len(ranking) > 1 else None
+    third_place = ranking[2] if len(ranking) > 2 else None
+
+    context = {
+        'game': game,
+        'quiz': game.quiz,
+        'first_place': first_place,
+        'second_place': second_place,
+        'third_place': third_place,
+        'total_participants': len(ranking),
+        'is_host': is_host,
+    }
+    return render(request, 'quiz_games/game_podium.html', context)
 
 
 @login_required

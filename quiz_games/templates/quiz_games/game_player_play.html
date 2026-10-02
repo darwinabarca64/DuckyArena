@@ -5,11 +5,44 @@
 
 {% block extra_css %}
 <style>
-    .mobile-play-wrapper {
-        max-width: 640px;
-        margin: 0 auto 2.5rem;
-        padding: 0 0.75rem;
-        position: relative;
+    /* Confinamiento táctil exclusivo para móviles en partida */
+    @media (max-width: 768px) and (pointer: coarse) {
+        body.in-game-screen {
+            overscroll-behavior-y: contain;
+            touch-action: manipulation;
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .mobile-play-wrapper {
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+    }
+
+    /* Main Layout Grid (Desktop vs Mobile) */
+    .player-game-layout {
+        max-width: 1150px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
+        padding-bottom: 5.5rem; /* Margen para evitar que el dock móvil tape alternativas */
+    }
+
+    @media (min-width: 992px) {
+        .player-game-layout {
+            grid-template-columns: 1fr 340px;
+            padding-bottom: 2rem;
+        }
+    }
+
+    .player-game-main {
+        width: 100%;
+        max-width: 720px;
+        margin: 0 auto;
     }
 
     /* Top Live Status Strip */
@@ -38,7 +71,7 @@
         font-family: var(--font-display);
         font-weight: 800;
         font-size: 0.9rem;
-        padding: 0.3rem 0.8rem;
+        padding: 0.35rem 0.85rem;
         border-radius: var(--radius-full);
         display: inline-flex;
         align-items: center;
@@ -52,15 +85,22 @@
         font-family: var(--font-display);
         font-weight: 800;
         font-size: 0.95rem;
-        padding: 0.3rem 0.9rem;
+        padding: 0.35rem 0.95rem;
         border-radius: var(--radius-full);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
     }
 
     .q-number-indicator {
         font-family: var(--font-display);
         font-weight: 800;
-        font-size: 0.88rem;
+        font-size: 0.9rem;
         color: var(--text-muted);
+        background: var(--bg-surface-secondary);
+        padding: 0.35rem 0.75rem;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-subtle);
     }
 
     /* Horizontal Progress Countdown Bar */
@@ -78,7 +118,7 @@
         width: 100%;
         background: linear-gradient(90deg, var(--kahoot-green), var(--kahoot-yellow), var(--kahoot-red));
         transform-origin: left;
-        transition: width 1s linear;
+        transition: width 0.5s linear;
     }
 
     /* Question Statement Card */
@@ -105,7 +145,7 @@
     .tactile-answers-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 0.9rem;
+        gap: 1rem;
     }
 
     .tactile-answer-btn {
@@ -125,6 +165,7 @@
         text-align: center;
         min-height: 130px;
         user-select: none;
+        touch-action: manipulation;
         -webkit-tap-highlight-color: transparent;
     }
 
@@ -146,8 +187,8 @@
     .color-opt-orange { background: #F97316; }
 
     .tactile-symbol-badge {
-        width: 42px;
-        height: 42px;
+        width: 44px;
+        height: 44px;
         border-radius: var(--radius-md);
         background: rgba(0, 0, 0, 0.22);
         border: 2px solid rgba(255, 255, 255, 0.65);
@@ -162,10 +203,167 @@
 
     .tactile-text-label {
         font-family: var(--font-display);
-        font-size: 1.1rem;
+        font-size: 1.15rem;
         font-weight: 800;
-        line-height: 1.25;
+        line-height: 1.3;
         word-break: break-word;
+    }
+
+    /* Desktop Ranking Sidebar (≥ 992px) */
+    .desktop-ranking-sidebar {
+        display: none;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: 1.25rem;
+        box-shadow: var(--shadow-sm);
+        height: fit-content;
+        position: sticky;
+        top: 80px;
+    }
+
+    @media (min-width: 992px) {
+        .desktop-ranking-sidebar {
+            display: block;
+        }
+    }
+
+    .sidebar-ranking-title {
+        font-family: var(--font-display);
+        font-size: 1.1rem;
+        font-weight: 900;
+        color: var(--text-heading);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding-bottom: 0.85rem;
+        border-bottom: 1px solid var(--border-subtle);
+        margin-bottom: 1rem;
+    }
+
+    .ranking-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        max-height: 450px;
+        overflow-y: auto;
+    }
+
+    .ranking-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.55rem 0.8rem;
+        border-radius: var(--radius-md);
+        background: var(--bg-surface-secondary);
+        border: 1px solid var(--border-subtle);
+        font-size: 0.88rem;
+        transition: all 0.25s ease;
+    }
+
+    .ranking-item.is-current-user {
+        border: 1.5px solid var(--kahoot-yellow);
+        background: #FFFBEB;
+        font-weight: 800;
+    }
+
+    .ranking-player-info {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        overflow: hidden;
+    }
+
+    .ranking-pos-badge {
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 0.82rem;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #E2E8F0;
+        color: var(--text-heading);
+        flex-shrink: 0;
+    }
+
+    .ranking-pos-1 { background: #FEF3C7; color: #B45309; }
+    .ranking-pos-2 { background: #F1F5F9; color: #475569; }
+    .ranking-pos-3 { background: #FFEDD5; color: #C2410C; }
+
+    .ranking-username {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 130px;
+    }
+
+    .ranking-score-pill {
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 0.85rem;
+        color: #B45309;
+        background: rgba(245, 158, 11, 0.12);
+        padding: 0.2rem 0.55rem;
+        border-radius: var(--radius-full);
+        flex-shrink: 0;
+    }
+
+    /* Mobile Bottom Dock (< 992px) */
+    .mobile-bottom-dock {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1050;
+        background: rgba(15, 23, 42, 0.92);
+        backdrop-filter: blur(12px);
+        border-top: 1px solid rgba(245, 158, 11, 0.3);
+        padding: 0.6rem 1rem;
+        padding-bottom: calc(0.6rem + env(safe-area-inset-bottom, 0px));
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        color: #FFFFFF;
+        box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    @media (min-width: 992px) {
+        .mobile-bottom-dock {
+            display: none;
+        }
+    }
+
+    .dock-stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.15rem;
+    }
+
+    .dock-stat-label {
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        color: #94A3B8;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+    }
+
+    .dock-stat-value {
+        font-family: var(--font-display);
+        font-size: 0.95rem;
+        font-weight: 900;
+        color: #FFFFFF;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .dock-stat-value.highlight-coins {
+        color: #FBBF24;
     }
 
     /* Feedback Overlay */
@@ -258,7 +456,7 @@
         50% { transform: scale(1.3); opacity: 1; }
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: 580px) {
         .tactile-answers-grid {
             grid-template-columns: 1fr;
         }
@@ -266,7 +464,7 @@
             flex-direction: row;
             justify-content: flex-start;
             padding: 1.15rem 1.25rem;
-            min-height: auto;
+            min-height: 75px;
             gap: 1rem;
             text-align: left;
         }
@@ -276,53 +474,102 @@
 
 {% block content %}
 <div class="mobile-play-wrapper">
-    <!-- Live Status Top Strip -->
-    <div class="player-stats-strip">
-        <div class="stat-pill-group">
-            <span class="streak-badge" id="player-streak-badge">
-                🔥 <span id="streak-count">{{ player_entry.current_streak }}</span>
-            </span>
-            <span class="score-badge">
-                ⭐ <span id="total-score">{{ player_entry.score }}</span> pts
+<div class="player-game-layout">
+    <!-- Main Play Container -->
+    <div class="player-game-main">
+        <!-- Live Status Top Strip -->
+        <div class="player-stats-strip">
+            <div class="stat-pill-group">
+                <span class="streak-badge" id="player-streak-badge">
+                    🔥 <span id="streak-count">{{ player_entry.current_streak }}</span>
+                </span>
+                <span class="score-badge">
+                    🪙 <span id="total-score">{{ player_entry.score }}</span> DC
+                </span>
+            </div>
+            <span class="q-number-indicator">
+                Pregunta {{ current_num }}/{{ total_questions }}
             </span>
         </div>
-        <span class="q-number-indicator">
-            P{{ current_num }}/{{ total_questions }}
-        </span>
+
+        <!-- Countdown Progress Bar -->
+        <div class="player-timer-bar-wrap">
+            <div class="player-timer-bar-fill" id="player-timer-progress"></div>
+        </div>
+
+        <!-- Question Statement -->
+        <div class="player-question-container">
+            <h1 class="player-question-heading">{{ question.text }}</h1>
+        </div>
+
+        <!-- Tactile Answer Buttons (Zero Leaks: answers shuffled without is_correct) -->
+        <div class="tactile-answers-grid" id="answers-container">
+            {% for answer in answers %}
+                <button
+                    type="button"
+                    class="tactile-answer-btn {% cycle 'color-opt-red' 'color-opt-blue' 'color-opt-yellow' 'color-opt-green' 'color-opt-purple' 'color-opt-orange' %}"
+                    data-answer-id="{{ answer.id }}"
+                    onclick="handleAnswerClick({{ answer.id }})"
+                    {% if has_answered %}disabled{% endif %}
+                >
+                    <span class="tactile-symbol-badge">
+                        {% if forloop.counter0 == 0 %}A
+                        {% elif forloop.counter0 == 1 %}B
+                        {% elif forloop.counter0 == 2 %}C
+                        {% elif forloop.counter0 == 3 %}D
+                        {% elif forloop.counter0 == 4 %}E
+                        {% else %}F
+                        {% endif %}
+                    </span>
+                    <span class="tactile-text-label">{{ answer.text }}</span>
+                </button>
+            {% endfor %}
+        </div>
     </div>
 
-    <!-- Countdown Progress Bar -->
-    <div class="player-timer-bar-wrap">
-        <div class="player-timer-bar-fill" id="player-timer-progress"></div>
-    </div>
+    <!-- Desktop Ranking Sidebar (≥ 992px) -->
+    <aside class="desktop-ranking-sidebar">
+        <div class="sidebar-ranking-title">
+            <span>🏆 Posiciones en Vivo</span>
+        </div>
+        <ul class="ranking-list" id="desktop-ranking-list">
+            {% for p in players %}
+                <li class="ranking-item {% if p.id == player_entry.id %}is-current-user{% endif %}" id="ranking-player-{{ p.id }}" data-username="{{ p.player.username }}">
+                    <div class="ranking-player-info">
+                        <span class="ranking-pos-badge pos-badge-slot {% if forloop.counter == 1 %}ranking-pos-1{% elif forloop.counter == 2 %}ranking-pos-2{% elif forloop.counter == 3 %}ranking-pos-3{% endif %}">
+                            {{ forloop.counter }}
+                        </span>
+                        <span class="ranking-username" title="{{ p.player.username }}">
+                            {{ p.player.username }}
+                            {% if p.id == player_entry.id %}<strong> (Tú)</strong>{% endif %}
+                        </span>
+                    </div>
+                    <span class="ranking-score-pill">
+                        <span class="player-score-val">{{ p.score }}</span> DC
+                    </span>
+                </li>
+            {% empty %}
+                <li class="ranking-item" style="justify-content: center; color: var(--text-muted);">
+                    Sin otros participantes
+                </li>
+            {% endfor %}
+        </ul>
+    </aside>
 
-    <!-- Question Statement -->
-    <div class="player-question-container">
-        <h1 class="player-question-heading">{{ question.text }}</h1>
-    </div>
-
-    <!-- Tactile Answer Buttons (Zero Leaks: answers shuffled without is_correct) -->
-    <div class="tactile-answers-grid" id="answers-container">
-        {% for answer in answers %}
-            <button
-                type="button"
-                class="tactile-answer-btn {% cycle 'color-opt-red' 'color-opt-blue' 'color-opt-yellow' 'color-opt-green' 'color-opt-purple' 'color-opt-orange' %}"
-                data-answer-id="{{ answer.id }}"
-                onclick="handleAnswerClick({{ answer.id }})"
-                {% if has_answered %}disabled{% endif %}
-            >
-                <span class="tactile-symbol-badge">
-                    {% if forloop.counter0 == 0 %}A
-                    {% elif forloop.counter0 == 1 %}B
-                    {% elif forloop.counter0 == 2 %}C
-                    {% elif forloop.counter0 == 3 %}D
-                    {% elif forloop.counter0 == 4 %}E
-                    {% else %}F
-                    {% endif %}
-                </span>
-                <span class="tactile-text-label">{{ answer.text }}</span>
-            </button>
-        {% endfor %}
+    <!-- Mobile Bottom Dock (< 992px) -->
+    <div class="mobile-bottom-dock">
+        <div class="dock-stat-item">
+            <span class="dock-stat-label">Racha</span>
+            <span class="dock-stat-value">🔥 <span id="dock-streak-count">{{ player_entry.current_streak }}</span></span>
+        </div>
+        <div class="dock-stat-item">
+            <span class="dock-stat-label">DuckyCoins</span>
+            <span class="dock-stat-value highlight-coins">🪙 <span id="mobile-score">{{ player_entry.score }}</span> DC</span>
+        </div>
+        <div class="dock-stat-item">
+            <span class="dock-stat-label">Posición</span>
+            <span class="dock-stat-value">🏅 <span id="current-rank">#{{ player_position|default:"--" }}</span></span>
+        </div>
     </div>
 
     <!-- Feedback Overlay (Initially Hidden unless has_answered) -->
@@ -334,18 +581,18 @@
                         {% if existing_answer.is_correct %}¡CORRECTO! 🎉{% else %}¡INCORRECTO! ❌{% endif %}
                     </div>
                     <div class="feedback-points-gained">
-                        +{{ existing_answer.points_awarded }} pts
+                        +{{ existing_answer.points_awarded }} DC
                     </div>
                 </div>
             {% else %}
                 <div class="feedback-banner" id="overlay-banner">
                     <div class="feedback-title" id="overlay-title">¡Respuesta Enviada!</div>
-                    <div class="feedback-points-gained" id="overlay-points">+<span id="points-gained">0</span> pts</div>
+                    <div class="feedback-points-gained" id="overlay-points">+<span id="points-gained">0</span> DC</div>
                 </div>
             {% endif %}
 
             <p class="feedback-subinfo" id="overlay-streak-info">
-                Puntuación acumulada: <strong><span id="overlay-total-score">{{ player_entry.score }}</span> pts</strong>
+                Saldo acumulado: <strong><span id="overlay-total-score">{{ player_entry.score }}</span> DC</strong>
             </p>
 
             <div class="pulse-waiting-box">
@@ -355,25 +602,39 @@
         </div>
     </div>
 </div>
+</div>
 
 <script>
     (function() {
-        const submitUrl = "{% url 'quiz_games:submit_player_answer' game.code %}";
-        const statusUrl = "{% url 'quiz_games:game_question_status' game.code %}";
+        document.body.classList.add('in-game-screen');
+        const currentUsername = "{{ user.username }}";
         const resultsUrl = "{% url 'quiz_games:game_player_results' game.code %}";
         const joinUrl = "{% url 'quiz_games:game_join' %}";
         const questionId = {{ question.id }};
         const currentNum = {{ current_num }};
         const timeLimit = parseFloat("{{ question.time_limit }}") || 30.0;
-        const csrfToken = "{{ csrf_token }}";
 
         const startTime = Date.now();
         let answered = {% if has_answered %}true{% else %}false{% endif %};
-        let pollTimer = null;
 
-        let lastEtag = null;
+        // 1. Establecer conexión WebSocket
+        const wsScheme = window.location.protocol === 'https:' ? 'wss' : 'ws';
+        const wsUrl = `${wsScheme}://${window.location.host}/ws/game/{{ game.code }}/`;
+        const gameSocket = new WebSocket(wsUrl);
 
-        // Temporizador visual de barra
+        gameSocket.onopen = function() {
+            console.log('⚡ WebSocket conectado a la sala {{ game.code }}');
+        };
+
+        gameSocket.onerror = function(err) {
+            console.error('Error WebSocket:', err);
+        };
+
+        gameSocket.onclose = function(e) {
+            console.warn('Conexión WebSocket cerrada:', e);
+        };
+
+        // 2. Temporizador visual de barra
         const timerFill = document.getElementById('player-timer-progress');
         const timerCountdown = setInterval(function() {
             const elapsed = (Date.now() - startTime) / 1000;
@@ -384,128 +645,143 @@
             }
             if (remaining <= 0) {
                 clearInterval(timerCountdown);
+                // Bloqueo de opciones al expirar tiempo si no había respondido
+                if (!answered) {
+                    document.querySelectorAll('#answers-container button').forEach(function(btn) {
+                        btn.disabled = true;
+                    });
+                }
             }
-        }, 500);
+        }, 300);
 
-        // Función de sondeo para avanzar de pregunta automáticamente con soporte ETag 304
-        function startWaitingPoll() {
-            if (pollTimer) return;
-            pollTimer = setInterval(function() {
-                fetch(statusUrl, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'If-None-Match': lastEtag || ''
+        // 3. Procesamiento reactivo de mensajes recibidos por WebSocket
+        gameSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+
+            // A. Resultado individual de respuesta
+            if (data.type === 'answer_result') {
+                if (window.duckyAudio) {
+                    if (data.is_correct) {
+                        window.duckyAudio.playCorrect();
+                    } else {
+                        window.duckyAudio.playIncorrect();
                     }
-                })
-                .then(function(res) {
-                    if (res.status === 304) return null;
-                    if (!res.ok) throw new Error('Error al sincronizar estado');
-                    const etag = res.headers.get('ETag');
-                    if (etag) lastEtag = etag;
-                    return res.json();
-                })
-                .then(function(data) {
-                    if (!data) return;
-                    if (data.status === 'RUNNING' && data.current_question > currentNum) {
-                        clearInterval(pollTimer);
-                        window.location.reload();
-                    } else if (data.status === 'FINISHED') {
-                        clearInterval(pollTimer);
-                        window.location.href = resultsUrl;
-                    } else if (data.status === 'CANCELLED') {
-                        clearInterval(pollTimer);
-                        window.location.href = joinUrl;
-                    }
-                })
-                .catch(function(err) {
-                    console.warn('Sondeo de partida en espera:', err);
+                }
+
+                // Actualizar contadores superiores y dock
+                const totalScoreSpan = document.getElementById('total-score');
+                const mobileScoreSpan = document.getElementById('mobile-score');
+                const streakCountSpan = document.getElementById('streak-count');
+                const dockStreakSpan = document.getElementById('dock-streak-count');
+
+                if (totalScoreSpan) totalScoreSpan.innerText = data.total_score;
+                if (mobileScoreSpan) mobileScoreSpan.innerText = data.total_score;
+                if (streakCountSpan) streakCountSpan.innerText = data.streak;
+                if (dockStreakSpan) dockStreakSpan.innerText = data.streak;
+
+                // Configurar overlay de retroalimentación
+                const overlay = document.getElementById('feedback-overlay');
+                const banner = document.getElementById('overlay-banner');
+                const title = document.getElementById('overlay-title');
+                const pointsGained = document.getElementById('points-gained');
+                const overlayTotalScore = document.getElementById('overlay-total-score');
+                const overlayStreakInfo = document.getElementById('overlay-streak-info');
+
+                if (banner && title && pointsGained) {
+                    banner.className = 'feedback-banner ' + (data.is_correct ? 'correct' : 'incorrect');
+                    title.innerText = data.is_correct ? '¡CORRECTO! 🎉' : '¡INCORRECTO! ❌';
+                    pointsGained.innerText = data.ducky_coins_awarded;
+                }
+
+                if (overlayTotalScore) overlayTotalScore.innerText = data.total_score;
+                if (overlayStreakInfo) {
+                    overlayStreakInfo.innerHTML = `Saldo acumulado: <strong>${data.total_score} DC</strong> &bull; Racha: <strong>🔥 ${data.streak}</strong>`;
+                }
+
+                if (overlay) overlay.style.display = 'flex';
+            }
+
+            // B. Eventos retransmitidos en tiempo real (broadcast)
+            if (data.event === 'player_answered_update') {
+                if (data.ranking && Array.isArray(data.ranking)) {
+                    updateRankingSidebar(data.ranking);
+                }
+            } else if (data.event === 'next_question') {
+                window.location.reload();
+            } else if (data.event === 'game_finished') {
+                window.location.href = data.leaderboard_url || resultsUrl;
+            }
+        };
+
+        // Función para actualizar la lista de ranking en vivo y la posición del jugador
+        function updateRankingSidebar(ranking) {
+            const listEl = document.getElementById('desktop-ranking-list');
+            const rankSpan = document.getElementById('current-rank');
+
+            let userPos = '--';
+
+            if (listEl) {
+                let html = '';
+                ranking.forEach(function(item, idx) {
+                    const pos = idx + 1;
+                    const isMe = item.username === currentUsername;
+                    if (isMe) userPos = pos;
+
+                    let posBadgeClass = '';
+                    if (pos === 1) posBadgeClass = 'ranking-pos-1';
+                    else if (pos === 2) posBadgeClass = 'ranking-pos-2';
+                    else if (pos === 3) posBadgeClass = 'ranking-pos-3';
+
+                    html += `
+                        <li class="ranking-item ${isMe ? 'is-current-user' : ''}">
+                            <div class="ranking-player-info">
+                                <span class="ranking-pos-badge ${posBadgeClass}">${pos}</span>
+                                <span class="ranking-username" title="${item.username}">
+                                    ${item.username}${isMe ? ' <strong>(Tú)</strong>' : ''}
+                                </span>
+                            </div>
+                            <span class="ranking-score-pill">
+                                <span class="player-score-val">${item.score}</span> DC
+                            </span>
+                        </li>
+                    `;
                 });
-            }, 1500);
+                listEl.innerHTML = html;
+            }
+
+            if (rankSpan) {
+                rankSpan.innerText = '#' + userPos;
+            }
         }
 
-        if (answered) {
-            startWaitingPoll();
-        }
-
+        // 4. Envío de respuesta del estudiante vía WebSocket
         window.handleAnswerClick = function(answerId) {
             if (answered) return;
             answered = true;
 
-            // 1. Deshabilitar inmediatamente todos los botones
+            // Deshabilitar de inmediato todos los botones
             document.querySelectorAll('#answers-container button').forEach(function(btn) {
                 btn.disabled = true;
             });
 
-            // 2. Calcular time_taken
-            const timeTaken = Math.min(timeLimit, Math.max(0.01, ((Date.now() - startTime) / 1000))).toFixed(2);
-
-            // 3. Enviar fetch POST con X-CSRFToken
-            fetch(submitUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken,
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify({
-                    question_id: questionId,
-                    selected_answer_id: answerId,
-                    time_taken: timeTaken
-                })
-            })
-            .then(function(response) {
-                if (!response.ok) {
-                    return response.json().then(function(err) { throw err; });
-                }
-                return response.json();
-            })
-            .then(function(data) {
-                if (data.success) {
-                    // Reproducir audio feedback
-                    if (window.duckyAudio) {
-                        if (data.is_correct) {
-                            window.duckyAudio.playCorrect();
-                        } else {
-                            window.duckyAudio.playIncorrect();
-                        }
+            if (gameSocket.readyState === WebSocket.OPEN) {
+                gameSocket.send(JSON.stringify({
+                    'action': 'submit_answer',
+                    'question_id': questionId,
+                    'selected_answer_id': answerId
+                }));
+            } else {
+                console.warn('WebSocket no listo, reintentando...');
+                setTimeout(function() {
+                    if (gameSocket.readyState === WebSocket.OPEN) {
+                        gameSocket.send(JSON.stringify({
+                            'action': 'submit_answer',
+                            'question_id': questionId,
+                            'selected_answer_id': answerId
+                        }));
                     }
-
-                    // Actualizar indicadores superiores
-                    const totalScoreSpan = document.getElementById('total-score');
-                    const streakCountSpan = document.getElementById('streak-count');
-                    if (totalScoreSpan) totalScoreSpan.innerText = data.total_score;
-                    if (streakCountSpan) streakCountSpan.innerText = data.streak;
-
-                    // Configurar overlay de retroalimentación
-                    const overlay = document.getElementById('feedback-overlay');
-                    const banner = document.getElementById('overlay-banner');
-                    const title = document.getElementById('overlay-title');
-                    const pointsGained = document.getElementById('points-gained');
-                    const overlayTotalScore = document.getElementById('overlay-total-score');
-                    const overlayStreakInfo = document.getElementById('overlay-streak-info');
-
-                    if (banner && title && pointsGained) {
-                        banner.className = 'feedback-banner ' + (data.is_correct ? 'correct' : 'incorrect');
-                        title.innerText = data.is_correct ? '¡CORRECTO! 🎉' : '¡INCORRECTO! ❌';
-                        pointsGained.innerText = data.points_awarded;
-                    }
-
-                    if (overlayTotalScore) overlayTotalScore.innerText = data.total_score;
-                    if (overlayStreakInfo) {
-                        overlayStreakInfo.innerHTML = `Puntuación acumulada: <strong>${data.total_score} pts</strong> &bull; Racha: <strong>🔥 ${data.streak}</strong>`;
-                    }
-
-                    if (overlay) overlay.style.display = 'flex';
-
-                    // Iniciar sondeo para pasar a la siguiente pregunta
-                    startWaitingPoll();
-                }
-            })
-            .catch(function(err) {
-                console.error('Error al registrar respuesta:', err);
-                alert(err.error || 'Hubo un error al procesar tu respuesta.');
-                startWaitingPoll();
-            });
+                }, 500);
+            }
         };
     })();
 </script>

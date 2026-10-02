@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#06B6D4" flood-opacity="0.9"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#EC4899" flood-opacity="0.7"/>
+    </filter>
+    <filter id="clothShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  <!-- CAPA 1: ROPA (Z-INDEX 20) - CYBERPUNK 2099 -->
+  <g id="clothes-cyberpunk" filter="url(#clothShadow)">
+    <!-- Chaqueta Techwear oscura de fibra de carbono -->
+    <path d="M 180 230 L 210 215 L 256 240 L 302 215 L 332 230 L 340 395 L 256 410 L 172 395 Z" 
+          fill="#090D16" stroke="#1E293B" stroke-width="4"/>
+    <!-- Cuello alto táctico asimétrico -->
+    <path d="M 205 215 L 215 250 L 297 250 L 307 215 Z" fill="#1E293B" stroke="#0F172A" stroke-width="2"/>
+    <!-- Tiras lumínicas LED de Neón Cian -->
+    <g filter="url(#neonGlow)">
+      <path d="M 195 240 L 235 340 L 235 390" stroke="#06B6D4" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M 317 240 L 277 340 L 277 390" stroke="#EC4899" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <line x1="210" y1="280" x2="245" y2="280" stroke="#06B6D4" stroke-width="3"/>
+      <line x1="302" y1="280" x2="267" y2="280" stroke="#EC4899" stroke-width="3"/>
+    </g>
+    <!-- Módulo de energía central / Arc Core triangular -->
+    <polygon points="256,290 268,312 244,312" fill="#06B6D4" filter="url(#neonGlow)"/>
+    <polygon points="256,295 264,309 248,309" fill="#E0F2FE"/>
+    <!-- Bolsillos tácticos modulares -->
+    <rect x="185" y="335" width="35" height="30" rx="3" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+    <rect x="292" y="335" width="35" height="30" rx="3" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+    <line x1="185" y1="345" x2="220" y2="345" stroke="#06B6D4" stroke-width="2"/>
+    <line x1="292" y1="345" x2="327" y2="345" stroke="#EC4899" stroke-width="2"/>
+  </g>
+</svg>

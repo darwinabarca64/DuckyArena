@@ -885,6 +885,12 @@ class QuizGamesE2ETestCase(TestCase):
         self.assertEqual(response_lb.context['first_place'], gp1)
         self.assertEqual(response_lb.context['second_place'], gp2)
 
+        # Consultar podio olímpico desacoplado
+        response_podium = self.client.get(reverse('quiz_games:game_podium', kwargs={'code': '990011'}))
+        self.assertEqual(response_podium.status_code, 200)
+        self.assertEqual(response_podium.context['first_place'], gp1)
+        self.assertEqual(response_podium.context['second_place'], gp2)
+
         # Protección relacional: borrar el Quiz debe ser bloqueado por models.PROTECT
         with self.assertRaises(ProtectedError):
             self.quiz.delete()

@@ -1,0 +1,363 @@
+{
+  "version": "1.0.0",
+  "generated_at": "2026-10-02T10:00:49.712631+00:00",
+  "canvas": {
+    "width": 512,
+    "height": 512,
+    "format": "svg",
+    "anchors": {
+      "head_center": [
+        256,
+        160
+      ],
+      "eyes_beak_line": [
+        256,
+        185
+      ],
+      "torso_center": [
+        256,
+        320
+      ],
+      "feet_base": [
+        256,
+        450
+      ]
+    }
+  },
+  "layers_order": [
+    {
+      "layer": 0,
+      "category": "body",
+      "z_index": 10,
+      "description": "Cuerpo base del pato"
+    },
+    {
+      "layer": 1,
+      "category": "clothes",
+      "z_index": 20,
+      "description": "Ropa y armaduras temáticas"
+    },
+    {
+      "layer": 2,
+      "category": "face",
+      "z_index": 30,
+      "description": "Expresiones faciales modulares"
+    },
+    {
+      "layer": 3,
+      "category": "head",
+      "z_index": 40,
+      "description": "Sombreros y accesorios de cabeza"
+    }
+  ],
+  "civilizations": [
+    "Cavernícola",
+    "Egipto",
+    "Grecia",
+    "Roma",
+    "Vikingo",
+    "Samurái",
+    "Medieval",
+    "Pirata",
+    "Steampunk",
+    "Cyberpunk 2099"
+  ],
+  "items": [
+    {
+      "id": "body_yellow",
+      "name": "Amarillo Canario",
+      "category": "body",
+      "civilization": "Universal",
+      "z_index": 10,
+      "file": "bodies/body_yellow.svg",
+      "path": "quiz_games/avatars/bodies/body_yellow.svg",
+      "preview_color": "#FBBF24"
+    },
+    {
+      "id": "body_brown",
+      "name": "Pardo Chocolate",
+      "category": "body",
+      "civilization": "Universal",
+      "z_index": 10,
+      "file": "bodies/body_brown.svg",
+      "path": "quiz_games/avatars/bodies/body_brown.svg",
+      "preview_color": "#78350F"
+    },
+    {
+      "id": "body_black",
+      "name": "Negro Ónix",
+      "category": "body",
+      "civilization": "Universal",
+      "z_index": 10,
+      "file": "bodies/body_black.svg",
+      "path": "quiz_games/avatars/bodies/body_black.svg",
+      "preview_color": "#1E293B"
+    },
+    {
+      "id": "body_white",
+      "name": "Blanco Ártico",
+      "category": "body",
+      "civilization": "Universal",
+      "z_index": 10,
+      "file": "bodies/body_white.svg",
+      "path": "quiz_games/avatars/bodies/body_white.svg",
+      "preview_color": "#F8FAFC"
+    },
+    {
+      "id": "body_pink",
+      "name": "Rosa Chicle",
+      "category": "body",
+      "civilization": "Universal",
+      "z_index": 10,
+      "file": "bodies/body_pink.svg",
+      "path": "quiz_games/avatars/bodies/body_pink.svg",
+      "preview_color": "#F472B6"
+    },
+    {
+      "id": "body_blue",
+      "name": "Azul Cerúleo",
+      "category": "body",
+      "civilization": "Universal",
+      "z_index": 10,
+      "file": "bodies/body_blue.svg",
+      "path": "quiz_games/avatars/bodies/body_blue.svg",
+      "preview_color": "#38BDF8"
+    },
+    {
+      "id": "body_green",
+      "name": "Verde Esmeralda",
+      "category": "body",
+      "civilization": "Universal",
+      "z_index": 10,
+      "file": "bodies/body_green.svg",
+      "path": "quiz_games/avatars/bodies/body_green.svg",
+      "preview_color": "#10B981"
+    },
+    {
+      "id": "body_lavender",
+      "name": "Lavanda Místico",
+      "category": "body",
+      "civilization": "Universal",
+      "z_index": 10,
+      "file": "bodies/body_lavender.svg",
+      "path": "quiz_games/avatars/bodies/body_lavender.svg",
+      "preview_color": "#A78BFA"
+    },
+    {
+      "id": "clothes_caveman",
+      "name": "Piel Prehistórica",
+      "category": "clothes",
+      "civilization": "Cavernícola",
+      "z_index": 20,
+      "file": "clothes/clothes_caveman.svg",
+      "path": "quiz_games/avatars/clothes/clothes_caveman.svg"
+    },
+    {
+      "id": "clothes_egypt",
+      "name": "Túnica de Faraón y Usekh",
+      "category": "clothes",
+      "civilization": "Egipto",
+      "z_index": 20,
+      "file": "clothes/clothes_egypt.svg",
+      "path": "quiz_games/avatars/clothes/clothes_egypt.svg"
+    },
+    {
+      "id": "clothes_greek",
+      "name": "Quitón Helénico",
+      "category": "clothes",
+      "civilization": "Grecia",
+      "z_index": 20,
+      "file": "clothes/clothes_greek.svg",
+      "path": "quiz_games/avatars/clothes/clothes_greek.svg"
+    },
+    {
+      "id": "clothes_roman",
+      "name": "Lorica Segmentata y Capa",
+      "category": "clothes",
+      "civilization": "Roma",
+      "z_index": 20,
+      "file": "clothes/clothes_roman.svg",
+      "path": "quiz_games/avatars/clothes/clothes_roman.svg"
+    },
+    {
+      "id": "clothes_viking",
+      "name": "Túnica y Cuello Nórdico",
+      "category": "clothes",
+      "civilization": "Vikingo",
+      "z_index": 20,
+      "file": "clothes/clothes_viking.svg",
+      "path": "quiz_games/avatars/clothes/clothes_viking.svg"
+    },
+    {
+      "id": "clothes_samurai",
+      "name": "Armadura Do-Maru",
+      "category": "clothes",
+      "civilization": "Samurái",
+      "z_index": 20,
+      "file": "clothes/clothes_samurai.svg",
+      "path": "quiz_games/avatars/clothes/clothes_samurai.svg"
+    },
+    {
+      "id": "clothes_medieval",
+      "name": "Tabardo Heráldico y Malla",
+      "category": "clothes",
+      "civilization": "Medieval",
+      "z_index": 20,
+      "file": "clothes/clothes_medieval.svg",
+      "path": "quiz_games/avatars/clothes/clothes_medieval.svg"
+    },
+    {
+      "id": "clothes_pirate",
+      "name": "Casaca de Capitán Pirata",
+      "category": "clothes",
+      "civilization": "Pirata",
+      "z_index": 20,
+      "file": "clothes/clothes_pirate.svg",
+      "path": "quiz_games/avatars/clothes/clothes_pirate.svg"
+    },
+    {
+      "id": "clothes_steampunk",
+      "name": "Chaleco de Engranajes Steampunk",
+      "category": "clothes",
+      "civilization": "Steampunk",
+      "z_index": 20,
+      "file": "clothes/clothes_steampunk.svg",
+      "path": "quiz_games/avatars/clothes/clothes_steampunk.svg"
+    },
+    {
+      "id": "clothes_cyberpunk",
+      "name": "Chaqueta Táctica Neón 2099",
+      "category": "clothes",
+      "civilization": "Cyberpunk 2099",
+      "z_index": 20,
+      "file": "clothes/clothes_cyberpunk.svg",
+      "path": "quiz_games/avatars/clothes/clothes_cyberpunk.svg"
+    },
+    {
+      "id": "face_focused",
+      "name": "Concentrado",
+      "category": "face",
+      "civilization": "Universal",
+      "z_index": 30,
+      "file": "faces/face_focused.svg",
+      "path": "quiz_games/avatars/faces/face_focused.svg"
+    },
+    {
+      "id": "face_confident",
+      "name": "Confiado / Pícaro",
+      "category": "face",
+      "civilization": "Universal",
+      "z_index": 30,
+      "file": "faces/face_confident.svg",
+      "path": "quiz_games/avatars/faces/face_confident.svg"
+    },
+    {
+      "id": "face_surprised",
+      "name": "Sorprendido",
+      "category": "face",
+      "civilization": "Universal",
+      "z_index": 30,
+      "file": "faces/face_surprised.svg",
+      "path": "quiz_games/avatars/faces/face_surprised.svg"
+    },
+    {
+      "id": "face_calm",
+      "name": "Calmado / Zen",
+      "category": "face",
+      "civilization": "Universal",
+      "z_index": 30,
+      "file": "faces/face_calm.svg",
+      "path": "quiz_games/avatars/faces/face_calm.svg"
+    },
+    {
+      "id": "head_caveman",
+      "name": "Cinta de Cuero y Hueso",
+      "category": "head",
+      "civilization": "Cavernícola",
+      "z_index": 40,
+      "file": "heads/head_caveman.svg",
+      "path": "quiz_games/avatars/heads/head_caveman.svg"
+    },
+    {
+      "id": "head_egypt",
+      "name": "Tocado Nemes de Faraón",
+      "category": "head",
+      "civilization": "Egipto",
+      "z_index": 40,
+      "file": "heads/head_egypt.svg",
+      "path": "quiz_games/avatars/heads/head_egypt.svg"
+    },
+    {
+      "id": "head_greek",
+      "name": "Corona de Laurel Helénica",
+      "category": "head",
+      "civilization": "Grecia",
+      "z_index": 40,
+      "file": "heads/head_greek.svg",
+      "path": "quiz_games/avatars/heads/head_greek.svg"
+    },
+    {
+      "id": "head_roman",
+      "name": "Casco Galea de Centurión",
+      "category": "head",
+      "civilization": "Roma",
+      "z_index": 40,
+      "file": "heads/head_roman.svg",
+      "path": "quiz_games/avatars/heads/head_roman.svg"
+    },
+    {
+      "id": "head_viking",
+      "name": "Yelmo Vikingo Spangenhelm",
+      "category": "head",
+      "civilization": "Vikingo",
+      "z_index": 40,
+      "file": "heads/head_viking.svg",
+      "path": "quiz_games/avatars/heads/head_viking.svg"
+    },
+    {
+      "id": "head_samurai",
+      "name": "Kabuto con Medialuna Dorada",
+      "category": "head",
+      "civilization": "Samurái",
+      "z_index": 40,
+      "file": "heads/head_samurai.svg",
+      "path": "quiz_games/avatars/heads/head_samurai.svg"
+    },
+    {
+      "id": "head_medieval",
+      "name": "Gran Yelmo de Caballero",
+      "category": "head",
+      "civilization": "Medieval",
+      "z_index": 40,
+      "file": "heads/head_medieval.svg",
+      "path": "quiz_games/avatars/heads/head_medieval.svg"
+    },
+    {
+      "id": "head_pirate",
+      "name": "Tricornio Pirata y Parche",
+      "category": "head",
+      "civilization": "Pirata",
+      "z_index": 40,
+      "file": "heads/head_pirate.svg",
+      "path": "quiz_games/avatars/heads/head_pirate.svg"
+    },
+    {
+      "id": "head_steampunk",
+      "name": "Chistera y Gafas de Bronce",
+      "category": "head",
+      "civilization": "Steampunk",
+      "z_index": 40,
+      "file": "heads/head_steampunk.svg",
+      "path": "quiz_games/avatars/heads/head_steampunk.svg"
+    },
+    {
+      "id": "head_cyberpunk",
+      "name": "Visor Holográfico AR 2099",
+      "category": "head",
+      "civilization": "Cyberpunk 2099",
+      "z_index": 40,
+      "file": "heads/head_cyberpunk.svg",
+      "path": "quiz_games/avatars/heads/head_cyberpunk.svg"
+    }
+  ]
+}

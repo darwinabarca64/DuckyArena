@@ -13,11 +13,13 @@ from .views import (
     game_player_play,
     submit_player_answer,
     game_leaderboard,
+    game_podium,
     game_player_results,
     game_lobby_status,
     game_question_status,
     game_question_breakdown,
     export_game_results_csv,
+    update_player_avatar,
 )
 
 app_name = 'quiz_games'
@@ -31,6 +33,7 @@ urlpatterns = [
     path('next-question/<str:code>/', host_next_question, name='host_next_question'),
     path('finish/<str:code>/', host_finish_game, name='host_finish_game'),
     path('leaderboard/<str:code>/', game_leaderboard, name='game_leaderboard'),
+    path('podium/<str:code>/', game_podium, name='game_podium'),
     path('export-csv/<str:code>/', export_game_results_csv, name='export_game_results_csv'),
     path('join/', game_join, name='game_join'),
     path('resume/', game_player_resume, name='game_player_resume'),
@@ -42,5 +45,6 @@ urlpatterns = [
     path('api/status/<str:code>/', game_lobby_status, name='game_lobby_status'),
     path('api/question-status/<str:code>/', game_question_status, name='game_question_status'),
     path('api/breakdown/<str:code>/', game_question_breakdown, name='game_question_breakdown'),
+    path('api/avatar/<str:code>/', update_player_avatar, name='update_player_avatar'),
     path('status/<str:code>/', game_lobby_status, name='game_status_check'),
 ]

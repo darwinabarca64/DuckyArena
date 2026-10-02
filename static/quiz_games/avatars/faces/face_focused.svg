@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <filter id="faceGlow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <!-- CAPA 2: EXPRESIÓN FACIAL (Z-INDEX 30) - CONCENTRADO -->
+  <g id="face-focused" filter="url(#faceGlow)">
+    <!-- Cejas inclinadas hacia adentro con determinación -->
+    <path d="M 195 152 L 236 164" stroke="#0F172A" stroke-width="5" stroke-linecap="round"/>
+    <path d="M 317 152 L 276 164" stroke="#0F172A" stroke-width="5" stroke-linecap="round"/>
+    <!-- Ojos firmes e intensos -->
+    <!-- Ojo Izquierdo -->
+    <ellipse cx="218" cy="172" rx="11" ry="13" fill="#0F172A"/>
+    <circle cx="215" cy="168" r="4" fill="#FFFFFF"/>
+    <circle cx="222" cy="176" r="2" fill="#FFFFFF"/>
+    <!-- Ojo Derecho -->
+    <ellipse cx="294" cy="172" rx="11" ry="13" fill="#0F172A"/>
+    <circle cx="291" cy="168" r="4" fill="#FFFFFF"/>
+    <circle cx="298" cy="176" r="2" fill="#FFFFFF"/>
+    <!-- Destello de enfoque / concentración -->
+    <polygon points="256,166 258,172 264,174 258,176 256,182 254,176 248,174 254,172" fill="#FBBF24"/>
+  </g>
+</svg>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <filter id="headShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  <!-- CAPA 3: SOMBRERO / CABEZA (Z-INDEX 40) - VIKINGO -->
+  <g id="head-viking" filter="url(#headShadow)">
+    <!-- Casco cónico de placas de hierro remachadas -->
+    <path d="M 175 135 C 180 50, 256 40, 256 40 C 256 40, 332 50, 337 135 C 300 120, 210 120, 175 135 Z" 
+          fill="#64748B" stroke="#334155" stroke-width="4"/>
+    <!-- Banda de refuerzo vertical central con púa superior -->
+    <path d="M 248 40 L 264 40 L 262 125 L 250 125 Z" fill="#475569" stroke="#1E293B" stroke-width="2"/>
+    <polygon points="256,22 250,40 262,40" fill="#94A3B8" stroke="#334155" stroke-width="2"/>
+    <!-- Banda de cejas / Base con remaches -->
+    <path d="M 175 125 Q 256 110 337 125 L 335 142 Q 256 128 177 142 Z" 
+          fill="#475569" stroke="#1E293B" stroke-width="2"/>
+    <!-- Protector ocular / Antifaz nasal nórdico -->
+    <path d="M 215 132 C 220 155, 245 155, 250 135 L 256 175 L 262 135 C 267 155, 292 155, 297 132 Z" 
+          fill="#334155" stroke="#0F172A" stroke-width="2"/>
+    <!-- Remaches de acero -->
+    <circle cx="256" cy="65" r="2.5" fill="#E2E8F0"/>
+    <circle cx="256" cy="85" r="2.5" fill="#E2E8F0"/>
+    <circle cx="256" cy="105" r="2.5" fill="#E2E8F0"/>
+    <circle cx="195" cy="132" r="2.5" fill="#E2E8F0"/>
+    <circle cx="317" cy="132" r="2.5" fill="#E2E8F0"/>
+  </g>
+</svg>

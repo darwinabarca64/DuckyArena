@@ -18,12 +18,14 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
     'quizzes.apps.QuizzesConfig',
     'quiz_games.apps.QuizGamesConfig',
 ]
@@ -52,11 +54,21 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries': {
+                'avatar_tags': 'quiz_games.templatetags.avatar_tags',
+            },
         },
     },
 ]
 
 WSGI_APPLICATION = 'quizz_project.wsgi.application'
+ASGI_APPLICATION = 'quizz_project.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 # Database
 DATABASES = {
@@ -91,6 +103,6 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Auth redirection
-LOGIN_URL = 'admin:login'
+LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = '/quizzes/'
 LOGOUT_REDIRECT_URL = '/quizzes/'

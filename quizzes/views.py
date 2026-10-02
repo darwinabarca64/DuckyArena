@@ -2,12 +2,13 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.forms import inlineformset_factory
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.db import transaction
 from django.db.models import Count, Sum
 from .models import Quiz, Question, Answer
-from .forms import QuizForm, QuestionForm, AnswerForm, AnswerFormSet, QuestionFormSet
+from .forms import QuizForm, QuestionForm, AnswerForm, AnswerFormSet, QuestionFormSet, BaseAnswerFormSet
 
 
 class TeacherRequiredMixin(UserPassesTestMixin):
@@ -98,14 +99,35 @@ class QuizFormsetMixin:
 
     def get_question_formset(self, data=None):
         instance = getattr(self, 'object', None)
-        return QuestionFormSet(data, instance=instance, prefix='questions')
+        extra = 0 if (instance and instance.pk and instance.questions.exists()) else 1
+        formset_class = inlineformset_factory(
+            parent_model=Quiz,
+            model=Question,
+            form=QuestionForm,
+            extra=extra,
+            can_delete=True
+        )
+        return formset_class(data, instance=instance, prefix='questions')
 
     def get_answer_formsets(self, question_formset, data=None):
         answer_formsets = []
         for q_form in question_formset:
             prefix = f'answers_{q_form.prefix}'
             q_instance = q_form.instance if (q_form.instance and q_form.instance.pk) else None
-            ans_formset = AnswerFormSet(data, instance=q_instance, prefix=prefix)
+            extra = 0 if (q_instance and q_instance.pk and q_instance.answers.exists()) else 4
+            ans_formset_class = inlineformset_factory(
+                parent_model=Question,
+                model=Answer,
+                form=AnswerForm,
+                formset=BaseAnswerFormSet,
+                extra=extra,
+                min_num=2,
+                max_num=6,
+                validate_min=True,
+                validate_max=True,
+                can_delete=True
+            )
+            ans_formset = ans_formset_class(data, instance=q_instance, prefix=prefix)
             q_form.answer_formset = ans_formset
             answer_formsets.append(ans_formset)
         return answer_formsets
