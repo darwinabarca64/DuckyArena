@@ -1262,6 +1262,117 @@ class NetworkPerformanceAndAudioTests(TestCase):
         self.assertNotEqual(response3.headers['ETag'], etag)
 
 
+class PasswordlessAuthTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.staff_user = User.objects.create_user(
+            username='staff_member',
+            password='Password123!',
+            is_staff=True
+        )
+        self.super_user = User.objects.create_superuser(
+            username='admin_boss',
+            password='Password123!',
+            email='admin@quizarenas.com'
+        )
+        self.existing_player = User.objects.create_user(
+            username='existing_player',
+            password='player_password'
+        )
+
+    def test_login_page_renders_without_password_field(self):
+        """La plantilla de login no debe contener inputs de contraseña y debe tener la etiqueta adecuada."""
+        response = self.client.get(reverse('login'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Usuario / Nickname')
+        self.assertContains(response, 'name="username"')
+        self.assertNotContains(response, 'name="password"')
+        self.assertNotContains(response, 'type="password"')
+
+    def test_student_passwordless_login_new_user(self):
+        """Un nuevo jugador puede autenticarse de inmediato; se crea el usuario con contraseña inutilizable."""
+        new_nickname = 'SpeedyDuck'
+        self.assertFalse(User.objects.filter(username=new_nickname).exists())
+
+        response = self.client.post(reverse('login'), {'username': new_nickname})
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, '/quizzes/')
+
+        user = User.objects.get(username=new_nickname)
+        self.assertFalse(user.has_usable_password())
+        self.assertFalse(user.is_staff)
+        self.assertFalse(user.is_superuser)
+
+        self.assertTrue(response.wsgi_request.user.is_authenticated)
+        self.assertEqual(response.wsgi_request.user.username, new_nickname)
+
+    def test_student_passwordless_login_existing_user(self):
+        """Un jugador existente puede iniciar sesión ingresando únicamente su username."""
+        response = self.client.post(reverse('login'), {'username': 'existing_player'})
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, '/quizzes/')
+
+        self.assertTrue(response.wsgi_request.user.is_authenticated)
+        self.assertEqual(response.wsgi_request.user.username, 'existing_player')
+
+    def test_staff_and_superuser_denied_passwordless_login(self):
+        """Staff y superusuarios tienen denegado el acceso sin contraseña y reciben aviso de usar /admin/."""
+        response_staff = self.client.post(reverse('login'), {'username': 'staff_member'})
+        self.assertEqual(response_staff.status_code, 200)
+        self.assertFalse(response_staff.wsgi_request.user.is_authenticated)
+        self.assertContains(response_staff, '/admin/')
+        self.assertContains(response_staff, 'contraseña')
+
+        response_super = self.client.post(reverse('login'), {'username': 'admin_boss'})
+        self.assertEqual(response_super.status_code, 200)
+        self.assertFalse(response_super.wsgi_request.user.is_authenticated)
+        self.assertContains(response_super, '/admin/')
+        self.assertContains(response_super, 'contraseña')
+
+    def test_username_normalization_and_sanitization(self):
+        """El nombre de usuario se limpia de espacios sobrantes y se valida correctamente."""
+        response = self.client.post(reverse('login'), {'username': '   CleanDucky   '})
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(User.objects.filter(username='CleanDucky').exists())
+        self.assertEqual(response.wsgi_request.user.username, 'CleanDucky')
+
+    def test_empty_username_rejected(self):
+        """Un nombre de usuario en blanco o solo espacios es rechazado."""
+        response = self.client.post(reverse('login'), {'username': '   '})
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.wsgi_request.user.is_authenticated)
+        self.assertContains(response, 'introduce un nombre de usuario o nickname')
+
+    def test_redirect_next_parameter_preserved(self):
+        """El parámetro next se respeta en la redirección post-login."""
+        target_next = '/games/join/'
+        response = self.client.post(f"{reverse('login')}?next={target_next}", {'username': 'LobbyRacer'})
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, target_next)
+
+    def test_unsafe_next_parameter_fallback(self):
+        """Un parámetro next inseguro (open redirect) debe caer a LOGIN_REDIRECT_URL."""
+        unsafe_next = 'https://malicious-site.com/steal-cookies'
+        response = self.client.post(f"{reverse('login')}?next={unsafe_next}", {'username': 'SafeDuck'})
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, '/quizzes/')
+
+    def test_authenticated_user_redirected_away_from_login(self):
+        """Un usuario ya autenticado es redirigido lejos del formulario de login."""
+        self.client.force_login(self.existing_player)
+        response = self.client.get(reverse('login'))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, '/quizzes/')
+
+    def test_admin_panel_still_requires_password(self):
+        """El panel Django Admin (/admin/) preserva la autenticación con contraseña."""
+        admin_login_url = reverse('admin:login')
+        response = self.client.get(admin_login_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'type="password"')
+
+
+
 
 
 
